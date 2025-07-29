@@ -22,6 +22,11 @@ import com.tencent.compose.sample.InteropListSimple
 import com.tencent.compose.sample.InteropRenderOrder
 import com.tencent.compose.sample.InteropButton
 import com.tencent.compose.sample.InteropTextInput
+import com.tencent.compose.sample.InteropVideo
+import com.tencent.compose.sample.InteropWebView
+import com.tencent.compose.sample.ComposeView1500Page
+import com.tencent.compose.sample.CApiView1500Page
+import com.tencent.compose.sample.ComposeToCPage
 import com.tencent.compose.sample.data.DisplayItem
 import composesample.composeapp.generated.resources.Res
 import composesample.composeapp.generated.resources.interop_list
@@ -37,6 +42,11 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("混排滑动", Res.drawable.interop_list) { InteropListSimple() },
         DisplayItem("混排嵌滑", Res.drawable.interop_nested_scroll) { InteropListNested() },
         DisplayItem("混排状态", Res.drawable.interop_state) { InteropTextInput() },
-        DisplayItem("InteropButton", Res.drawable.interop_state) { InteropButton() }
+        DisplayItem("InteropButton", Res.drawable.interop_state) { InteropButton() },
+	    DisplayItem("短视频", Res.drawable.interop_state) { InteropVideo() },
+        DisplayItem("WebView", Res.drawable.interop_state) { InteropWebView() },
+        DisplayItem("compose 1500View", Res.drawable.interop_state) { ComposeView1500Page() },
+        DisplayItem("CApi 1500View", Res.drawable.interop_state) { CApiView1500Page() },
+        DisplayItem("Kotlin to C", Res.drawable.interop_state) { ComposeToCPage() },
     )
 }
