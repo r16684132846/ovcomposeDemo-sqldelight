@@ -36,6 +36,14 @@
           ]
         }
       ]
+    },
+    {
+      "name": "base",
+      "srcPath": "./commons/base"
+    },
+    {
+      "name": "adaptive_video_component",
+      "srcPath": "./features/adaptive_video_component"
     }
   ]
 }

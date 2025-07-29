@@ -16,9 +16,18 @@
  */
 
 import { ArkUIViewController } from "compose/src/main/cpp/types/libcompose_arkui_utils";
+import { NodeContent } from "@ohos.arkui.node";
 
 export const add: (a: number, b: number) => number;
 
 export const MainArkUIViewController: () => ArkUIViewController
 
 export const initResourceManager: (resourceManager: resourceManager.ResourceManager) => number;
+
+export const createNativeNode: (nodeContent: NodeContent) => number;
+
+export const createNativeNodeStackView: (nodeContent: NodeContent) => number;
+
+export const createNativeNodeTextView: (nodeContent: NodeContent) => number;
+
+export const createNativeNodeImageView: (nodeContent: NodeContent, imagePath: string) => number;

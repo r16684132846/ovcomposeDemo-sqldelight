@@ -18,9 +18,10 @@
 #include "libkn_api.h"
 #include "napi/native_api.h"
 #include <rawfile/raw_file_manager.h>
-#include "hilog/log.h"
+#include <hilog/log.h>
+#include "manager.h"
 
-#define LOG_TAG "MY_TAG"   // 全局tag宏，标识模块日志tag
+namespace NativeXComponentSample {
 
 void callKotlinMethodTest() {
     OH_LOG_INFO(LOG_APP, "KN: callKotlinMethodTest: start");
@@ -90,6 +91,12 @@ static napi_value Init(napi_env env, napi_value exports) {
         {"add", nullptr, Add, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"initResourceManager", nullptr, InitResourceManager, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"MainArkUIViewController", nullptr, MainArkUIViewController, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"getContext", nullptr, Manager::GetContext, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"createNativeNode", nullptr, Manager::CreateNativeNode, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"updateNativeNode", nullptr, Manager::UpdateNativeNode, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"createNativeNodeStackView", nullptr, Manager::CreateNativeNodeStackView, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"createNativeNodeTextView", nullptr, Manager::CreateNativeNodeTextView, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"createNativeNodeImageView", nullptr, Manager::CreateNativeNodeImageView, nullptr, nullptr, nullptr, napi_default, nullptr},
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
@@ -109,4 +116,5 @@ static napi_module demoModule = {
 extern "C" __attribute__((constructor)) void RegisterEntryModule(void)
 {
     napi_module_register(&demoModule);
+}
 }
