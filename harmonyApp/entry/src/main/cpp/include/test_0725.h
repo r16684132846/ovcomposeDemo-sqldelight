@@ -7,6 +7,7 @@ extern "C" {
 
 int testNum(int num);
 void print_string(char* msg);
+void print_const_string(const char* msg);
 
 #ifdef __cplusplus
 };

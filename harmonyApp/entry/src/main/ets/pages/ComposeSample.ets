@@ -29,6 +29,9 @@ import {
   horizontalListBuilder,
   videoBuilder,
   webViewBuilder,
+  cApiStackView1500Builder,
+  cApiTextView1500Builder,
+  cApiImageView1500Builder,
 } from './ComposeInterops';
 
 export function registerComposeInteropBuilders() {
@@ -42,4 +45,7 @@ export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('horizontalList', horizontalListBuilder)
   registerComposeInteropBuilder('video', videoBuilder)
   registerComposeInteropBuilder('webView', webViewBuilder)
+  registerComposeInteropBuilder('cApiStackView1500', cApiStackView1500Builder)
+  registerComposeInteropBuilder('cApiTextView1500', cApiTextView1500Builder)
+  registerComposeInteropBuilder('cApiImageView1500', cApiImageView1500Builder)
 }
