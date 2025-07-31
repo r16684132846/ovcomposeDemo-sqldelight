@@ -141,6 +141,7 @@ extern void androidx_compose_ui_arkui_ArkUIViewController_setRootView(void* cont
 extern void androidx_compose_ui_arkui_ArkUIViewController_setUIContext(void* controllerRef, void* uiContext);
 extern void androidx_compose_ui_arkui_ArkUIViewController_setXComponentRender(void* controllerRef, void* render);
 extern void androidx_compose_ui_arkui_init(void* env, void* exports);
+extern void define_string_function(void* env, void* exports);
 extern void kotlin_callback(libkn_KInt data, void* handler);
 extern libkn_KInt kotlin_function(libkn_KInt input);
 extern void* MainArkUIViewController(void* env);
@@ -606,6 +607,15 @@ typedef struct {
               libkn_KInt (*com_tencent_compose_sample_ObjectTracker$stableprop_getter_________________________)();
               libkn_KInt (*com_tencent_compose_sample_RefManager$stableprop_getter_________________________)();
             } sample;
+            struct {
+              const char* (*get_TestString)();
+              void (*defineStringFunction)(void* env, void* exports);
+              void (*kn_string_params)(const char* a);
+              const char* (*kn_string_result)();
+              void* (*createString)(const char* value);
+              const char* (*asString)(void* thiz);
+              const char* (*asStringUtf8)(void* thiz);
+            } utils;
             libkn_KInt (*com_tencent_compose_Greeting$stableprop_getter)();
             libkn_KInt (*com_tencent_compose_OHOSPlatform$stableprop_getter)();
             libkn_KInt (*com_tencent_compose_Greeting$stableprop_getter_)();

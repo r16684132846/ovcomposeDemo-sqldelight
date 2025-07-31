@@ -102,6 +102,8 @@ static napi_value Init(napi_env env, napi_value exports) {
         {"createNativeNodeImageSingleView", nullptr, Manager::CreateImageSingleViewExample, nullptr, nullptr, nullptr, napi_default, nullptr},
     };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
+
+    define_string_function(env, exports);
     return exports;
 }
 EXTERN_C_END

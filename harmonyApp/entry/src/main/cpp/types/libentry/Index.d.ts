@@ -37,3 +37,11 @@ export const createNativeNodeTextSingleView: (nodeContent: NodeContent) => numbe
 export const createNativeNodeImageView: (nodeContent: NodeContent, imagePath: string) => number;
 
 export const createNativeNodeImageSingleView: (nodeContent: NodeContent, imagePath: string) => number;
+
+export const kn_string_params: (param: string) => void
+
+export const kn_string_result: () => string
+
+export const origin_string_params: (param: string) => void
+
+export const origin_string_result: () => string
