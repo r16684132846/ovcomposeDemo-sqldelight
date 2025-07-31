@@ -42,14 +42,15 @@ internal fun ComposeView1500Page() {
         repeat(1500) { index ->
             Box(
                 modifier = Modifier
-                    .size(300.dp) // 设置宽高均为300dp
+                    .size(300.dp, 100.dp) // 设置宽高均为300dp
                     .border(
                         width = 2.dp, // 边框宽度
                         color = Color.Red, // 边框颜色为红色
                     )
-                    .padding(8.dp) // 添加一些间距，使边框更明显
             ) {
-                // 内容为空，仅显示红色边框
+                Text(
+                    text = "Item #$index",
+                )
             }
         }
     }

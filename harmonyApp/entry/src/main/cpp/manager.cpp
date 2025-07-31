@@ -78,6 +78,139 @@ ArkUI_NodeHandle createStackExample() {
     return scroll;
 }
 
+
+ArkUI_NodeHandle createSimpleStackOnly()
+{
+    // 创建 Stack
+    ArkUI_NodeHandle stack = nodeAPI->createNode(ARKUI_NODE_STACK);
+
+    ArkUI_NumberValue stackSize[] = { 300 };
+    ArkUI_AttributeItem stackWidth = { stackSize, 1 };
+    nodeAPI->setAttribute(stack, NODE_WIDTH, &stackWidth);
+
+    stackSize[0].f32 = 100;
+    ArkUI_AttributeItem stackHeight = { stackSize, 1 };
+    nodeAPI->setAttribute(stack, NODE_HEIGHT, &stackHeight);
+
+    ArkUI_NumberValue borderWidth[] = { 2.0f };
+    ArkUI_AttributeItem borderWidthItem = { borderWidth, 1 };
+    nodeAPI->setAttribute(stack, NODE_BORDER_WIDTH, &borderWidthItem);
+
+    ArkUI_NumberValue borderColor[] = { { .i32 = (int32_t)0xFFFF0000 } };
+    ArkUI_AttributeItem borderColorItem = { borderColor, 1 };
+    nodeAPI->setAttribute(stack, NODE_BORDER_COLOR, &borderColorItem);
+    
+    return stack;
+}
+
+
+ArkUI_NodeHandle createSimpleColumnWithStack()
+{
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "ArkUIExample", "createSimpleColumnWithStack");
+
+    // 创建最外层 Column
+    ArkUI_NodeHandle column = nodeAPI->createNode(ARKUI_NODE_COLUMN);
+
+    // 设置 Column 宽度
+    ArkUI_NumberValue columnWidth[] = { 300 };
+    ArkUI_AttributeItem columnWidthItem = { columnWidth, 1 };
+    nodeAPI->setAttribute(column, NODE_WIDTH, &columnWidthItem);
+
+    // 创建 Stack
+    ArkUI_NodeHandle stack = nodeAPI->createNode(ARKUI_NODE_STACK);
+
+    ArkUI_NumberValue stackSize[] = { 300 };
+    ArkUI_AttributeItem stackWidth = { stackSize, 1 };
+    nodeAPI->setAttribute(stack, NODE_WIDTH, &stackWidth);
+
+    stackSize[0].f32 = 100;
+    ArkUI_AttributeItem stackHeight = { stackSize, 1 };
+    nodeAPI->setAttribute(stack, NODE_HEIGHT, &stackHeight);
+
+    ArkUI_NumberValue borderWidth[] = { 2.0f };
+    ArkUI_AttributeItem borderWidthItem = { borderWidth, 1 };
+    nodeAPI->setAttribute(stack, NODE_BORDER_WIDTH, &borderWidthItem);
+
+    ArkUI_NumberValue borderColor[] = { { .i32 = (int32_t)0xFFFF0000 } };
+    ArkUI_AttributeItem borderColorItem = { borderColor, 1 };
+    nodeAPI->setAttribute(stack, NODE_BORDER_COLOR, &borderColorItem);
+
+    ArkUI_NodeHandle text = nodeAPI->createNode(ARKUI_NODE_TEXT);
+    ArkUI_AttributeItem textVal = { .string = "1" };
+    nodeAPI->setAttribute(text, NODE_TEXT_CONTENT, &textVal);
+
+    nodeAPI->addChild(stack, text);
+    nodeAPI->addChild(column, stack);
+
+    return column;
+}
+
+
+ArkUI_NodeHandle createScrollWithContainersEachWithStack()
+{
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "ArkUIExample", "createScrollWithContainersEachWithStack");
+
+    ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
+
+    ArkUI_NumberValue size[] = { 480 }; // 宽度
+    size[0].f32 = 1920; // 高度
+    ArkUI_AttributeItem heightItem = { size, 1 };
+    nodeAPI->setAttribute(scroll, NODE_HEIGHT, &heightItem);
+
+    // 设置为垂直滚动
+    ArkUI_NumberValue scrollDir[] = { { .i32 = ARKUI_SCROLL_DIRECTION_VERTICAL } };
+    ArkUI_AttributeItem dirItem = { scrollDir, 1 };
+    nodeAPI->setAttribute(scroll, NODE_SCROLL_SCROLL_DIRECTION, &dirItem);
+    
+    ArkUI_NodeHandle column = nodeAPI->createNode(ARKUI_NODE_COLUMN);
+    
+    ArkUI_NumberValue containerSize[] = { 300 };
+    ArkUI_AttributeItem containerWidth = { containerSize, 1 };
+    nodeAPI->setAttribute(column, NODE_WIDTH, &containerWidth);
+    
+    for (int i = 0; i < 1500; ++i) {
+        ArkUI_NodeHandle container = nodeAPI->createNode(ARKUI_NODE_COLUMN);
+
+        ArkUI_NumberValue containerSize[] = { 300 };
+        ArkUI_AttributeItem containerWidth = { containerSize, 1 };
+        nodeAPI->setAttribute(container, NODE_WIDTH, &containerWidth);
+
+        ArkUI_NodeHandle stack = nodeAPI->createNode(ARKUI_NODE_STACK);
+
+        ArkUI_NumberValue stackWidth[] = {300};
+        ArkUI_AttributeItem widthItem = {stackWidth, 1};
+        nodeAPI->setAttribute(stack, NODE_WIDTH, &widthItem);
+
+        ArkUI_NumberValue stackHeight[] = {100}; // 固定高度100
+        ArkUI_AttributeItem heightItem = {stackHeight, 1};
+        nodeAPI->setAttribute(stack, NODE_HEIGHT, &heightItem);
+
+        ArkUI_NodeHandle text = nodeAPI->createNode(ARKUI_NODE_TEXT);
+        char buf[32];
+        snprintf(buf, sizeof(buf), "Item #%d", i + 1);
+        ArkUI_AttributeItem textVal = { .string = buf };
+        nodeAPI->setAttribute(text, NODE_TEXT_CONTENT, &textVal);
+        
+        ArkUI_NumberValue borderWidth[] = {2.0f};
+        ArkUI_AttributeItem borderWidthItem = {borderWidth, 1};
+        nodeAPI->setAttribute(stack, NODE_BORDER_WIDTH, &borderWidthItem);
+
+        ArkUI_NumberValue borderColor[] = { { .i32 = (int32_t)0xFFFF0000 } };
+        ArkUI_AttributeItem borderColorItem = {borderColor, 1};
+        nodeAPI->setAttribute(stack, NODE_BORDER_COLOR, &borderColorItem);
+        
+        nodeAPI->addChild(stack, text);
+        nodeAPI->addChild(container, stack);
+        nodeAPI->addChild(column, container);
+    }
+
+    nodeAPI->addChild(scroll, column);
+        HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
+    
+
+    return scroll;
+}
+
 ArkUI_NodeHandle createStackViewExample() {
     OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp createStackExample");
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
@@ -174,11 +307,27 @@ ArkUI_NodeHandle createTextViewExample() {
     for (int i = 0; i < 1500; i++) {
         // 创建Text并设置内容（唯一区别）
         ArkUI_NodeHandle text = nodeAPI->createNode(ARKUI_NODE_TEXT);
-        std::string contentStr = "测试:" + std::to_string(i + 1);
+        std::string contentStr = "Item #" + std::to_string(i);
         ArkUI_AttributeItem content = {.string = contentStr.c_str()};
         nodeAPI->setAttribute(text, NODE_TEXT_CONTENT, &content);
-
-        // 将Stack添加到Column（关键修改）
+        
+        ArkUI_NumberValue width[] = { 480 };
+        ArkUI_AttributeItem widthItem = { width, 1 };
+        nodeAPI->setAttribute(text, NODE_WIDTH, &widthItem);
+        
+        ArkUI_NumberValue borderWidth[] = { 1.0f };
+        ArkUI_AttributeItem borderWidthItem = { borderWidth, 1 };
+        nodeAPI->setAttribute(text, NODE_BORDER_WIDTH, &borderWidthItem);
+        
+        ArkUI_NumberValue borderColor[] = {{ .i32 = static_cast<int32_t>(0xFF888888) }};
+        ArkUI_AttributeItem borderColorItem = { borderColor, 1 };
+        nodeAPI->setAttribute(text, NODE_BORDER_COLOR, &borderColorItem);
+        
+        // 设置内边距为 10（上下左右统一）
+        ArkUI_NumberValue padding[] = { 10, 10, 10, 10 };  // left, top, right, bottom
+        ArkUI_AttributeItem paddingItem = { padding, 4 };
+        nodeAPI->setAttribute(text, NODE_PADDING, &paddingItem);
+        
         nodeAPI->addChild(column, text);
     }
 
@@ -189,8 +338,7 @@ ArkUI_NodeHandle createTextViewExample() {
 }
 
 
-ArkUI_NodeHandle createImageViewExample(const char *imagePath) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "lww TestXXX manager.cpp createStackExample %{public}s", imagePath);
+ArkUI_NodeHandle createImageViewExample(const char *imagePath, int32_t iteration) {
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
 
     // 设置Scroll尺寸
@@ -213,7 +361,7 @@ ArkUI_NodeHandle createImageViewExample(const char *imagePath) {
 
     // 创建并添加1500个Stack到Column中
     // 创建并添加1500个Image到Column中
-    for (int i = 0; i < 1500; i++) {
+    for (int i = 0; i < iteration; i++) {
         // 创建Image节点
         ArkUI_NodeHandle imageNode = nodeAPI->createNode(ARKUI_NODE_IMAGE);
         
@@ -222,11 +370,11 @@ ArkUI_NodeHandle createImageViewExample(const char *imagePath) {
         nodeAPI->setAttribute(imageNode, NODE_IMAGE_SRC, &srcItem);
         
         // 设置图片尺寸
-        ArkUI_NumberValue widthValue[] = {100.0f};
+        ArkUI_NumberValue widthValue[] = {200.0f};
         ArkUI_AttributeItem widthItem = {widthValue, 1};
         nodeAPI->setAttribute(imageNode, NODE_WIDTH, &widthItem);
-        
-        ArkUI_NumberValue heightValue[] = {100.0f};
+
+        ArkUI_NumberValue heightValue[] = {200.0f};
         ArkUI_AttributeItem heightItem = {heightValue, 1};
         nodeAPI->setAttribute(imageNode, NODE_HEIGHT, &heightItem);
         
@@ -258,6 +406,47 @@ ArkUI_NodeHandle createImageViewExample(const char *imagePath) {
 
     return scroll;
 }
+
+ArkUI_NodeHandle createImageSingleViewExample(const char *imagePath) {
+
+    // 创建Image节点
+    ArkUI_NodeHandle imageNode = nodeAPI->createNode(ARKUI_NODE_IMAGE);
+    
+    // 设置图片源
+    ArkUI_AttributeItem srcItem = {.string = imagePath};
+    nodeAPI->setAttribute(imageNode, NODE_IMAGE_SRC, &srcItem);
+    
+    // 设置图片尺寸
+    ArkUI_NumberValue widthValue[] = {200.0f};
+    ArkUI_AttributeItem widthItem = {widthValue, 1};
+    nodeAPI->setAttribute(imageNode, NODE_WIDTH, &widthItem);
+
+    ArkUI_NumberValue heightValue[] = {200.0f};
+    ArkUI_AttributeItem heightItem = {heightValue, 1};
+    nodeAPI->setAttribute(imageNode, NODE_HEIGHT, &heightItem);
+    
+    // 设置图片边距（使图片之间有间距）
+    ArkUI_NumberValue marginValue[] = {5.0f, 5.0f, 5.0f, 5.0f}; // 上、右、下、左
+    ArkUI_AttributeItem marginItem = {marginValue, 4};
+    nodeAPI->setAttribute(imageNode, NODE_MARGIN, &marginItem);
+    
+    // 设置圆角效果
+    ArkUI_NumberValue radiusValue[] = {10.0f};
+    ArkUI_AttributeItem radiusItem = {radiusValue, 1};
+    nodeAPI->setAttribute(imageNode, NODE_BORDER_RADIUS, &radiusItem);
+    
+    // 设置边框
+    ArkUI_NumberValue borderWidthValue[] = {1.0f};
+    ArkUI_AttributeItem borderWidthItem = {borderWidthValue, 1};
+    nodeAPI->setAttribute(imageNode, NODE_BORDER_WIDTH, &borderWidthItem);
+    
+    ArkUI_NumberValue borderColorValue[] = {0.5f, 0.5f, 0.5f, 1.0f}; // RGBA
+    ArkUI_AttributeItem borderColorItem = {borderColorValue, 4};
+    nodeAPI->setAttribute(imageNode, NODE_BORDER_COLOR, &borderColorItem);
+
+    return imageNode;
+}
+
 
 napi_value Manager::CreateNativeNode(napi_env env, napi_callback_info info) {
     OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode");
@@ -301,70 +490,104 @@ napi_value Manager::CreateNativeNode(napi_env env, napi_callback_info info) {
     
 }
 
-napi_value Manager::CreateNativeNodeStackView(napi_env env, napi_callback_info info) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode");
+
+napi_value Manager::CreateNativeNodeStackSingleView(napi_env env, napi_callback_info info) {
     if ((env == nullptr) || (info == nullptr)) {
         OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode env or info is null");
         return nullptr;
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 1");
     size_t argCnt = 1;
     napi_value args[1] = {nullptr};
     if (napi_get_cb_info(env, info, &argCnt, args, nullptr, nullptr) != napi_ok) {
         OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode napi_get_cb_info failed");
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 2");
     if (argCnt != 1) {
         napi_throw_type_error(env, NULL, "Wrong number of arguments");
         return nullptr;
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 3");
     nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
         OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp OH_ArkUI_GetBasicNodeAPI after");
     if (nodeAPI != nullptr) {
         if (nodeAPI->createNode != nullptr && nodeAPI->addChild != nullptr) {
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp C-API节点挂载到XComponent");
             ArkUI_NodeHandle testNode;
-            testNode = createStackViewExample();
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp 获得第一个参数NodeContent，以供C-API节点挂载");
+            testNode = createSimpleStackOnly();
             OH_ArkUI_GetNodeContentFromNapiValue(env, args[0], &nodeContentHandle_);
-            
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp OH_ArkUI_NodeContent_AddNode C-API节点挂载到NodeContent");
             OH_ArkUI_NodeContent_AddNode(nodeContentHandle_, testNode);
         }
     }
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 555");
+    return nullptr;
+    
+}
+
+napi_value Manager::CreateNativeNodeStackView(napi_env env, napi_callback_info info) {
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode");
+    if ((env == nullptr) || (info == nullptr)) {
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode env or info is null");
+        return nullptr;
+    }
+    
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 1");
+    size_t argCnt = 1;
+    napi_value args[1] = {nullptr};
+    if (napi_get_cb_info(env, info, &argCnt, args, nullptr, nullptr) != napi_ok) {
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode napi_get_cb_info failed");
+    }
+    
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 2");
+    if (argCnt != 1) {
+        napi_throw_type_error(env, NULL, "Wrong number of arguments");
+        return nullptr;
+    }
+    
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 3");
+    nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
+        OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
+    
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp OH_ArkUI_GetBasicNodeAPI after");
+    if (nodeAPI != nullptr) {
+        if (nodeAPI->createNode != nullptr && nodeAPI->addChild != nullptr) {
+//            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp C-API节点挂载到XComponent");
+            ArkUI_NodeHandle testNode;
+//            testNode = createStackViewExample();
+            testNode = createScrollWithContainersEachWithStack();
+//            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp 获得第一个参数NodeContent，以供C-API节点挂载");
+            OH_ArkUI_GetNodeContentFromNapiValue(env, args[0], &nodeContentHandle_);
+            
+//            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp OH_ArkUI_NodeContent_AddNode C-API节点挂载到NodeContent");
+            OH_ArkUI_NodeContent_AddNode(nodeContentHandle_, testNode);
+        }
+    }
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 555");
     return nullptr;
     
 }
 
 
 napi_value Manager::CreateNativeNodeTextView(napi_env env, napi_callback_info info) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode");
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNodeTextView");
     if ((env == nullptr) || (info == nullptr)) {
-        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode env or info is null");
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNodeTextView env or info is null");
         return nullptr;
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 1");
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNodeTextView 1");
     size_t argCnt = 1;
     napi_value args[1] = {nullptr};
     if (napi_get_cb_info(env, info, &argCnt, args, nullptr, nullptr) != napi_ok) {
-        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode napi_get_cb_info failed");
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNodeTextView napi_get_cb_info failed");
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 2");
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNodeTextView 2");
     if (argCnt != 1) {
         napi_throw_type_error(env, NULL, "Wrong number of arguments");
         return nullptr;
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 3");
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNodeTextView 3");
     nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
         OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
     
@@ -428,7 +651,71 @@ napi_value Manager::CreateNativeNodeTextView(napi_env env, napi_callback_info in
 //}
 
 napi_value Manager::CreateNativeNodeImageView(napi_env env, napi_callback_info info) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode");
+    // 参数检查
+    if ((env == nullptr) || (info == nullptr)) {
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNode env or info is null");
+        return nullptr;
+    }
+    // 获取参数信息
+    size_t argCnt = 2; // 现在需要两个参数
+    napi_value args[2] = {nullptr, nullptr};
+    napi_value thisArg = nullptr;
+    void* data = nullptr;
+    napi_status status = napi_get_cb_info(env, info, &argCnt, args, &thisArg, &data);
+    if (status != napi_ok) {
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", 
+                     "CreateNativeNode napi_get_cb_info failed: %{public}d", status);
+        return nullptr;
+    }
+    
+    if (argCnt < 2) { // 现在需要两个参数
+        napi_throw_type_error(env, nullptr, "Wrong number of arguments. Expected 2 arguments.");
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", 
+                     "Incorrect argument count: %{public}zu", argCnt);
+        return nullptr;
+    }
+    
+    // 解析新的字符串参数
+    std::string imagePath;
+    napi_valuetype valueType;
+    status = napi_typeof(env, args[1], &valueType);
+    if (status != napi_ok || valueType != napi_string) {
+        napi_throw_type_error(env, nullptr, "Second argument must be a string");
+        return nullptr;
+    }
+    
+    // 获取字符串长度
+    size_t strLength = 0;
+    status = napi_get_value_string_utf8(env, args[1], nullptr, 0, &strLength);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    
+    // 分配缓冲区并获取字符串内容
+    std::vector<char> buffer(strLength + 1);
+    size_t resultLength = 0;
+    status = napi_get_value_string_utf8(env, args[1], buffer.data(), buffer.size(), &resultLength);
+    if (status != napi_ok) {
+        return nullptr;
+    }
+    
+    imagePath.assign(buffer.data(), resultLength);
+    // 原有的节点创建逻辑
+    nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
+        OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
+
+    if (nodeAPI != nullptr) {
+        if (nodeAPI->createNode != nullptr && nodeAPI->addChild != nullptr) {
+            ArkUI_NodeHandle testNode;
+            testNode = createImageViewExample(imagePath.c_str(),1500);
+            OH_ArkUI_GetNodeContentFromNapiValue(env, args[0], &nodeContentHandle_);
+            OH_ArkUI_NodeContent_AddNode(nodeContentHandle_, testNode);
+        }
+    }
+    return nullptr;
+}
+
+napi_value Manager::CreateImageSingleViewExample(napi_env env, napi_callback_info info) {
     
     // 参数检查
     if ((env == nullptr) || (info == nullptr)) {
@@ -442,7 +729,6 @@ napi_value Manager::CreateNativeNodeImageView(napi_env env, napi_callback_info i
     napi_value thisArg = nullptr;
     void* data = nullptr;
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 1");
     napi_status status = napi_get_cb_info(env, info, &argCnt, args, &thisArg, &data);
     if (status != napi_ok) {
         OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", 
@@ -450,7 +736,6 @@ napi_value Manager::CreateNativeNodeImageView(napi_env env, napi_callback_info i
         return nullptr;
     }
     
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 2");
     if (argCnt < 2) { // 现在需要两个参数
         napi_throw_type_error(env, nullptr, "Wrong number of arguments. Expected 2 arguments.");
         OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", 
@@ -489,29 +774,24 @@ napi_value Manager::CreateNativeNodeImageView(napi_env env, napi_callback_info i
     }
     
     imagePath.assign(buffer.data(), resultLength);
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", 
-                 "Received image path: %{public}s", imagePath.c_str());
     
     // 原有的节点创建逻辑
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 3");
     nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
         OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
 
     if (nodeAPI != nullptr) {
         if (nodeAPI->createNode != nullptr && nodeAPI->addChild != nullptr) {
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp C-API节点挂载到XComponent");
             ArkUI_NodeHandle testNode;
-            testNode = createImageViewExample(imagePath.c_str());
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp 获得第一个参数NodeContent，以供C-API节点挂载");
+            testNode = createImageSingleViewExample(imagePath.c_str());
             OH_ArkUI_GetNodeContentFromNapiValue(env, args[0], &nodeContentHandle_);
 
-            OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp OH_ArkUI_NodeContent_AddNode C-API节点挂载到NodeContent");
             OH_ArkUI_NodeContent_AddNode(nodeContentHandle_, testNode);
         }
     }
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNode 555");
     return nullptr;
 }
+
+
 
 napi_value Manager::UpdateNativeNode(napi_env env, napi_callback_info info) {
     OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp UpdateNativeNode");

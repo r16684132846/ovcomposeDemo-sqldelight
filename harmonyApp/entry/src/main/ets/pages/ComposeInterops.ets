@@ -17,8 +17,8 @@
 
 import { promptAction } from '@kit.ArkUI';
 import { HomePage } from 'adaptive_video_component';
-import { CApiImageView } from './CApiImageView';
-import { CApiStackView } from './CApiStackView';
+import { CApiImageView, CApiSingleImage } from './CApiImageView';
+import { CApiStackSingle, CApiStackView } from './CApiStackView';
 import { CApiTextView } from './CApiTextView';
 import { H5DetailPage } from './H5DetailPage';
 
@@ -277,6 +277,21 @@ export struct webView {
   }
 }
 
+@Builder
+export function cApiStackSingleViewBuilder(args?: object) {
+  cApiStackSingleView()
+}
+@Component
+export struct cApiStackSingleView {
+
+  build() {
+    Column() {
+      CApiStackSingle()
+    }
+    .width("100%")
+    .height("100%")
+  }
+}
 
 @Builder
 export function cApiStackView1500Builder(args?: object) {
@@ -306,6 +321,22 @@ export struct cApiTextView1500 {
   build() {
     Row() {
       CApiTextView()
+    }
+    .height('100%')
+  }
+}
+
+
+@Builder
+export function cApiSingleImage1500Builder(args?: object) {
+  cApiImage()
+}
+@Component
+export struct cApiImage {
+
+  build() {
+    Row() {
+      CApiSingleImage()
     }
     .height('100%')
   }

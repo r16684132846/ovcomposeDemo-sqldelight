@@ -9,7 +9,6 @@ class Params {
   nodeContent: NodeContent;
 
   constructor(insert: boolean, nodeContent: NodeContent) {
-    console.debug("TestXXX Params constructor")
     this.insert = insert;
     this.nodeContent = nodeContent;
   }
@@ -26,7 +25,6 @@ function buildNodeContent(params: Params) {
   }
   .height('100%')
   .onAppear(() => {
-    console.log("TestXXX MyNodeContent.ets ContentSlot onAppear")
   })
 }
 
@@ -37,14 +35,14 @@ export struct CApiImageView {
   private nodeContent = new MyNodeContent();
   @State @Watch('watchContent') controlContent: boolean = true;
   @State imagePixelMap: PixelMap | undefined = undefined;
-  @State imagePath: string = '';
+  @State imagePath: string = "https://ww2.sinaimg.cn/mw690/007ut4Uhly1hx4v37mpxcj30u017cgrv.jpg";
   // 获取应用上下文
   private context: common.Context = getContext(this) as common.Context;
 
   aboutToAppear(): void {
 
-    // nativeNode.createNativeNodeImageView(this.nodeContent);
-    this.getImagePath();
+    nativeNode.createNativeNodeImageView(this.nodeContent, this.imagePath);
+    // this.getImagePath();
   }
 
   // 获取资源图片并保存到缓存目录
@@ -102,6 +100,37 @@ export struct CApiImageView {
   watchContent() {
     if (this.getDialogController() == true) {
       nativeNode.createNativeNodeImageView(this.nodeContent, this.imagePath);
+    }
+  }
+
+  build() {
+    Column() {
+      Scroll() {
+        buildNodeContent(new Params(this.insert, this.nodeContent))
+      }
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Start)
+    .alignItems(HorizontalAlign.Center)
+  }
+}
+
+@Component
+export struct CApiSingleImage{
+  @State insert: boolean = true;
+  private nodeContent = new MyNodeContent();
+  @State @Watch('watchContent') controlContent: boolean = true;
+  @State imagePixelMap: PixelMap | undefined = undefined;
+  @State imagePath: string = "https://ww2.sinaimg.cn/mw690/007ut4Uhly1hx4v37mpxcj30u017cgrv.jpg";
+
+  aboutToAppear(): void {
+    nativeNode.createNativeNodeImageSingleView(this.nodeContent, this.imagePath);
+  }
+
+  watchContent() {
+    if (this.getDialogController() == true) {
+        nativeNode.createNativeNodeImageSingleView(this.nodeContent, this.imagePath);
     }
   }
 

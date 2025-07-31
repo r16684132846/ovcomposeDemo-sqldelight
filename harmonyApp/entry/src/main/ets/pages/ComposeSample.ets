@@ -30,8 +30,10 @@ import {
   videoBuilder,
   webViewBuilder,
   cApiStackView1500Builder,
+  cApiStackSingleViewBuilder,
   cApiTextView1500Builder,
   cApiImageView1500Builder,
+  cApiSingleImage1500Builder,
 } from './ComposeInterops';
 
 export function registerComposeInteropBuilders() {
@@ -46,6 +48,8 @@ export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('video', videoBuilder)
   registerComposeInteropBuilder('webView', webViewBuilder)
   registerComposeInteropBuilder('cApiStackView1500', cApiStackView1500Builder)
+  registerComposeInteropBuilder('cApiStackSingleView', cApiStackSingleViewBuilder)
   registerComposeInteropBuilder('cApiTextView1500', cApiTextView1500Builder)
   registerComposeInteropBuilder('cApiImageView1500', cApiImageView1500Builder)
+  registerComposeInteropBuilder('cApiSingleImage', cApiSingleImage1500Builder)
 }

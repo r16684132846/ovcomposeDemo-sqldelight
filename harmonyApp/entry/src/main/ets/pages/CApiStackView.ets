@@ -6,7 +6,6 @@ class Params {
   nodeContent: NodeContent;
 
   constructor(insert: boolean, nodeContent: NodeContent) {
-    console.debug("TestXXX Params constructor")
     this.insert = insert;
     this.nodeContent = nodeContent;
   }
@@ -23,7 +22,6 @@ function buildNodeContent(params: Params) {
   }
   .height("100%")
   .onAppear(() => {
-    console.log("TestXXX MyNodeContent.ets ContentSlot onAppear")
   })
 }
 
@@ -41,6 +39,35 @@ export struct CApiStackView {
   watchContent() {
     if (this.getDialogController() == true) {
       nativeNode.createNativeNodeStackView(this.nodeContent);
+    }
+  }
+
+  build() {
+    Column() {
+      Scroll() {
+        buildNodeContent(new Params(this.insert, this.nodeContent))
+      }
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Center)
+    .alignItems(HorizontalAlign.Center)
+  }
+}
+
+@Component
+export struct CApiStackSingle {
+  @State insert: boolean = true;
+  private nodeContent = new MyNodeContent();
+  @State @Watch('watchContent') controlContent: boolean = true;
+
+  aboutToAppear(): void {
+    nativeNode.createNativeNodeStackSingleView(this.nodeContent);
+  }
+
+  watchContent() {
+    if (this.getDialogController() == true) {
+      nativeNode.createNativeNodeStackSingleView(this.nodeContent);
     }
   }
 

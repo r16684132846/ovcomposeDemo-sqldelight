@@ -50,7 +50,6 @@ internal fun CApiView1500Page() {
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .verticalScroll(scrollState)  // 启用垂直滚动
     ) {
         ArkUIView(
             name = "cApiStackView1500",
