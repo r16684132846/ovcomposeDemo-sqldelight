@@ -9,6 +9,7 @@
 
 #include "manager.h"
 #include "HiTraceSystraceSection.h"
+#include <hitrace/trace.h>
 
 ArkUI_NodeContentHandle nodeContentHandle_ = nullptr;
 
@@ -81,6 +82,7 @@ ArkUI_NodeHandle createStackExample() {
 
 ArkUI_NodeHandle createSimpleStackOnly()
 {
+    HiTraceSystraceSection d("Compose::create start");
     // 创建 Stack
     ArkUI_NodeHandle stack = nodeAPI->createNode(ARKUI_NODE_STACK);
 
@@ -148,8 +150,8 @@ ArkUI_NodeHandle createSimpleColumnWithStack()
 
 ArkUI_NodeHandle createScrollWithContainersEachWithStack()
 {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "ArkUIExample", "createScrollWithContainersEachWithStack");
-
+//    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "ArkUIExample", "createScrollWithContainersEachWithStack");
+    OH_HiTrace_StartTrace("Compose::createScrollWithContainersEachWithStack begin");
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
 
     ArkUI_NumberValue size[] = { 480 }; // 宽度
@@ -202,16 +204,21 @@ ArkUI_NodeHandle createScrollWithContainersEachWithStack()
         nodeAPI->addChild(stack, text);
         nodeAPI->addChild(container, stack);
         nodeAPI->addChild(column, container);
+        {
+            HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
+        }
     }
 
     nodeAPI->addChild(scroll, column);
-        HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
+//    HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
     
-
+    OH_HiTrace_FinishTrace();
     return scroll;
 }
 
 ArkUI_NodeHandle createStackViewExample() {
+    HiTraceSystraceSection s("#Compose::createStackViewExample begin");
+    
     OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp createStackExample");
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
 
@@ -234,6 +241,7 @@ ArkUI_NodeHandle createStackViewExample() {
     nodeAPI->registerNodeEventReceiver(onScroll);
 
     // 创建并添加1500个Stack到Column中
+    
     for (int i = 0; i < 1500; i++) {
         // 创建Stack并设置固定大小
         ArkUI_NodeHandle stack = nodeAPI->createNode(ARKUI_NODE_STACK);
@@ -265,13 +273,38 @@ ArkUI_NodeHandle createStackViewExample() {
 
         // 将Stack添加到Column（关键修改）
         nodeAPI->addChild(column, stack);
-        HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
     }
 
     // 将Column添加到Scroll中
     nodeAPI->addChild(scroll, column);
+    HiTraceSystraceSection d("#Compose::createStackViewExample end");
 
     return scroll;
+}
+
+ArkUI_NodeHandle createTextSingleViewExample() {
+    ArkUI_NodeHandle text = nodeAPI->createNode(ARKUI_NODE_TEXT);
+    std::string contentStr = "Item #" ;
+    ArkUI_AttributeItem content = {.string = contentStr.c_str()};
+    nodeAPI->setAttribute(text, NODE_TEXT_CONTENT, &content);
+    
+    ArkUI_NumberValue width[] = { 300 };
+    ArkUI_AttributeItem widthItem = { width, 1 };
+    nodeAPI->setAttribute(text, NODE_WIDTH, &widthItem);
+    
+    ArkUI_NumberValue borderWidth[] = { 1.0f };
+    ArkUI_AttributeItem borderWidthItem = { borderWidth, 1 };
+    nodeAPI->setAttribute(text, NODE_BORDER_WIDTH, &borderWidthItem);
+    
+    ArkUI_NumberValue borderColor[] = {{ .i32 = static_cast<int32_t>(0xFF888888) }};
+    ArkUI_AttributeItem borderColorItem = { borderColor, 1 };
+    nodeAPI->setAttribute(text, NODE_BORDER_COLOR, &borderColorItem);
+    
+    // 设置内边距为 10（上下左右统一）
+    ArkUI_NumberValue padding[] = { 10, 10, 10, 10 };  // left, top, right, bottom
+    ArkUI_AttributeItem paddingItem = { padding, 4 };
+    nodeAPI->setAttribute(text, NODE_PADDING, &paddingItem);
+    return text;
 }
 
 
@@ -280,7 +313,7 @@ ArkUI_NodeHandle createTextViewExample() {
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
 
     // 设置Scroll尺寸
-    ArkUI_NumberValue value[] = {480};
+    ArkUI_NumberValue value[] = {300};
     ArkUI_AttributeItem item = {value, 1};
     nodeAPI->setAttribute(scroll, NODE_WIDTH, &item);
     value[0].f32 = 1920;
@@ -311,7 +344,7 @@ ArkUI_NodeHandle createTextViewExample() {
         ArkUI_AttributeItem content = {.string = contentStr.c_str()};
         nodeAPI->setAttribute(text, NODE_TEXT_CONTENT, &content);
         
-        ArkUI_NumberValue width[] = { 480 };
+        ArkUI_NumberValue width[] = { 300 };
         ArkUI_AttributeItem widthItem = { width, 1 };
         nodeAPI->setAttribute(text, NODE_WIDTH, &widthItem);
         
@@ -566,6 +599,35 @@ napi_value Manager::CreateNativeNodeStackView(napi_env env, napi_callback_info i
     
 }
 
+napi_value Manager::CreateNativeNodeTextSingleView(napi_env env, napi_callback_info info) {
+    if ((env == nullptr) || (info == nullptr)) {
+        return nullptr;
+    }
+    
+    size_t argCnt = 1;
+    napi_value args[1] = {nullptr};
+    if (napi_get_cb_info(env, info, &argCnt, args, nullptr, nullptr) != napi_ok) {
+        OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_PRINT_DOMAIN, "Manager", "CreateNativeNodeTextView napi_get_cb_info failed");
+    }
+    
+    if (argCnt != 1) {
+        napi_throw_type_error(env, NULL, "Wrong number of arguments");
+        return nullptr;
+    }
+    
+    nodeAPI = reinterpret_cast<ArkUI_NativeNodeAPI_1 *>(
+        OH_ArkUI_QueryModuleInterfaceByName(ARKUI_NATIVE_NODE, "ArkUI_NativeNodeAPI_1"));
+    
+    if (nodeAPI != nullptr) {
+        if (nodeAPI->createNode != nullptr && nodeAPI->addChild != nullptr) {
+            ArkUI_NodeHandle testNode;
+            testNode = createTextSingleViewExample();
+            OH_ArkUI_GetNodeContentFromNapiValue(env, args[0], &nodeContentHandle_);
+            OH_ArkUI_NodeContent_AddNode(nodeContentHandle_, testNode);
+        }
+    }
+    return nullptr;
+}
 
 napi_value Manager::CreateNativeNodeTextView(napi_env env, napi_callback_info info) {
     OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "Manager", "TestXXX manager.cpp CreateNativeNodeTextView");

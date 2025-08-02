@@ -56,3 +56,32 @@ export struct CApiTextView {
     .alignItems(HorizontalAlign.Center)
   }
 }
+
+@Component
+export struct CApiTextSingle {
+  @State insert: boolean = true;
+  private nodeContent = new MyNodeContent();
+  @State @Watch('watchContent') controlContent: boolean = true;
+
+  aboutToAppear(): void {
+    nativeNode.createNativeNodeTextSingleView(this.nodeContent);
+  }
+
+  watchContent() {
+    if (this.getDialogController() == true) {
+      nativeNode.createNativeNodeTextSingleView(this.nodeContent);
+    }
+  }
+
+  build() {
+    Column() {
+      Scroll() {
+        buildNodeContent(new Params(this.insert, this.nodeContent))
+      }
+    }
+    .height('100%')
+    .width('100%')
+    .justifyContent(FlexAlign.Start)
+    .alignItems(HorizontalAlign.Center)
+  }
+}

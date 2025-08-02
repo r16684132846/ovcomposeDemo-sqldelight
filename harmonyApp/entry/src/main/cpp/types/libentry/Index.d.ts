@@ -32,6 +32,8 @@ export const createNativeNodeStackSingleView: (nodeContent: NodeContent) => numb
 
 export const createNativeNodeTextView: (nodeContent: NodeContent) => number;
 
+export const createNativeNodeTextSingleView: (nodeContent: NodeContent) => number;
+
 export const createNativeNodeImageView: (nodeContent: NodeContent, imagePath: string) => number;
 
 export const createNativeNodeImageSingleView: (nodeContent: NodeContent, imagePath: string) => number;

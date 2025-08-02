@@ -19,7 +19,7 @@ import { promptAction } from '@kit.ArkUI';
 import { HomePage } from 'adaptive_video_component';
 import { CApiImageView, CApiSingleImage } from './CApiImageView';
 import { CApiStackSingle, CApiStackView } from './CApiStackView';
-import { CApiTextView } from './CApiTextView';
+import { CApiTextSingle, CApiTextView } from './CApiTextView';
 import { H5DetailPage } from './H5DetailPage';
 
 interface ButtonArgs {
@@ -295,6 +295,7 @@ export struct cApiStackSingleView {
 
 @Builder
 export function cApiStackView1500Builder(args?: object) {
+
   cApiStackView1500()
 }
 
@@ -321,6 +322,22 @@ export struct cApiTextView1500 {
   build() {
     Row() {
       CApiTextView()
+    }
+    .height('100%')
+  }
+}
+
+@Builder
+export function cApiTextViewSingleBuilder(args?: object) {
+  cApiTextSingleView()
+}
+
+@Component
+export struct cApiTextSingleView {
+
+  build() {
+    Row() {
+      CApiTextSingle()
     }
     .height('100%')
   }

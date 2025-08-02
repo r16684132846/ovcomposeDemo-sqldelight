@@ -119,6 +119,7 @@ internal fun MainPage(skiaRender: Boolean = true) {
             if (target == null) {
                 LazyColumn(state = listState) {
                     items(displayItems) { displayItem ->
+
                         Section(displayItem) { clickItem ->
                             openedExample = clickItem
                         }

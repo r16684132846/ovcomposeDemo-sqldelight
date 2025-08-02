@@ -8,6 +8,9 @@ extern "C" {
 int testNum(int num);
 void print_string(char* msg);
 void print_const_string(const char* msg);
+void trace_tag_begin();
+void trace_tag_end();
+void trace_tag_cnt(int num);
 
 #ifdef __cplusplus
 };

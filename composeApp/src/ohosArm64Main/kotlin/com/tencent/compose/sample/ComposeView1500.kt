@@ -28,16 +28,35 @@ import composesample.composeapp.generated.resources.image_cat
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.border
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import platform.test725.trace_tag_begin
+import platform.test725.trace_tag_end
+import platform.test725.trace_tag_cnt
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.cstr
 
-@OptIn(ExperimentalResourceApi::class)
+
+@OptIn(ExperimentalForeignApi::class)
 @Composable
 internal fun ComposeView1500Page() {
+
+    LaunchedEffect(Unit) {
+        trace_tag_begin()
+    }
+
+    SideEffect {
+        trace_tag_end()
+    }
+
+
     Column(
         modifier = Modifier
             .verticalScroll(rememberScrollState()) // 启用垂直滚动
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally // 水平居中所有子项
     ) {
+//        trace_tag_begin()
         // 创建1500个Box
         repeat(1500) { index ->
             Box(
@@ -53,5 +72,6 @@ internal fun ComposeView1500Page() {
                 )
             }
         }
+//        trace_tag_end()
     }
 }

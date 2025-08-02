@@ -97,6 +97,7 @@ static napi_value Init(napi_env env, napi_value exports) {
         {"createNativeNodeStackView", nullptr, Manager::CreateNativeNodeStackView, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"createNativeNodeStackSingleView", nullptr, Manager::CreateNativeNodeStackSingleView, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"createNativeNodeTextView", nullptr, Manager::CreateNativeNodeTextView, nullptr, nullptr, nullptr, napi_default, nullptr},
+        {"createNativeNodeTextSingleView", nullptr, Manager::CreateNativeNodeTextSingleView, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"createNativeNodeImageView", nullptr, Manager::CreateNativeNodeImageView, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"createNativeNodeImageSingleView", nullptr, Manager::CreateImageSingleViewExample, nullptr, nullptr, nullptr, napi_default, nullptr},
     };

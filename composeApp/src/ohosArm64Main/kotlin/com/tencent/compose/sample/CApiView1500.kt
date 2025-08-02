@@ -31,21 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.system.getTimeMillis
 
+
+@OptIn(ExperimentalForeignApi::class)
 @Composable
 internal fun CApiView1500Page() {
-    // 创建滚动状态
-    val scrollState = rememberScrollState()
-    // 存储滚动距离（像素）
-    var scrollPosition by remember { mutableStateOf(0) }
-    val startTime = remember { getTimeMillis() }
-
-    // 监听滚动状态变化
-    LaunchedEffect(scrollState.value) {
-        val endTime = getTimeMillis()
-        println("lww22 CApiView1500Page  all渲染耗时：${endTime - startTime}ms")
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -17,6 +17,7 @@
 
 package com.tencent.compose.sample.mainpage
 
+import com.tencent.compose.sample.AutoScrollingInfiniteList
 import com.tencent.compose.sample.CApiView1500Image
 import com.tencent.compose.sample.InteropListNested
 import com.tencent.compose.sample.InteropListSimple
@@ -29,6 +30,7 @@ import com.tencent.compose.sample.ComposeView1500Page
 import com.tencent.compose.sample.CApiView1500Page
 import com.tencent.compose.sample.CApiView1500Text
 import com.tencent.compose.sample.ComposeImage1500CApi
+import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
 import com.tencent.compose.sample.ComposeView1500CApi
 import com.tencent.compose.sample.ComposeView1500Text
@@ -56,8 +58,10 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("compose 1500View CApi", Res.drawable.interop_state) { ComposeView1500CApi() },
         DisplayItem("compose 1500Text", Res.drawable.interop_state) { ComposeView1500Text() },
         DisplayItem("CApi 1500Text", Res.drawable.interop_state) { CApiView1500Text() },
-        DisplayItem("compose 1500Text CApi", Res.drawable.interop_state) { ComposeView1500Text() },
+        DisplayItem("compose 1500Text CApi", Res.drawable.interop_state) { ComposeText1500CApi() },
         DisplayItem("CApi 1500Image", Res.drawable.interop_state) { CApiView1500Image() },
         DisplayItem("compose 1500Image CApi", Res.drawable.interop_state) { ComposeImage1500CApi() },
+        DisplayItem("AutoScrollingInfiniteList", Res.drawable.interop_state) { AutoScrollingInfiniteList() },
+
     )
 }

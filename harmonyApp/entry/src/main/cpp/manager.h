@@ -33,6 +33,7 @@ public:
     static napi_value CreateNativeNodeStackView(napi_env env, napi_callback_info info);
     static napi_value CreateNativeNodeStackSingleView(napi_env env, napi_callback_info info);
     static napi_value CreateNativeNodeTextView(napi_env env, napi_callback_info info);
+    static napi_value CreateNativeNodeTextSingleView(napi_env env, napi_callback_info info);
     static napi_value CreateNativeNodeImageView(napi_env env, napi_callback_info info);
     static napi_value CreateImageSingleViewExample(napi_env env, napi_callback_info info);
     static napi_value UpdateNativeNode(napi_env env, napi_callback_info info);

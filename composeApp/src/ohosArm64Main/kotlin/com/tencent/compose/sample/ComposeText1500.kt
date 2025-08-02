@@ -28,6 +28,7 @@ import composesample.composeapp.generated.resources.image_cat
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalResourceApi::class)
@@ -43,7 +44,8 @@ internal fun ComposeView1500Text() {
         repeat(1500) { index ->
             Text(
                 text = "Item #$index",
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.width(300.dp)
+                    .height(50.dp)
                     .border(width = 1.dp, color = Color.Gray)
                     .padding(10.dp)
             )
