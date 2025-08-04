@@ -32,7 +32,7 @@ fun AutoScrollingInfiniteList() {
 
     // 初始填充大量数据
     LaunchedEffect(Unit) {
-        repeat(1000000) { items += it }
+        repeat(10000) { items += it }
     }
 
     LaunchedEffect(Unit) {

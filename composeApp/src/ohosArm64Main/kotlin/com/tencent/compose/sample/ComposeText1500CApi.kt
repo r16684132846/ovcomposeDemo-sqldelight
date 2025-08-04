@@ -28,7 +28,7 @@ internal fun ComposeText1500CApi() {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally // 水平居中所有子项
     ) {
-        repeat(1000) { index ->
+        repeat(500) { index ->
             ArkUIView(
                 name = "cApiSingleText",
                 modifier = Modifier
