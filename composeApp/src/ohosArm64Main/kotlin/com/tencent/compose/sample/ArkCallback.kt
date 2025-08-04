@@ -1,58 +1,147 @@
 package com.tencent.compose.sample
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.*
-import kotlin.experimental.ExperimentalNativeApi
 import platform.test725.native_register
 import platform.test725.native_trigger
+import kotlin.experimental.ExperimentalNativeApi
+import kotlin.native.internal.GC
+import kotlin.native.ref.WeakReference
+import kotlin.system.getTimeMillis
 
+object LogBuffer {
+    val logs = mutableStateListOf<String>()
 
-@OptIn(ExperimentalForeignApi::class)
-@Composable
-internal fun CallbackInteropButton() {
-    val triggered = remember { mutableStateOf(false) }
+    fun log(msg: String) {
+        println(msg)
+        logs += msg
+    }
 
-    Column(Modifier.padding(16.dp)) {
-        androidx.compose.material.Button(onClick = {
-            println("dzy CallbackInteropButton in ...")
+    fun clear() {
+        logs.clear()
+    }
+}
 
-            val holder = CallbackHolder("Circular Reference Triggered")
-            val ref = StableRef.create(holder)
+object LeakTracker {
+    @OptIn(ExperimentalNativeApi::class)
+    val holders = mutableListOf<WeakReference<CallbackHolder>>()
 
-            val cb = staticCFunction { x: Int, ptr: COpaquePointer? ->
-                val obj = ptr!!.asStableRef<CallbackHolder>().get()
-                obj.onResult(x)
+    @OptIn(ExperimentalNativeApi::class)
+    fun collectStatus(): List<Unit> {
+        return holders.mapIndexed { index, ref ->
+            val obj = ref.get()
+            if (obj != null) {
+                LogBuffer.log("dzy $index -> ${obj.name} ✅ 活跃")
+            } else {
+                LogBuffer.log("dzy $index -> 已被 GC 回收")
             }
-
-            native_register(ref.asCPointer(), cb)
-
-            println("dzy Triggering native callback from Compose button...")
-            native_trigger()
-
-            // ref.dispose()  // 打破闭环
-            triggered.value = true
-        }) {
-            Text("执行 Kotlin ↔ C 环状引用测试")
-        }
-
-        if (triggered.value) {
-            println("dzy 已触发 callback，可观察控制台输出")
         }
     }
 }
 
+fun forceGC() {
+    LogBuffer.log("dzy 手动触发 GC ...")
+    GC.collect()
+}
+
+@OptIn(ExperimentalForeignApi::class)
+@Composable
+fun CallbackLeakTestScreen() {
+    val triggered = remember { mutableStateOf(false) }
+    var disposeAfterRegister by remember { mutableStateOf(false) }
+
+    Column(Modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+        Column {
+            Button(onClick = {
+                LogBuffer.log("dzy Click: 创建并注册 CallbackHolder...")
+
+                val holder = CallbackHolder("Holder-${getTimeMillis()}")
+                val ref = StableRef.create(holder)
+
+                val cb = staticCFunction { x: Int, ptr: COpaquePointer? ->
+                    val obj = ptr!!.asStableRef<CallbackHolder>().get()
+                    obj.onResult(x)
+                }
+
+                native_register(ref.asCPointer(), cb)
+//                native_trigger()
+
+                if (disposeAfterRegister) {
+                    ref.dispose()
+                    LogBuffer.log("dzy StableRef disposed")
+                }
+
+                triggered.value = true
+            }) {
+                Text("创建 CallbackHolder")
+            }
+
+            Button(onClick = {
+                LeakTracker.collectStatus()
+            }) {
+                Text("查看状态")
+            }
+
+            Button(onClick = {
+                forceGC()
+            }) {
+                Text("GC")
+            }
+
+            Button(onClick = {
+                LogBuffer.clear()
+            }) {
+                Text("清空日志")
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = disposeAfterRegister,
+                onCheckedChange = { disposeAfterRegister = it }
+            )
+            Text("创建后立即 dispose()（避免引用环）")
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(LogBuffer.logs) { log ->
+                Text(log)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalForeignApi::class)
 class CallbackHolder(val name: String) {
+
+    init {
+        @OptIn(ExperimentalNativeApi::class)
+        LeakTracker.holders += WeakReference(this)
+        @OptIn(kotlin. experimental. ExperimentalNativeApi::class)
+        LogBuffer.log("dzy 创建 Holder: $name, 当前数量: ${LeakTracker.holders.size}")
+    }
+
     fun onResult(x: Int) {
-        println("dzy [$name] Kotlin CallbackHolder.onResult called with $x")
-        native_trigger()
+        LogBuffer.log("dzy [$name] called with $x")
+    }
+
+    protected fun finalize() {
+        LogBuffer.log("dzy CallbackHolder [$name] finalized, 已被 GC 回收")
     }
 }

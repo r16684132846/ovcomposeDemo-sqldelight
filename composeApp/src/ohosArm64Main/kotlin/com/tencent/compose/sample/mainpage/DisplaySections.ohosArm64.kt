@@ -29,7 +29,7 @@ import com.tencent.compose.sample.InteropWebView
 import com.tencent.compose.sample.ComposeView1500Page
 import com.tencent.compose.sample.CApiView1500Page
 import com.tencent.compose.sample.CApiView1500Text
-import com.tencent.compose.sample.CallbackInteropButton
+import com.tencent.compose.sample.*
 import com.tencent.compose.sample.ComposeImage1500CApi
 import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
@@ -63,7 +63,7 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("CApi 1500Image", Res.drawable.interop_state) { CApiView1500Image() },
         DisplayItem("Compose 1500Image CApi", Res.drawable.interop_state) { ComposeImage1500CApi() },
         DisplayItem("AutoScrollingInfiniteList", Res.drawable.interop_state) { AutoScrollingInfiniteList() },
-        DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CallbackInteropButton() },
+        DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CallbackLeakTestScreen() },
 
     )
 }

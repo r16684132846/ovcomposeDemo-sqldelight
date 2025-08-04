@@ -50,11 +50,8 @@ static register_callback_holder g_callback = NULL;
 static int counter = 0;
 
 void native_register(void* kotlin_obj, register_callback_holder callback) {
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "native_register", "dzy native_register 1");
     g_kotlin_obj = kotlin_obj;
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "native_register", "dzy native_register 2");
     g_callback = callback;
-    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "native_register", "dzy native_register 3");
 }
 
 void native_trigger() {
