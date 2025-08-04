@@ -21,7 +21,7 @@ internal fun CallbackInteropButton() {
 
     Column(Modifier.padding(16.dp)) {
         androidx.compose.material.Button(onClick = {
-            println("🔄dzy CallbackInteropButton in ...")
+            println("dzy CallbackInteropButton in ...")
 
             val holder = CallbackHolder("Circular Reference Triggered")
             val ref = StableRef.create(holder)
@@ -33,10 +33,9 @@ internal fun CallbackInteropButton() {
 
             native_register(ref.asCPointer(), cb)
 
-            println("🔄dzy Triggering native callback from Compose button...")
+            println("dzy Triggering native callback from Compose button...")
             native_trigger()
 
-            // ❗️可切换是否释放 StableRef
             // ref.dispose()  // 打破闭环
             triggered.value = true
         }) {
