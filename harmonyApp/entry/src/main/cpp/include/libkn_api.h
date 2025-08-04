@@ -78,6 +78,9 @@ typedef struct {
 typedef struct {
   libkn_KNativePtr pinned;
 } libkn_kref_androidx_compose_runtime_snapshots_SnapshotStateList;
+typedef struct {
+  libkn_KNativePtr pinned;
+} libkn_kref_com_tencent_compose_sample_CallbackHolder;
 
 extern void androidx_compose_ui_arkui_ArkUIViewController_aboutToAppear(void* controllerRef);
 extern void androidx_compose_ui_arkui_ArkUIViewController_aboutToDisappear(void* controllerRef);
@@ -303,9 +306,38 @@ typedef struct {
                   libkn_KInt (*com_tencent_compose_sample_mainpage_sectionItem_PieceData$stableprop_getter________________)();
                 } sectionItem;
               } mainpage;
+              struct {
+                libkn_KType* (*_type)(void);
+                libkn_kref_com_tencent_compose_sample_CallbackHolder (*CallbackHolder)(const char* name);
+                const char* (*get_name)(libkn_kref_com_tencent_compose_sample_CallbackHolder thiz);
+                void (*onResult)(libkn_kref_com_tencent_compose_sample_CallbackHolder thiz, libkn_KInt x);
+              } CallbackHolder;
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter__)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter___)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter____)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_____)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter______)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_______)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter__________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter___________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter____________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_____________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter______________)();
               void* (*get_nativeResourceManager)();
               void (*set_nativeResourceManager)(void* set);
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_______________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter________________)();
               void (*testMemScoped)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_________________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter__________________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter___________________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter____________________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter_____________________)();
+              libkn_KInt (*com_tencent_compose_sample_CallbackHolder$stableprop_getter______________________)();
             } sample;
             libkn_KInt (*com_tencent_compose_Greeting$stableprop_getter)();
             libkn_KInt (*com_tencent_compose_OHOSPlatform$stableprop_getter)();

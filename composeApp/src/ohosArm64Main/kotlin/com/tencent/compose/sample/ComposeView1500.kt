@@ -30,6 +30,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.border
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.layout.onGloballyPositioned
 import platform.test725.trace_tag_begin
 import platform.test725.trace_tag_end
 import platform.test725.trace_tag_cnt
@@ -40,14 +43,14 @@ import kotlinx.cinterop.cstr
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 internal fun ComposeView1500Page() {
-
+    val loaded = remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         trace_tag_begin()
     }
 
-    SideEffect {
-        trace_tag_end()
-    }
+//    SideEffect {
+//        trace_tag_end()
+//    }
 
 
     Column(
@@ -66,6 +69,13 @@ internal fun ComposeView1500Page() {
                         width = 2.dp, // 边框宽度
                         color = Color.Red, // 边框颜色为红色
                     )
+                    .then(
+                        if (index == 1499) Modifier.onGloballyPositioned {
+                            // 最后一个 Box 被布局 -> 页面“加载完成”
+                            loaded.value = true
+                            trace_tag_end()
+                        } else Modifier
+                    )
             ) {
                 Text(
                     text = "Item #$index",
@@ -73,5 +83,9 @@ internal fun ComposeView1500Page() {
             }
         }
 //        trace_tag_end()
+    }
+    if (loaded.value) {
+        // 可以做其它“加载完成”后的逻辑
+        println("页面加载完成 ✅")
     }
 }

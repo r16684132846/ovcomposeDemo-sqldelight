@@ -154,8 +154,8 @@ ArkUI_NodeHandle createScrollWithContainersEachWithStack()
     OH_HiTrace_StartTrace("Compose::createScrollWithContainersEachWithStack begin");
     ArkUI_NodeHandle scroll = nodeAPI->createNode(ARKUI_NODE_SCROLL);
 
-    ArkUI_NumberValue size[] = { 480 }; // 宽度
-    size[0].f32 = 1920; // 高度
+    ArkUI_NumberValue size[] = { 480 }; 
+    size[0].f32 = 1920; 
     ArkUI_AttributeItem heightItem = { size, 1 };
     nodeAPI->setAttribute(scroll, NODE_HEIGHT, &heightItem);
 
@@ -210,7 +210,6 @@ ArkUI_NodeHandle createScrollWithContainersEachWithStack()
     }
 
     nodeAPI->addChild(scroll, column);
-//    HiTraceSystraceSection s("#Compose::createStackViewExample::KeyToCPPList");
     
     OH_HiTrace_FinishTrace();
     return scroll;

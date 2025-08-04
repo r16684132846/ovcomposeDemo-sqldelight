@@ -12,6 +12,9 @@ void trace_tag_begin();
 void trace_tag_end();
 void trace_tag_cnt(int num);
 
+typedef void (*register_callback_holder)(int, void*);
+void native_register(void* kotlin_obj, register_callback_holder callback);
+void native_trigger(void);
 #ifdef __cplusplus
 };
 #endif

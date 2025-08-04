@@ -35,10 +35,9 @@ fun AutoScrollingInfiniteList() {
         repeat(1000000) { items += it }
     }
 
-    // 自动滚动逻辑
     LaunchedEffect(Unit) {
         while (true) {
-            delay(16) // 建议不要小于帧间隔（约16ms）
+            delay(16)
             val nextIndex = (listState.firstVisibleItemIndex + 1).coerceAtMost(items.lastIndex)
             listState.scrollToItem(nextIndex)
         }
