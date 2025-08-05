@@ -32,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlin.system.getTimeMillis
 
 
 @OptIn(ExperimentalForeignApi::class)

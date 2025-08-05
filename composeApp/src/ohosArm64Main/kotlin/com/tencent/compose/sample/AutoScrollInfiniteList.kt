@@ -25,7 +25,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun AutoScrollingInfiniteList() {
+internal fun AutoScrollingInfiniteList() {
     val items = remember { mutableStateListOf<Int>() }
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()

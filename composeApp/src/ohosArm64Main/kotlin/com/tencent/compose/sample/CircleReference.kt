@@ -14,16 +14,17 @@ import platform.test725.native_trigger_simple_callback
 import platform.test725.native_cleanup_simple_callback
 import platform.test725.native_cleanup_all_simple_callbacks
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
-import kotlin.system.getTimeMillis
+import kotlin.native.runtime.NativeRuntimeApi
+import kotlin.time.TimeSource
 
 object MemoryLogger {
     val logs = mutableStateListOf<String>()
 
     fun log(msg: String) {
         println(msg)
-        logs += "[${getTimeMillis() % 100000}] $msg"
+        logs += "[${TimeSource.Monotonic.markNow()}] $msg"
     }
 
     fun clear() {
@@ -196,8 +197,9 @@ class LeakyCallbackHolder(val id: String) {
     }
 }
 
+@OptIn(NativeRuntimeApi::class)
 @Composable
-fun CircularReferenceDemo() {
+internal fun CircularReferenceDemo() {
     var objectCounter by remember { mutableStateOf(0) }
     var createCircularRef by remember { mutableStateOf(true) }
     var usePartialDispose by remember { mutableStateOf(false) }

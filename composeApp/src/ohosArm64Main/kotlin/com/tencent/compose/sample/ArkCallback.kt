@@ -12,9 +12,10 @@ import kotlinx.cinterop.*
 import platform.test725.native_register
 import platform.test725.native_trigger
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
-import kotlin.system.getTimeMillis
+import kotlin.native.runtime.NativeRuntimeApi
+import kotlin.time.TimeSource
 
 object LogBuffer {
     val logs = mutableStateListOf<String>()
@@ -65,6 +66,7 @@ object RefManager {
     }
 }
 
+@OptIn(NativeRuntimeApi::class)
 fun forceGC() {
     LogBuffer.log("dzy 手动触发 GC ...")
     GC.collect()
@@ -72,7 +74,7 @@ fun forceGC() {
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-fun CallbackLeakTestScreen() {
+internal fun CallbackLeakTestScreen() {
     val triggered = remember { mutableStateOf(false) }
     var holdInC by remember { mutableStateOf(true) }
     var disposeAfterRegister by remember { mutableStateOf(false) }
@@ -84,7 +86,7 @@ fun CallbackLeakTestScreen() {
             Button(onClick = {
                 LogBuffer.log("dzy Click: 创建并注册 CallbackHolder...")
 
-                val holder = CallbackHolder("Holder-${getTimeMillis()}")
+                val holder = CallbackHolder("Holder-${TimeSource.Monotonic.markNow()}")
                 val ref = StableRef.create(holder)
 
                 val cb = staticCFunction { x: Int, ptr: COpaquePointer? ->

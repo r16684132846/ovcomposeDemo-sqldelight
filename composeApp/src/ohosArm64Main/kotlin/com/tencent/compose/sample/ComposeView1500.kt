@@ -28,6 +28,8 @@ import composesample.composeapp.generated.resources.image_cat
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.border
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
@@ -44,9 +46,13 @@ import kotlinx.cinterop.cstr
 @Composable
 internal fun ComposeView1500Page() {
     val loaded = remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        trace_tag_begin()
-    }
+//    val startTime = remember { getTimeMillis() }
+//
+//    LaunchedEffect(Unit) {
+//        trace_tag_begin()
+//        val duration = getTimeMillis() - startTime
+//        println("dzy Compose 页面构建 + 渲染耗时：${duration}ms")
+//    }
 
 //    SideEffect {
 //        trace_tag_end()
@@ -89,3 +95,34 @@ internal fun ComposeView1500Page() {
         println("页面加载完成 ✅")
     }
 }
+
+
+//@Composable
+//fun ComposeView1500Page() {
+//    val totalCount = 1500
+//    val items = remember { List(totalCount) { it } }
+//    val startTime = remember { getTimeMillis() }
+//
+//    LaunchedEffect(Unit) {
+//        val duration = getTimeMillis() - startTime
+//        println("dzy Compose 页面构建 + 渲染耗时：${duration}ms")
+//    }
+//
+//    LazyColumn(
+//        modifier = Modifier.fillMaxWidth()
+//    ) {
+//        itemsIndexed(items) { index, item ->
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(100.dp)
+//                    .padding(vertical = 4.dp, horizontal = 8.dp)
+//                    .border(2.dp, Color.Red),
+//
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text("Item #$item")
+//            }
+//        }
+//    }
+//}

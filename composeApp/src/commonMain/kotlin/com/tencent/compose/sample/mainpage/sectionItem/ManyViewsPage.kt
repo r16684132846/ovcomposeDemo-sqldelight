@@ -30,15 +30,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-import kotlin.system.getTimeMillis
 
 @Composable
-fun ManyViewsPage(count: Int) {
-   val startTime = remember { getTimeMillis() }
-   LaunchedEffect(Unit) {
-       val endTime = getTimeMillis()
-       println("ManyViewsPage 渲染耗时: ${endTime - startTime} ms")
-   }
+internal fun ManyViewsPage(count: Int) {
+//   val startTime = remember { getTimeMillis() }
+//   LaunchedEffect(Unit) {
+//       val endTime = getTimeMillis()
+//       println("ManyViewsPage 渲染耗时: ${endTime - startTime} ms")
+//   }
     Column(
     // LazyColumn(
         modifier = Modifier
