@@ -14,11 +14,16 @@ void trace_tag_cnt(int num);
 
 typedef void (*register_callback_holder)(int, void*);
 
-void native_register(void* kotlin_obj, register_callback_holder callback);
+void native_register(void* kotlin_obj, register_callback_holder callback, bool holdRef);
 
 void native_trigger();
 
-
+void native_register_simple_callback(const char* id, void* stable_ref, void (*callback)(void*));
+void native_trigger_simple_callback(const char* id);
+void native_cleanup_simple_callback(const char* id);
+void native_cleanup_all_simple_callbacks();
+int native_get_simple_callback_count();
+void native_print_simple_callback_status();
 
 #ifdef __cplusplus
 };

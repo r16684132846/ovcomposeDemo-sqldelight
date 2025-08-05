@@ -46,6 +46,25 @@ object LeakTracker {
     }
 }
 
+object RefManager {
+    @OptIn(ExperimentalForeignApi::class)
+    private val refs = mutableListOf<StableRef<CallbackHolder>>()
+
+    @OptIn(ExperimentalForeignApi::class)
+    fun register(ref: StableRef<CallbackHolder>) {
+        refs += ref
+    }
+
+    @OptIn(ExperimentalForeignApi::class)
+    fun disposeAll() {
+        refs.forEach {
+            it.dispose()
+        }
+        refs.clear()
+        LogBuffer.log("dzy 所有未释放 StableRef 已 dispose()")
+    }
+}
+
 fun forceGC() {
     LogBuffer.log("dzy 手动触发 GC ...")
     GC.collect()
@@ -55,6 +74,7 @@ fun forceGC() {
 @Composable
 fun CallbackLeakTestScreen() {
     val triggered = remember { mutableStateOf(false) }
+    var holdInC by remember { mutableStateOf(true) }
     var disposeAfterRegister by remember { mutableStateOf(false) }
 
     Column(Modifier
@@ -72,12 +92,14 @@ fun CallbackLeakTestScreen() {
                     obj.onResult(x)
                 }
 
-                native_register(ref.asCPointer(), cb)
+                native_register(ref.asCPointer(), cb, holdInC)
 //                native_trigger()
 
                 if (disposeAfterRegister) {
                     ref.dispose()
                     LogBuffer.log("dzy StableRef disposed")
+                } else {
+                    RefManager.register(ref)
                 }
 
                 triggered.value = true
@@ -102,6 +124,13 @@ fun CallbackLeakTestScreen() {
             }) {
                 Text("清空日志")
             }
+
+            // ✅ 新增：手动释放所有未 dispose 的引用
+            Button(onClick = {
+                RefManager.disposeAll()
+            }) {
+                Text("释放所有未释放的引用")
+            }
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -110,6 +139,14 @@ fun CallbackLeakTestScreen() {
                 onCheckedChange = { disposeAfterRegister = it }
             )
             Text("创建后立即 dispose()（避免引用环）")
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = holdInC,
+                onCheckedChange = { holdInC = it }
+            )
+            Text("C 侧是否持有 Kotlin 对象")
         }
 
         Spacer(Modifier.height(8.dp))
@@ -133,7 +170,7 @@ class CallbackHolder(val name: String) {
     init {
         @OptIn(ExperimentalNativeApi::class)
         LeakTracker.holders += WeakReference(this)
-        @OptIn(kotlin. experimental. ExperimentalNativeApi::class)
+        @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
         LogBuffer.log("dzy 创建 Holder: $name, 当前数量: ${LeakTracker.holders.size}")
     }
 

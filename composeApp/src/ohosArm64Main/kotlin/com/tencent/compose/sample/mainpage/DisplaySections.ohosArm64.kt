@@ -63,7 +63,7 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("CApi 1500Image", Res.drawable.interop_state) { CApiView1500Image() },
         DisplayItem("Compose 1500Image CApi", Res.drawable.interop_state) { ComposeImage1500CApi() },
         DisplayItem("AutoScrollingInfiniteList", Res.drawable.interop_state) { AutoScrollingInfiniteList() },
-        DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CallbackLeakTestScreen() },
+        DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CircularReferenceDemo() },
 
     )
 }
