@@ -96,33 +96,3 @@ internal fun ComposeView1500Page() {
     }
 }
 
-
-//@Composable
-//fun ComposeView1500Page() {
-//    val totalCount = 1500
-//    val items = remember { List(totalCount) { it } }
-//    val startTime = remember { getTimeMillis() }
-//
-//    LaunchedEffect(Unit) {
-//        val duration = getTimeMillis() - startTime
-//        println("dzy Compose 页面构建 + 渲染耗时：${duration}ms")
-//    }
-//
-//    LazyColumn(
-//        modifier = Modifier.fillMaxWidth()
-//    ) {
-//        itemsIndexed(items) { index, item ->
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(100.dp)
-//                    .padding(vertical = 4.dp, horizontal = 8.dp)
-//                    .border(2.dp, Color.Red),
-//
-//                contentAlignment = Alignment.Center
-//            ) {
-//                Text("Item #$item")
-//            }
-//        }
-//    }
-//}
