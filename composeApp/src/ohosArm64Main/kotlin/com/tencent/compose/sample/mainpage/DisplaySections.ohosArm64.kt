@@ -29,7 +29,8 @@ import com.tencent.compose.sample.InteropWebView
 import com.tencent.compose.sample.ComposeView1500Page
 import com.tencent.compose.sample.CApiView1500Page
 import com.tencent.compose.sample.CApiView1500Text
-import com.tencent.compose.sample.*
+import com.tencent.compose.sample.CircularReferenceDemo
+import com.tencent.compose.sample.ComposeLazyView1500Page
 import com.tencent.compose.sample.ComposeImage1500CApi
 import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
@@ -55,6 +56,7 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("WebView", Res.drawable.interop_state) { InteropWebView() },
         DisplayItem("Kotlin to C", Res.drawable.interop_state) { ComposeToCPage() },
         DisplayItem("Compose 1500View", Res.drawable.interop_state) { ComposeView1500Page() },
+        DisplayItem("Compose Lazy 1500View", Res.drawable.interop_state) { ComposeLazyView1500Page()},
         DisplayItem("CApi 1500View", Res.drawable.interop_state) { CApiView1500Page() },
         DisplayItem("Compose 1500View CApi", Res.drawable.interop_state) { ComposeView1500CApi() },
         DisplayItem("Compose 1500Text", Res.drawable.interop_state) { ComposeView1500Text() },
