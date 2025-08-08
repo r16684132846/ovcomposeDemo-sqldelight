@@ -36,6 +36,7 @@ import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
 import com.tencent.compose.sample.ComposeView1500CApi
 import com.tencent.compose.sample.ComposeView1500Text
+import com.tencent.compose.sample.NestedLayerEntry
 import com.tencent.compose.sample.data.DisplayItem
 import composesample.composeapp.generated.resources.Res
 import composesample.composeapp.generated.resources.interop_list
@@ -66,6 +67,6 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("Compose 1500Image CApi", Res.drawable.interop_state) { ComposeImage1500CApi() },
         DisplayItem("AutoScrollingInfiniteList", Res.drawable.interop_state) { AutoScrollingInfiniteList() },
         DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CircularReferenceDemo() },
-
+        DisplayItem("组件嵌套 Demo", Res.drawable.interop_state) { NestedLayerEntry() },
     )
 }
