@@ -16,7 +16,7 @@ void OH_LOG(const char *msg) {
 }
 
 void print_string(char* msg) {
-    OH_LOG_INFO(LOG_APP, "KN: print_string: num=%{public}s", msg);
+    OH_LOG_Print(LOG_APP, LOG_INFO, LOG_PRINT_DOMAIN, "xxx", "KN: print_string: num=%{public}s", msg);
 }
 
 void print_const_string(const char* msg) {

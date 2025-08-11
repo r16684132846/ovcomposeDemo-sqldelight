@@ -24,13 +24,13 @@
 namespace NativeXComponentSample {
 
 void callKotlinMethodTest() {
-    OH_LOG_INFO(LOG_APP, "KN: callKotlinMethodTest: start");
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0, "xxx", "KN: callKotlinMethodTest: start");
     int num = kotlin_function(10);
-    OH_LOG_INFO(LOG_APP, "KN: callKotlinMethodTest: end num=%{public}d", num);
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0, "xxx", "KN: callKotlinMethodTest: end num=%{public}d", num);
 }
 
 void print_result(int x) {
-    OH_LOG_INFO(LOG_APP, "KN: print_result: num=%{public}d", x);
+    OH_LOG_Print(LOG_APP, LOG_INFO, 0, "xxx", "KN: print_result: num=%{public}d", x);
 }
 
 void callKotlinCallbackTest() {
