@@ -11,7 +11,9 @@ import platform.ohos.napi_value
 
 @OptIn(ExperimentalForeignApi::class)
 fun napi_value.asString(): String? {
-    return napi_get_kotlin_string_utf16(JsEnv.env().rawValue, this.rawValue)
+//    return napi_get_kotlin_string_utf16(JsEnv.env().rawValue, this.rawValue)
+    //TODO bug need to be fixed
+    return ""
 }
 
 fun napi_value.asStringUtf8(): String? {
@@ -20,6 +22,7 @@ fun napi_value.asStringUtf8(): String? {
 
 fun createString(value: String): napi_value? {
     val nativePtr: NativePtr = JsEnv.env().rawValue
-    val result: napi_value? = interpretCPointer(value.getNapiValue(nativePtr))
-    return result
+//    val result: napi_value? = interpretCPointer(value.getNapiValue(nativePtr))
+    //TODO bug need to be fixed
+    return null
 }

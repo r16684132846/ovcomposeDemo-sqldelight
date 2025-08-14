@@ -32,6 +32,7 @@ import com.tencent.compose.sample.CApiView1500Text
 import com.tencent.compose.sample.CircularReferenceDemo
 import com.tencent.compose.sample.ComposeLazyView1500Page
 import com.tencent.compose.sample.ComposeImage1500CApi
+import com.tencent.compose.sample.ComposeLazy1500ViewWithString
 import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
 import com.tencent.compose.sample.ComposeView1500CApi
@@ -68,5 +69,8 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("AutoScrollingInfiniteList", Res.drawable.interop_state) { AutoScrollingInfiniteList() },
         DisplayItem("Circular Reference Demo", Res.drawable.interop_state) { CircularReferenceDemo() },
         DisplayItem("组件嵌套 Demo", Res.drawable.interop_state) { NestedLayerEntry() },
+        DisplayItem("滑动+字符串 Demo", Res.drawable.interop_state) { ComposeLazy1500ViewWithString() },
+
+
     )
 }
