@@ -37,6 +37,7 @@ import com.tencent.compose.sample.ComposeText1500CApi
 import com.tencent.compose.sample.ComposeToCPage
 import com.tencent.compose.sample.ComposeView1500CApi
 import com.tencent.compose.sample.ComposeView1500Text
+import com.tencent.compose.sample.FfiBenchmark
 import com.tencent.compose.sample.NestedLayerEntry
 import com.tencent.compose.sample.data.DisplayItem
 import composesample.composeapp.generated.resources.Res
@@ -54,6 +55,7 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("混排嵌滑", Res.drawable.interop_nested_scroll) { InteropListNested() },
         DisplayItem("混排状态", Res.drawable.interop_state) { InteropTextInput() },
         DisplayItem("InteropButton", Res.drawable.interop_state) { InteropButton() },
+        DisplayItem("FfiBenchmark", Res.drawable.layers) { FfiBenchmark() },
 	    DisplayItem("短视频", Res.drawable.interop_state) { InteropVideo() },
         DisplayItem("WebView", Res.drawable.interop_state) { InteropWebView() },
         DisplayItem("Kotlin to C", Res.drawable.interop_state) { ComposeToCPage() },

@@ -36,6 +36,7 @@ import {
   cApiImageView1500Builder,
   cApiSingleImage1500Builder,
 } from './ComposeInterops';
+import { FfiBenchmarkBuilder } from './FfiBenchmark';
 
 export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('button', buttonBuilder)
@@ -54,4 +55,5 @@ export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('cApiSingleText', cApiTextViewSingleBuilder)
   registerComposeInteropBuilder('cApiImageView1500', cApiImageView1500Builder)
   registerComposeInteropBuilder('cApiSingleImage', cApiSingleImage1500Builder)
+  registerComposeInteropBuilder('FfiBenchmark', FfiBenchmarkBuilder)
 }
