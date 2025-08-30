@@ -58,6 +58,15 @@ kotlin {
     }
 
     ohosArm64 {
+        compilations.all {
+            compilerOptions.configure {
+                // 1. 性能摘要报告
+                freeCompilerArgs.add("-Xreport-perf")
+                // 2. 详细性能dump
+                freeCompilerArgs.add("-Xdump-perf=${project.buildDir}/dump-report.txt")
+                freeCompilerArgs.add("-Xprofile-phases")  // 新增的阶段分析参数
+            }
+        }
         binaries.sharedLib {
             baseName = "kn"
             export(libs.compose.multiplatform.export)
