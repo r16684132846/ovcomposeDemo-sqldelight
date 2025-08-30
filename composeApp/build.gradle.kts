@@ -18,6 +18,7 @@
 import android.databinding.tool.ext.capitalizeUS
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.File
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -151,6 +152,129 @@ arrayOf("debug", "release").forEach { type ->
         }
         from(project.file("build/bin/ohosArm64/${type}Shared/libkn.so")) {
             into("/entry/libs/arm64-v8a/")
+        }
+    }
+}
+
+arrayOf("debug", "release").forEach { type ->
+
+    tasks.register<Copy>("startHarmonyApp${type.capitalizeUS()}") {
+        val harmonyAppDir: String by project
+        val absoluteHarmonyAppDir = if (File(harmonyAppDir).isAbsolute) harmonyAppDir else
+            rootProject.file(harmonyAppDir).absolutePath
+        val appJsonContent = file("$absoluteHarmonyAppDir/AppScope/app.json5").readText()
+        val bundleNameRegex = """"bundleName"\s*:\s*"([^"]+)"""".toRegex()
+        val bundleName = bundleNameRegex.find(appJsonContent)?.groupValues?.get(1) ?: error("bundleName not found")
+        val devEcoStudioDir: String by project
+        val harmonyAppEntryModuleDir: String by project
+        val hFileDir: String by project
+        val soFileDir: String by project
+        val abilityName: String by project
+        val nodeHome = "$devEcoStudioDir/Contents/tools/node"
+        val devEcoSdkHome = "$devEcoStudioDir/Contents/sdk"
+
+        if (!File(devEcoStudioDir).exists()) {
+            throw GradleException("Provided DevEco Studio install path doesn't exist: $devEcoStudioDir")
+        }
+
+        group = "harmony"
+        dependsOn("link${type.capitalizeUS()}SharedOhosArm64")
+        into(rootProject.file(absoluteHarmonyAppDir))
+        from("build/bin/ohosArm64/${type}Shared/libkn_api.h") {
+            into("$harmonyAppEntryModuleDir/$hFileDir")
+        }
+        from(project.file("build/bin/ohosArm64/${type}Shared/libkn.so")) {
+            into("$harmonyAppEntryModuleDir/$soFileDir")
+        }
+
+        outputs.upToDateWhen { false }
+        doLast {
+            fun execAtHarmonyAppDir(cmd: List<String>) {
+                val result = project.exec {
+                    environment(mapOf("NODE_HOME" to nodeHome, "DEVECO_SDK_HOME" to devEcoSdkHome))
+                    commandLine(cmd)
+                    workingDir(absoluteHarmonyAppDir)
+                    isIgnoreExitValue = true
+                }
+                if (result.exitValue != 0) {
+                    throw GradleException("${cmd.joinToString(" ")}\nFailed with exit code ${result.exitValue}\nTry to reproduce this in DevEco Studio's command line, otherwise you would need to setup some enviroment parameters")
+                }
+            }
+
+            println("=== Step 1: Install OHPM dependencies ===")
+            execAtHarmonyAppDir(listOf(
+                "$devEcoStudioDir/Contents/tools/ohpm/bin/ohpm",
+                "install",
+                "--all",
+                "--registry",
+                "https://ohpm.openharmony.cn/ohpm/",
+                "--strict_ssl",
+                "true"
+            ))
+
+            println("=== Step 2: Run hvigor sync ===")
+            execAtHarmonyAppDir(listOf(
+                "$devEcoStudioDir/Contents/tools/node/bin/node",
+                "$devEcoStudioDir/Contents/tools/hvigor/bin/hvigorw.js",
+                "--sync",
+                "-p", "product=default",
+                "-p", "buildMode=${type}",
+                "--analyze=false",
+                "--parallel",
+                "--incremental",
+                "--daemon"
+            ))
+
+            println("=== Step 3: Build HAP ===")
+            println(listOf("$devEcoStudioDir/Contents/tools/node/bin/node",
+                "$devEcoStudioDir/Contents/tools/hvigor/bin/hvigorw.js",
+                "--mode", "module",
+                "-p", "module=entry@default",
+                "-p", "product=default",
+                "-p", "buildMode=${type}",
+                "-p", "requiredDeviceType=phone",
+                "assembleHap",
+                "--analyze=false",
+                "--parallel",
+                "--incremental",
+                "--daemon").toString())
+            execAtHarmonyAppDir(listOf(
+                "$devEcoStudioDir/Contents/tools/node/bin/node",
+                "$devEcoStudioDir/Contents/tools/hvigor/bin/hvigorw.js",
+                "--mode", "module",
+                "-p", "module=entry@default",
+                "-p", "product=default",
+                "-p", "buildMode=${type}",
+                "-p", "requiredDeviceType=phone",
+                "assembleHap",
+                "--analyze=false",
+                "--parallel",
+                "--incremental",
+                "--daemon"
+            ))
+
+            println("=== Step 4: Install HAP to device via hdc ===")
+            val hapFile = File("$absoluteHarmonyAppDir/$harmonyAppEntryModuleDir/build/default/outputs/default/entry-default-signed.hap")
+            if (!hapFile.exists()) {
+                throw GradleException("HAP file not found at: ${hapFile.absolutePath}.\nDid you forget to provide signature for the hap in DevEco Studio -> File -> Project Structure -> Signing Configs?")
+            }
+
+            execAtHarmonyAppDir(listOf(
+                "$devEcoStudioDir/Contents/sdk/default/openharmony/toolchains/hdc",
+                "install",
+                "$absoluteHarmonyAppDir/$harmonyAppEntryModuleDir/build/default/outputs/default/entry-default-signed.hap"
+            ))
+
+            println("=== Step 5: Launch app on device ===")
+            println("Ability: $abilityName, Bundle: $bundleName")
+            execAtHarmonyAppDir(listOf(
+                "$devEcoStudioDir/Contents/sdk/default/openharmony/toolchains/hdc",
+                "shell",
+                "aa",
+                "start",
+                "-a", abilityName,
+                "-b", bundleName
+            ))
         }
     }
 }
