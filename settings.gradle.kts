@@ -20,6 +20,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        // maven("/path/to/local/kotlin/build/repo")
         maven("https://kotlinnativeohos.online/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public")
@@ -37,6 +38,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        // maven("/path/to/local/kotlin/build/repo")
         maven("https://kotlinnativeohos.online/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         maven("https://mirrors.tencent.com/nexus/repository/maven-public")

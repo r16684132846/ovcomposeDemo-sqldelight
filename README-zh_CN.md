@@ -540,3 +540,39 @@ ovCompose-sample 基于 Apache 2.0 协议发布，详见：[License](License.txt
 欢迎扫码下方二维码关注最新动态或咨询交流。
 
 <img alt="ovCompose support" src="img/support.png" />
+
+## 技巧
+
+### 一步启动鸿蒙应用
+
+参考[composeApp/build.gradle.kts](./composeApp/build.gradle.kts)中 startHarmonyApp 任务的实现
+
+任务配置：
+
+```
+# DevEco Studio 安装路径
+devEcoStudioDir=/Applications/DevEco-Studio.app
+# 鸿蒙工程的路径：如果写相对路径是相对kotlin项目的根目录，如果写绝对路径就指哪就是哪
+harmonyAppDir=harmonyApp
+# 鸿蒙应用中入口模块所在的文件夹
+harmonyAppEntryModuleDir=entry/
+# 鸿蒙应用入口模块中，gradle打出来的kn项目 .h 放在哪个文件夹
+hFileDir=src/main/cpp/include/
+# 鸿蒙应用入口模块中，gradle打出来的kn项目 .so 放在哪个文件夹
+soFileDir=libs/arm64-v8a/
+# 启动应用中ability的名字，可以通过在DevEco Studio中点击运行，查看'hdc shell aa start -a'后面的参数，就是这个ability名字
+abilityName = EntryAbility
+```
+
+执行过程（这里只简介，详细命令参考gradle任务实现或DevEco Studio中构建执行日志）：
+
+1. 依赖 linkRelease/DebugSharedOhosArm64 任务，构建kotlin项目
+2. 将kotlin项目打包的 .so 和 .h 复制到鸿蒙应用中
+
+后面的步骤都是在鸿蒙应用中执行
+
+3. `ohpm i`，这步不改依赖就不需要重复执行，不过重复执行耗时也只是几秒，加上这个步骤比较保险
+4. 运行 hvigor sync 同步项目
+5. 打包鸿蒙应用
+6. hdc install 安装hap到手机
+7. 启动应用

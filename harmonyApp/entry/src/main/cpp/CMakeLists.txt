@@ -13,7 +13,7 @@ include_directories(${NATIVERENDER_ROOT_PATH}
 
 find_package(skikobridge)
 
-add_library(entry SHARED  test725.cpp container.cpp manager.cpp napi_init.cpp)
+add_library(entry SHARED test725.cpp container.cpp manager.cpp napi_init.cpp)
 find_library(
     hilog-lib
     hilog_ndk.z

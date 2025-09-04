@@ -27,6 +27,25 @@
         }
       }
     },
+    {
+      "name": "debug",
+      "arkOptions": {
+        "obfuscation": {
+          "ruleOptions": {
+            "enable": false,
+            "files": [
+              "./obfuscation-rules.txt"
+            ]
+          }
+        }
+      },
+      "nativeLib": {
+        "debugSymbol": {
+          "strip": false,
+          "exclude": []
+        }
+      }
+    }
   ],
   "targets": [
     {

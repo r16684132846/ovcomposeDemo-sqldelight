@@ -59,18 +59,23 @@ kotlin {
     }
 
     ohosArm64 {
+        val dumpReportPath = getLayout().buildDirectory.file("compile_perf.txt").get()
         compilations.all {
             compilerOptions.configure {
-                // 1. 性能摘要报告
-                freeCompilerArgs.add("-Xreport-perf")
-                // 2. 详细性能dump
-                freeCompilerArgs.add("-Xdump-perf=${project.buildDir}/dump-report.txt")
-                freeCompilerArgs.add("-Xprofile-phases")  // 新增的阶段分析参数
+                // // 开启性能统计
+                // freeCompilerArgs.add("-Xreport-perf")
+                // // 指定报告地址
+                // freeCompilerArgs.add("-Xdump-perf=$dumpReportPath")
+                // // 打印后端各阶段耗时
+                // freeCompilerArgs.add("-Xprofile-phases")
             }
         }
         binaries.sharedLib {
             baseName = "kn"
             export(libs.compose.multiplatform.export)
+            // 在debug和release模式，gradle都打包带符号表的so
+            // release包在鸿蒙应用打包时strip so中的符号表，打包出的符号表可以对现网崩溃进行 addr2line
+            debuggable = true
         }
 
         val main by compilations.getting
@@ -226,18 +231,6 @@ arrayOf("debug", "release").forEach { type ->
             ))
 
             println("=== Step 3: Build HAP ===")
-            println(listOf("$devEcoStudioDir/Contents/tools/node/bin/node",
-                "$devEcoStudioDir/Contents/tools/hvigor/bin/hvigorw.js",
-                "--mode", "module",
-                "-p", "module=entry@default",
-                "-p", "product=default",
-                "-p", "buildMode=${type}",
-                "-p", "requiredDeviceType=phone",
-                "assembleHap",
-                "--analyze=false",
-                "--parallel",
-                "--incremental",
-                "--daemon").toString())
             execAtHarmonyAppDir(listOf(
                 "$devEcoStudioDir/Contents/tools/node/bin/node",
                 "$devEcoStudioDir/Contents/tools/hvigor/bin/hvigorw.js",
