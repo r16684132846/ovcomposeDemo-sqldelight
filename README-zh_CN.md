@@ -576,3 +576,41 @@ abilityName = EntryAbility
 5. 打包鸿蒙应用
 6. hdc install 安装hap到手机
 7. 启动应用
+
+
+### 现网问题反解
+
+基本流程为出现网包时打release且debuggable的so，这个so带符号表，本地保留用于出现问题时进行反解。使用这个so打鸿蒙的包并在 [harmonyApp/entry/build-profile.json5](harmonyApp/entry/build-profile.json5) 中配置打 release 模式的hap包时对so进行strip，最终进入hap的so会被去掉符号表。
+
+```
+"buildOptionSet": [
+  {
+    "name": "release",
+    "arkOptions": {
+      "obfuscation": {
+        "ruleOptions": {
+          "enable": false,
+          "files": [
+            "./obfuscation-rules.txt"
+          ]
+        }
+      }
+    },
+    "nativeLib": {
+      "debugSymbol": {
+        "strip": true,
+        "exclude": []
+      }
+    }
+  },
+```
+
+当现网出现崩溃时使用现网崩溃的地址+本地保留的带debug符号的release so使用addr2line反解。
+
+如需将debug符号上传到外部平台，可以去掉debuggable so中可执行代码部分，只保留debug符号表
+
+
+```
+llvm-objcopy --only-keep-debug libkn.so libkn.debug
+llvm-objdump -dS libkn.debug > asm # so中所有汇编代码进行反汇编并dump，结果应该为空
+```
