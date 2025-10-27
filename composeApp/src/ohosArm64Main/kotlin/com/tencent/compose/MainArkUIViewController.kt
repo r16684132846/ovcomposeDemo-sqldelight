@@ -19,10 +19,12 @@ package com.tencent.compose
 
 import androidx.compose.ui.window.ComposeArkUIViewController
 import com.tencent.compose.sample.NativeResourceManager
+import com.tencent.compose.sample.koin.appModule
 import com.tencent.compose.sample.mainpage.MainPage
 import com.tencent.compose.sample.nativeResourceManager
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.initMainHandler
+import org.koin.core.context.startKoin
 import platform.ohos.napi_env
 import platform.ohos.napi_value
 import kotlin.experimental.ExperimentalNativeApi
@@ -31,6 +33,9 @@ import kotlin.experimental.ExperimentalNativeApi
 @CName("MainArkUIViewController")
 fun MainArkUIViewController(env: napi_env): napi_value {
     initMainHandler(env)
+    startKoin {
+        modules(appModule)
+    }
     return ComposeArkUIViewController(env) { MainPage() }
 }
 

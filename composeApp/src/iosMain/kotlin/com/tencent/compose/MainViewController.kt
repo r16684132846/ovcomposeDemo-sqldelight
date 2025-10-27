@@ -22,7 +22,9 @@ package com.tencent.compose
 import androidx.compose.ui.uikit.OnFocusBehavior
 import androidx.compose.ui.uikit.RenderBackend
 import androidx.compose.ui.window.ComposeUIViewController
+import com.tencent.compose.sample.koin.appModule
 import com.tencent.compose.sample.mainpage.MainPage
+import org.koin.core.context.startKoin
 import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalObjCName::class)
@@ -30,6 +32,9 @@ import kotlin.experimental.ExperimentalObjCName
 fun MainViewController() = ComposeUIViewController(
     configure = { onFocusBehavior = OnFocusBehavior.DoNothing }
 ) {
+    startKoin {
+        modules(appModule)
+    }
     MainPage(false)
 }
 
