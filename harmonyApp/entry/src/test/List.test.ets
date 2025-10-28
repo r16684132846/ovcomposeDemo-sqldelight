@@ -16,9 +16,11 @@
  */
 
 import localUnitTest from './LocalUnit.test';
-import xmlUtilTest from './XmlUtilTest'; // 导入xmlUtilTest
-import coroutinesTest from './CoroutinesTest'; // 导入coroutinesTest
-import ksoupTest from './KsoupTest'; // 导入ksoupTest
+import xmlUtilTest from './XmlUtilTest.test'; // 导入xmlUtilTest
+import coroutinesTest from './CoroutinesTest.test'; // 导入coroutinesTest
+import ksoupTest from './KsoupTest.test'; // 导入ksoupTest
+import napierTest from './NapierTest.test'; // 导入napierTest
+import ksoupIntegrationTest from './KsoupTest.test';
 
 export default function testsuite() {
   localUnitTest();
@@ -26,4 +28,5 @@ export default function testsuite() {
   xmlUtilTest(); // 执行xmlUtilTest
    ksoupTest(); // 执行ksoupTest
    ksoupIntegrationTest(); // 执行ksoup集成测试
+   napierTest(); // 执行napierTest
 }

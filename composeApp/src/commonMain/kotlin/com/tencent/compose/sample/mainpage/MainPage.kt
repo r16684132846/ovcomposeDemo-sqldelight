@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import com.tencent.compose.db.MyDatabase
 import com.tencent.compose.sample.XmlUtilTest
 import com.tencent.compose.sample.KsoupTest
+import com.tencent.compose.sample.NapierTest
 import com.tencent.compose.sample.backhandler.BackHandler
 import com.tencent.compose.sample.createTestDriver
 import com.tencent.compose.sample.data.DisplayItem
@@ -155,7 +156,6 @@ fun testDatabase(): String {
     }
 }
 
-
 fun testKsoup(): String {
     return try {
         val ksoupTest = KsoupTest()
@@ -165,6 +165,14 @@ fun testKsoup(): String {
     }
 }
 
+fun testNapier(): String {
+    return try {
+        val napierTest = NapierTest()
+        napierTest.runAllTests()
+    } catch (e: Exception) {
+        "Napier 测试失败: ${e.message}"
+    }
+}
 
 @Composable
 internal fun MainPage(skiaRender: Boolean = true) {
@@ -185,7 +193,8 @@ internal fun MainPage(skiaRender: Boolean = true) {
                 )
             },
             title = {
-                val title = testKsoup()
+                val title = testNapier()
+//                val title = testKsoup()
 //                val title = testXmlUtil()
 //                val title = testDatabase()
 //                val title = testXmlUtil()

@@ -24,7 +24,7 @@ export default function coroutinesTest() {
       let coroutineExecuted = false;
 
       // 模拟协程执行
-      const coroutinePromise = new Promise((resolve) => {
+      const coroutinePromise: Promise<boolean> = new Promise((resolve) => {
         setTimeout(() => {
           coroutineExecuted = true;
           resolve(true);
@@ -41,7 +41,7 @@ export default function coroutinesTest() {
       let delayCompleted = false;
 
       // 模拟 delay 函数
-      const delayPromise = new Promise((resolve) => {
+      const delayPromise: Promise<boolean> = new Promise((resolve) => {
         setTimeout(() => {
           delayCompleted = true;
           resolve(true);
@@ -60,9 +60,13 @@ export default function coroutinesTest() {
       let cancellationSupported = true;
       try {
         // 检查是否支持基本的取消机制
-        const job = {
+        interface Job {
+          isActive: boolean;
+          cancel: () => void;
+        }
+        const job: Job = {
           isActive: true,
-          cancel: function() { this.isActive = false; }
+          cancel: () => { job.isActive = false; }
         };
         job.cancel();
         cancellationSupported = !job.isActive;
@@ -77,10 +81,18 @@ export default function coroutinesTest() {
       let scopeAvailable = true;
       try {
         // 检查是否支持作用域概念
-        const scope = {
-          launch: function() { return { cancel: () => {} }; }
+        interface Scope {
+          launch: () => Job;
+        }
+
+        interface Job {
+          cancel: () => void;
+        }
+
+        const scope: Scope = {
+          launch: () => ({ cancel: () => {} })
         };
-        const job = scope.launch();
+        const job: Job = scope.launch();
         scopeAvailable = typeof job.cancel === 'function';
       } catch (e) {
         scopeAvailable = false;

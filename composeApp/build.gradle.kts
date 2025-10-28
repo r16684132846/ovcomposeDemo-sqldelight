@@ -79,6 +79,7 @@ kotlin {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.napier.android)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -116,6 +117,7 @@ kotlin {
                 implementation(libs.ksoup.entities)
                 implementation(libs.sqldelight.coroutines.extensions)
                 implementation(libs.sqldelight.native.driver)
+                implementation(libs.napier.ohosarm64)
             }
         }
         iosMain.dependencies {

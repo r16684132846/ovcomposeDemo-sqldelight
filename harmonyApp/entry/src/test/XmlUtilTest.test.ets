@@ -38,7 +38,11 @@ export default function xmlUtilTest() {
       let serializationSuccess = false;
       try {
         // 模拟XML序列化过程
-        const testObject = { name: "张三", age: 30 };
+        interface TestObject {
+          name: string;
+          age: number;
+        }
+        const testObject: TestObject = { name: "张三", age: 30 };
         // 在实际实现中，这里应该调用真正的序列化方法
         serializationSuccess = true;
       } catch (e) {
