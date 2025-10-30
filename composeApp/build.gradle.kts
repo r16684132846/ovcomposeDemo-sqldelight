@@ -25,7 +25,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.cocoapods)
-    alias(libs.plugins.sqldelight)
     kotlin("plugin.serialization") version libs.versions.kotlinxSerializationJsonPlug
 }
 
@@ -78,8 +77,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.sqldelight.android.driver)
             implementation(libs.napier.android)
+            implementation(libs.webview)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -98,14 +97,13 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
-            implementation(libs.sqldelight.coroutines.extensions)
-            implementation(libs.sqldelight.runtime)
             implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
             implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
             implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
 
             implementation(libs.ksoup.html)
             implementation(libs.ksoup.entities)
+            implementation(libs.webview)
         }
 
         val ohosArm64Main by getting {
@@ -115,13 +113,9 @@ kotlin {
                 implementation(libs.xmlutil.serialization)
                 implementation(libs.ksoup.html)
                 implementation(libs.ksoup.entities)
-                implementation(libs.sqldelight.coroutines.extensions)
-                implementation(libs.sqldelight.native.driver)
                 implementation(libs.napier.ohosarm64)
+                implementation(libs.webview.ohosarm64)
             }
-        }
-        iosMain.dependencies {
-            implementation(libs.sqldelight.native.driver)
         }
     }
 }
@@ -176,15 +170,5 @@ arrayOf("debug", "release").forEach { type ->
 tasks.whenTaskAdded {
     if (name.contains("iosTest")) {
         enabled = false
-    }
-}
-
-sqldelight {
-    databases {
-        create("MyDatabase") {
-            packageName = "com.tencent.compose.db"
-            dialect("app.cash.sqldelight:sqlite-3-25-dialect:${libs.versions.sqldelight.get()}")
-            schemaOutputDirectory = file("build/dbs")
-        }
     }
 }
