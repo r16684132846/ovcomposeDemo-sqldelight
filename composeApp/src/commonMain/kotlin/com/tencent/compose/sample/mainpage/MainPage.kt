@@ -78,7 +78,7 @@ class Test1 {
     var a: String = ""
 }
 
-val encodeJsonFormat = Json { encodeDefaults = true}
+val encodeJsonFormat = Json { encodeDefaults = true }
 inline fun <reified T> gsonToString(obj: T): String {
     obj?.let { t ->
         return encodeJsonFormat.encodeToString(t)
@@ -99,6 +99,7 @@ private fun appBarTitle(openedExample: DisplayItem?, skiaRender: Boolean = true)
 fun testJson(): String {
     return "${Test1().apply { a = "testac" }.let { gsonToString(it) }}"
 }
+
 fun testXmlUtil(): String {
     return try {
         val xmlTest = XmlUtilTest()
@@ -163,7 +164,6 @@ internal fun MainPage(skiaRender: Boolean = true) {
                 val title = testWebView()
 //                val title = testNapier()
 //                val title = testKsoup()
-//                val title = testXmlUtil()
 //                val title = testXmlUtil()
 //                val title = testCoroutines()
 //                val title = testJson()

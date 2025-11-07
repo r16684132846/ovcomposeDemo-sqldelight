@@ -241,3 +241,54 @@ export struct horizontalList {
     }
   }
 }
+
+interface WebViewArgs {
+  url: string
+  userAgent: string
+  databaseEnabled: boolean
+  domStorageEnabled: boolean
+  cacheMode: string
+  javaScriptEnabled: boolean
+}
+
+@Builder
+export function webviewBuilder(args: WebViewArgs) {
+  webview()
+}
+
+@Component
+export struct webview {
+  @Consume compose_args: WebViewArgs
+  private webviewController: WebController = new WebController();
+
+  build() {
+    Column() {
+      Text("WebView Component")
+        .fontSize(20)
+        .fontWeight(FontWeight.Bold)
+        .margin({ bottom: 10 })
+
+      Text(`URL: ${this.compose_args.url}`)
+        .fontSize(14)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+
+      Web({
+        src: this.compose_args.url,
+        controller: this.webviewController
+      })
+      .onPageEnd((event: OnPageEndEvent) => {
+        console.info(`WebView page loaded: ${event.url}`);
+      })
+      .javaScriptAccess(this.compose_args.javaScriptEnabled)
+      .domStorageAccess(this.compose_args.domStorageEnabled)
+      .databaseAccess(this.compose_args.databaseEnabled)
+      .cacheMode(this.compose_args.cacheMode === "default" ? CacheMode.Default : CacheMode.None)
+      .width('100%')
+      .height('80%')
+    }
+    .width('100%')
+    .height('100%')
+    .padding(10)
+  }
+}

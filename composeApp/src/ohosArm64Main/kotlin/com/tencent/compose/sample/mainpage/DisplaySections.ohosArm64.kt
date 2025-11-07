@@ -17,6 +17,7 @@
 
 package com.tencent.compose.sample.mainpage
 
+import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.InteropListNested
 import com.tencent.compose.sample.InteropListSimple
 import com.tencent.compose.sample.InteropRenderOrder
@@ -28,6 +29,7 @@ import composesample.composeapp.generated.resources.interop_nested_scroll
 import composesample.composeapp.generated.resources.interop_state
 import composesample.composeapp.generated.resources.layers
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import com.tencent.compose.sample.WebViewExample
 
 @OptIn(ExperimentalResourceApi::class)
 internal actual fun platformSections(): List<DisplayItem> {
@@ -37,4 +39,9 @@ internal actual fun platformSections(): List<DisplayItem> {
         DisplayItem("混排嵌滑", Res.drawable.interop_nested_scroll) { InteropListNested() },
         DisplayItem("混排状态", Res.drawable.interop_state) { InteropTextInput() }
     )
+}
+
+@Composable
+internal actual fun WebViewInterface() {
+    WebViewExample()
 }

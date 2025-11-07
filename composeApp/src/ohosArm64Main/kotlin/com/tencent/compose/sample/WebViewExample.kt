@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
-package com.tencent.compose.sample.mainpage.sectionItem
+package com.tencent.compose.sample
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -30,20 +32,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.multiplatform.webview.web.LoadingState
-import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.WebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
+import androidx.compose.ui.napi.js
 
 @Composable
 internal fun WebViewExample() {
     var url by remember { mutableStateOf("https://www.baidu.com") }
     val state = rememberWebViewState(url = url)
     val navigator = rememberWebViewNavigator()
+
+    val userAgent =
+        "Mozilla/5.0 (OpenHarmony) AppleWebKit/537.36 (KHTML, like Gecko) Version/9.0 Mobile"
+
+    // 使用一个状态变量来记录是否加载失败
+    val webViewError by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -57,22 +65,43 @@ internal fun WebViewExample() {
             label = { Text("URL") }
         )
 
+        Button(
+            onClick = { navigator.loadUrl(url) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text("加载")
+        }
+
         WebViewNavigationControls(navigator, state)
 
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            contentAlignment = Alignment.Center
+                .background(Color.Red)
+                .size(500.dp, 500.dp)
         ) {
-            WebView(
-                state = state,
-                navigator = navigator,
-                modifier = Modifier.fillMaxSize()
-            )
+            // 将 ArkUIView 的创建放在一个独立的可组合函数中
+            if (webViewError == null) {
+                ArkUIView(
+                    name = "webview",
+                    modifier = Modifier.fillMaxSize(),
+                    parameter = js {
+                        "url"(url)
+                        "userAgent"(userAgent)
+                        "databaseEnabled"(true)
+                        "domStorageEnabled"(true)
+                        "cacheMode"("default")
+                        "javaScriptEnabled"(true)
+                    },
+                )
+            } else {
+                Text("WebView加载失败: $webViewError")
+            }
         }
     }
 }
+
 
 @Composable
 private fun WebViewNavigationControls(

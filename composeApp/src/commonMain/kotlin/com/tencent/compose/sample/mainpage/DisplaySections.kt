@@ -17,6 +17,7 @@
 
 package com.tencent.compose.sample.mainpage
 
+import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.LinearGradientLine
 import com.tencent.compose.sample.MultiTouches
 import com.tencent.compose.sample.mainpage.sectionItem.BouncingBallsApp
@@ -37,7 +38,6 @@ import com.tencent.compose.sample.mainpage.sectionItem.SliderExamples
 import com.tencent.compose.sample.mainpage.sectionItem.SwitchExamples
 import com.tencent.compose.sample.mainpage.sectionItem.TextField2
 import com.tencent.compose.sample.mainpage.sectionItem.TextField3
-import com.tencent.compose.sample.mainpage.sectionItem.WebViewExample
 import composesample.composeapp.generated.resources.Res
 import composesample.composeapp.generated.resources.balls
 import composesample.composeapp.generated.resources.carousel
@@ -97,10 +97,13 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("Falling Balls", Res.drawable.falling) { FallingBalls() },
                 DisplayItem("DropdownMenu", Res.drawable.menu) { DropdownMenu() },
                 DisplayItem("GradientLine", Res.drawable.gradient) { LinearGradientLine() },
-                DisplayItem("WebView Example", Res.drawable.balls) { WebViewExample() }
-            )
+                DisplayItem("WebView Example", Res.drawable.gradient) { WebViewInterface() },
+            ),
         )
     )
 }
 
-internal expect fun platformSections() : List<DisplayItem>
+internal expect fun platformSections(): List<DisplayItem>
+
+@Composable
+internal expect fun WebViewInterface()
