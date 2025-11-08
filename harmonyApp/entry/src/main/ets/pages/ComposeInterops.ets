@@ -373,14 +373,12 @@ interface GeneratedTypeLiteralInterface_1 {
       if (this.compose_args.navigationCommandId === undefined) {
         console.info("navigationCommandId 未定义");
       } else {
-        console.info("navigationCommandId 类型: " + typeof this.compose_args.navigationCommandId);
         console.info("navigationCommandId 值: " + this.compose_args.navigationCommandId);
       }
 
       if (this.compose_args.navigationCommand === undefined) {
         console.info("navigationCommand 未定义");
       } else {
-        console.info("navigationCommand 类型: " + typeof this.compose_args.navigationCommand);
         console.info("navigationCommand 值: " + this.compose_args.navigationCommand);
       }
 
@@ -438,7 +436,6 @@ private handleNavigationCommand(): void {
     console.info(`处理导航命令: ${this.navigationCommand}, commandId: ${this.navigationCommandId}`);
 
     try {
-      // 添加详细的命令处理日志
       switch (this.navigationCommand) {
         case "back":
           console.info("执行后退操作");
@@ -506,30 +503,34 @@ private handleNavigationCommand(): void {
             console.error("执行刷新操作时出错:", e);
           }
           break;
-          case "home":
-           console.info("执行首页操作，跳转到: " + this.compose_args.url);
-           // 更新当前URL并重新加载，但要确保URL有效
-                // 检查URL是否发生变化
-      if (this.compose_args.url !== this.currentUrl) {
-        console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
-        // 修复：只有在compose_args.url非空且不为空字符串时才更新currentUrl
-        if (this.compose_args.url && this.compose_args.url.trim() !== '') {
-          this.currentUrl = this.compose_args.url;
+        case "home":
+          console.info("执行首页操作，跳转到: " + this.compose_args.url);
+          // 检查URL是否发生变化
+          if (this.compose_args.url !== this.currentUrl) {
+            console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
+            if (this.compose_args.url && this.compose_args.url.trim() !== '') {
+              this.currentUrl = this.compose_args.url;
 
-          if (this.webviewController && this.currentUrl !== this.compose_args.url) {
-            this.webviewController.loadUrl({
-              url: this.currentUrl
-            });
+              if (this.webviewController && this.currentUrl !== this.compose_args.url) {
+                this.webviewController.loadUrl({
+                  url: this.currentUrl
+                });
+              }
+            } else {
+              console.warn("接收到空URL或空字符串，忽略更新");
+            }
+          } else {
+            if (this.webviewController) {
+              this.webviewController.loadUrl({
+                url: this.currentUrl
+              });
+            }
           }
-        } else {
-          console.warn("接收到空URL或空字符串，忽略更新");
-        }
-      }
 
-           if (this.compose_args.onGoHome) {
-             this.compose_args.onGoHome();
-           }
-           break;
+          if (this.compose_args.onGoHome) {
+            this.compose_args.onGoHome();
+          }
+          break;
         default:
           console.info("未知导航命令: " + this.navigationCommand);
 
