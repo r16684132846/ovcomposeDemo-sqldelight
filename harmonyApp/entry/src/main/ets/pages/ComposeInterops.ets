@@ -360,7 +360,7 @@ interface GeneratedTypeLiteralInterface_1 {
     .width('100%')
     .height('100%')
     .padding(10)
-         .onAreaChange((_oldValue: Area) => {
+    .onAreaChange((_oldValue: Area) => {
       // 添加详细的调试日志
       console.info(`=== Navigation Debug ===`);
       console.info(`Current navigationCommandId: ${this.compose_args.navigationCommandId}`);
@@ -387,21 +387,21 @@ interface GeneratedTypeLiteralInterface_1 {
       console.info(`=== End of Debug ===`);
 
        try {
-              // 检查URL是否发生变化
-              if (this.compose_args.url !== this.currentUrl) {
-                console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
-                if (this.compose_args.url && this.compose_args.url.trim() !== '') {
-                  this.currentUrl = this.compose_args.url;
-                } else {
-                  console.warn("接收到空URL，忽略更新");
-                }
+        // 检查URL是否发生变化
+        if (this.compose_args.url !== this.currentUrl) {
+           console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
+           if (this.compose_args.url && this.compose_args.url.trim() !== '') {
+             this.currentUrl = this.compose_args.url;
+           } else {
+             console.warn("接收到空URL，忽略更新");
+           }
 
-                if (this.webviewController && this.currentUrl !== this.compose_args.url) {
-                  this.webviewController.loadUrl({
-                    url: this.currentUrl
-                  });
-                }
-              }
+           if (this.webviewController && this.currentUrl !== this.compose_args.url) {
+             this.webviewController.loadUrl({
+               url: this.currentUrl
+             });
+           }
+         }
 
         // 检查是否有新的导航命令
         // 确保比较的是数值类型

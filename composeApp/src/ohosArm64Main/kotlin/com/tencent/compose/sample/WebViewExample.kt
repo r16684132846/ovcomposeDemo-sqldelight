@@ -4,10 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
@@ -26,7 +24,6 @@ import com.multiplatform.webview.web.LoadingState
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
 import androidx.compose.ui.napi.js
-import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.cinterop.ExperimentalForeignApi
 
 @OptIn(ExperimentalForeignApi::class)
@@ -62,15 +59,15 @@ internal fun WebViewExample() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
-                .height(32.dp),
-            label = { Text("URL") },
+                .padding(8.dp),
+            label = { Text("URL") }
         )
 
         Button(
             onClick = {
                 navigator.loadUrl(url)
                 println("url更新 : $url")
+                // 更新导航命令以触发重新加载
                 navigationCommand = "loadUrl"
                 navigationCommandId++
                 println("kn numId--加载 : $navigationCommandId")
@@ -163,7 +160,8 @@ internal fun WebViewExample() {
                     name = "webview",
                     modifier = Modifier.fillMaxSize(),
                     parameter = js {
-                        "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
+                        "url"(url)
+//                        "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
                         "userAgent"(userAgent)
                         "databaseEnabled"(true)
                         "domStorageEnabled"(true)
@@ -173,13 +171,12 @@ internal fun WebViewExample() {
                         "navigationCommandId"(navigationCommandId)
                     },
                     update = { jsObject ->
-                        val newUrl = jsObject["currentUrl"]?.asString()
+                        val newUrl = jsObject["currentUrl"]?.asString()?.toString()
                         if (!newUrl.isNullOrEmpty()) {
                             url = newUrl
                         }
                         jsObject.apply {
-                            "url"(url)
-//                            "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
+                            "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
                             "userAgent"(userAgent)
                             "databaseEnabled"(true)
                             "domStorageEnabled"(true)
