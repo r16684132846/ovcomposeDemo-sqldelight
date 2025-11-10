@@ -277,68 +277,202 @@ interface GeneratedTypeLiteralInterface_1 {
   private webviewController: WebController = new WebController();
   @State private currentUrl: string = ''
   @State private navigationCommand: string = ''
-  @State private navigationCommandId: number = 0
+  @State @Watch('onNavigationCommandIdChange') private navigationCommandId: number = 0
+  @State private lastHandledCommandId: number = -1
+  @State private homeUrl: string = ''
 
   aboutToAppear(): void {
-    // 确保 URL 不为空
     if (this.compose_args.url && this.compose_args.url.trim() !== '') {
       this.currentUrl = this.compose_args.url;
+      this.homeUrl = this.compose_args.url;
+      console.info("设置初始URL和首页URL: " + this.currentUrl);
     } else {
       console.warn("WebView URL 为空或无效，使用默认值");
-      this.currentUrl = "about:blank"; // 使用默认页面
-    } }
-  
+      this.currentUrl = "about:blank";
+      this.homeUrl = "about:blank";
+    }
+  }
 
   build() {
     Column() {
+      // 添加URL输入框和加载按钮
+      Row() {
+        TextInput({
+          text: this.currentUrl,
+          placeholder: "请输入URL"
+        })
+          .onChange((value: string) => {
+            console.info(`URL输入框内容变化: ${value}`);
+
+            // 实时将URL传递给Compose端
+            this.compose_args.currentUrl = value;
+            // 生成新的urlChangeCommandId通知Compose端URL已更新
+            this.compose_args.urlChangeCommandId = Date.now();
+
+            // 更新本地状态
+            this.currentUrl = value;
+          })
+          .layoutWeight(1)
+
+        Button("加载")
+          .onClick(() => {
+            // 点击加载按钮时才加载URL到WebView
+            if (this.webviewController) {
+              this.webviewController.loadUrl({
+                url: this.currentUrl
+              });
+              console.info(`WebView开始加载URL: ${this.currentUrl}`);
+
+              // 将加载状态同步给Compose端
+              this.compose_args.currentUrl = this.currentUrl;
+              this.compose_args.urlChangeCommandId = Date.now();
+
+              // 如果需要通知Compose端执行了加载操作，可以添加一个加载状态标识
+              // 例如，如果有onReload回调，可以调用它
+              if (this.compose_args.onReload) {
+                this.compose_args.onReload();
+              }
+            }
+          })
+          .margin({ left: 10 })
+      }
+      .margin({ bottom: 10 })
+
+      Row() {
+        Button("后退")
+          .onClick(() => {
+            // 执行后退操作
+            if (this.webviewController && this.webviewController.accessBackward &&
+            this.webviewController.backward && this.webviewController.accessBackward()) {
+              this.webviewController.backward();
+              console.info("后退操作执行成功");
+
+              // 将后退状态同步给Compose端
+              this.compose_args.currentUrl = this.currentUrl;
+              this.compose_args.urlChangeCommandId = Date.now();
+
+              if (this.compose_args.onNavigateBack) {
+                this.compose_args.onNavigateBack();
+              }
+            } else {
+              console.info("无法后退 - 没有后退历史或控制器不可用");
+            }
+          })
+          .layoutWeight(1)
+
+        Button("首页")
+          .onClick(() => {
+            console.info("点击首页按钮，返回首页URL: " + this.homeUrl);
+            // 执行首页操作 - 返回到保存的首页URL
+            if (this.homeUrl && this.homeUrl.trim() !== '') {
+              // 使用保存的首页URL
+              this.currentUrl = this.homeUrl;
+
+              if (this.webviewController) {
+                console.info("开始加载首页URL: " + this.homeUrl);
+                this.webviewController.loadUrl({
+                  url: this.homeUrl
+                });
+                console.info("首页操作执行成功，加载URL: " + this.homeUrl);
+
+                // 将首页状态同步给Compose端
+                this.compose_args.currentUrl = this.homeUrl;
+                this.compose_args.urlChangeCommandId = Date.now();
+
+                if (this.compose_args.onGoHome) {
+                  this.compose_args.onGoHome();
+                }
+              } else {
+                console.error("WebViewController未初始化");
+              }
+            } else {
+              console.warn("首页URL未设置或为空");
+              // 如果没有设置首页URL，则使用默认页面
+              this.currentUrl = "about:blank";
+              if (this.webviewController) {
+                this.webviewController.loadUrl({
+                  url: this.currentUrl
+                });
+              }
+              this.compose_args.currentUrl = this.currentUrl;
+              this.compose_args.urlChangeCommandId = Date.now();
+            }
+          })
+          .layoutWeight(1)
+          .margin({ left: 10 })
+
+
+        Button("前进")
+          .onClick(() => {
+            // 执行前进操作
+            if (this.webviewController && this.webviewController.accessForward &&
+            this.webviewController.forward && this.webviewController.accessForward()) {
+              this.webviewController.forward();
+              console.info("前进操作执行成功");
+
+              // 将前进状态同步给Compose端
+              this.compose_args.currentUrl = this.currentUrl;
+              this.compose_args.urlChangeCommandId = Date.now();
+
+              if (this.compose_args.onNavigateForward) {
+                this.compose_args.onNavigateForward();
+              }
+            } else {
+              console.info("无法前进 - 没有前进历史或控制器不可用");
+            }
+          })
+          .layoutWeight(1)
+          .margin({ left: 10 })
+      }
+      .margin({ bottom: 10 })
+
       Text("WebView Component")
         .fontSize(14)
         .fontWeight(FontWeight.Bold)
         .margin({ bottom: 10 })
 
-      Text(`URL: ${this.currentUrl}`)
+      Text(`当前URL: ${this.currentUrl}`)
         .fontSize(14)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
-
       Web({
         src: this.currentUrl,
         controller: this.webviewController
       })
-      .onPageBegin((event: OnPageBeginEvent) => {
-             console.info(`页面开始加载时更新 URL: ${event.url}`);
-             // 页面开始加载时更新 URL
-             this.currentUrl = event.url;
-              // 通过更新参数通知Compose端
-                this.compose_args.currentUrl = event.url;
-             try {
-               // 触发URL变更事件，通过增加commandId来通知变化
-               this.compose_args.urlChangeCommandId = Date.now(); // 使用时间戳作为唯一ID
+        .onPageBegin((event: OnPageBeginEvent) => {
+          console.info(`页面开始加载时更新 URL: ${event.url}`);
+          // 页面开始加载时更新 URL
+          this.currentUrl = event.url;
+          // 通过更新参数通知Compose端
+          this.compose_args.currentUrl = event.url;
+          try {
+            // 触发URL变更事件，通过增加commandId来通知变化
+            this.compose_args.urlChangeCommandId = Date.now(); // 使用时间戳作为唯一ID
 
-               if (this.compose_args.onLoadStart) {
-                 this.compose_args.onLoadStart();
-               }
-             } catch (e) {
-               console.error("执行回调时出错:", e);
-             }
-           })
-           .onPageEnd((event: OnPageEndEvent) => {
-             console.info(`页面加载完成时更新 URL: ${event.url}`);
-             // 页面加载完成时更新 URL
-             this.currentUrl = event.url;
-             // 通过更新参数通知Compose端
-             this.compose_args.currentUrl = event.url;
-             try {
-               // 触发URL变更事件，通过增加commandId来通知变化
-               this.compose_args.urlChangeCommandId = Date.now(); // 使用时间戳作为唯一ID
+            if (this.compose_args.onLoadStart) {
+              this.compose_args.onLoadStart();
+            }
+          } catch (e) {
+            console.error("执行回调时出错:", e);
+          }
+        })
+        .onPageEnd((event: OnPageEndEvent) => {
+          console.info(`页面加载完成时更新 URL: ${event.url}`);
+          // 页面加载完成时更新 URL
+          this.currentUrl = event.url;
+          // 通过更新参数通知Compose端
+          this.compose_args.currentUrl = event.url;
+          try {
+            // 触发URL变更事件，通过增加commandId来通知变化
+            this.compose_args.urlChangeCommandId = Date.now(); // 使用时间戳作为唯一ID
 
-               if (this.compose_args.onLoadFinish) {
-                 this.compose_args.onLoadFinish();
-               }
-             } catch (e) {
-               console.error("执行回调时出错:", e);
-             }
-           })
+            if (this.compose_args.onLoadFinish) {
+              this.compose_args.onLoadFinish();
+            }
+          } catch (e) {
+            console.error("执行回调时出错:", e);
+          }
+        })
         .onErrorReceive((event: GeneratedTypeLiteralInterface_1) => {
           try {
             if (this.compose_args.onLoadError) {
@@ -350,89 +484,100 @@ interface GeneratedTypeLiteralInterface_1 {
             console.error("执行onLoadError回调时出错:", e);
           }
         })
-      .javaScriptAccess(this.compose_args.javaScriptEnabled)
-      .domStorageAccess(this.compose_args.domStorageEnabled)
-      .databaseAccess(this.compose_args.databaseEnabled)
-      .cacheMode(this.compose_args.cacheMode === "default" ? CacheMode.Default : CacheMode.None)
-      .width('100%')
-      .height('80%')
+        .javaScriptAccess(this.compose_args.javaScriptEnabled)
+        .domStorageAccess(this.compose_args.domStorageEnabled)
+        .databaseAccess(this.compose_args.databaseEnabled)
+        .cacheMode(this.compose_args.cacheMode === "default" ? CacheMode.Default : CacheMode.None)
+        .width('100%')
+        .height('80%')
     }
     .width('100%')
     .height('100%')
     .padding(10)
-    .onAreaChange((_oldValue: Area) => {
-      // 添加详细的调试日志
-      console.info(`=== Navigation Debug ===`);
-      console.info(`Current navigationCommandId: ${this.compose_args.navigationCommandId}`);
-      console.info(`Local navigationCommandId: ${this.navigationCommandId}`);
-      console.info(`Navigation command: ${this.navigationCommand}`);
-      console.info(`Current URL from compose_args: ${this.compose_args.url}`);
-      console.info(`Local currentUrl: ${this.currentUrl}`);
 
-      // 检查参数是否存在
-      if (this.compose_args.navigationCommandId === undefined) {
-        console.info("navigationCommandId 未定义");
-      } else {
-        console.info("navigationCommandId 值: " + this.compose_args.navigationCommandId);
-      }
+    .onAreaChange((oldValue: Area, newValue: Area) => {
+      try {
+        // 检查URL是否发生变化（仅当Compose端URL与当前URL不同时才更新）
+        if (this.compose_args.url && this.compose_args.url !== this.currentUrl) {
+          console.info(`检测到Compose端URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
 
-      if (this.compose_args.navigationCommand === undefined) {
-        console.info("navigationCommand 未定义");
-      } else {
-        console.info("navigationCommand 值: " + this.compose_args.navigationCommand);
-      }
+          // 更新本地URL
+          this.currentUrl = this.compose_args.url;
+          console.info(`本地URL同步成功: ${this.currentUrl}`);
 
-      console.info(`=== End of Debug ===`);
+          // 立即加载新URL到WebView
+          if (this.webviewController) {
+            this.webviewController.loadUrl({
+              url: this.currentUrl
+            });
+            console.info(`WebView已加载新URL: ${this.currentUrl}`);
+          }
+        }
 
-       try {
-        // 检查URL是否发生变化
-        if (this.compose_args.url !== this.currentUrl) {
-           console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
-           if (this.compose_args.url && this.compose_args.url.trim() !== '') {
-             this.currentUrl = this.compose_args.url;
-           } else {
-             console.warn("接收到空URL，忽略更新");
-           }
+        // 检查导航命令变化
+        const currentNavId = this.compose_args.navigationCommandId !== undefined ?
+        Number(this.compose_args.navigationCommandId) : undefined;
 
-           if (this.webviewController && this.currentUrl !== this.compose_args.url) {
-             this.webviewController.loadUrl({
-               url: this.currentUrl
-             });
-           }
-         }
-
-        // 检查是否有新的导航命令
-        // 确保比较的是数值类型
-        const currentId = this.compose_args.navigationCommandId !== undefined ?
-          Number(this.compose_args.navigationCommandId) : undefined;
-        const localId = Number(this.navigationCommandId);
-
-        console.info(`转换后的ID比较 - Current: ${currentId}, Local: ${localId}`);
-
-        if (currentId !== undefined && currentId !== localId) {
+        if (currentNavId !== undefined && currentNavId > this.lastHandledCommandId) {
           console.info("检测到新的导航命令，准备处理");
 
           // 更新本地状态
-          this.navigationCommandId = currentId;
+          this.navigationCommandId = currentNavId;
           this.navigationCommand = this.compose_args.navigationCommand || '';
+          this.lastHandledCommandId = currentNavId;
           console.info("更新本地状态完成，开始处理命令");
 
-          // 根据命令执行相应操作
+          // 处理导航命令
           this.handleNavigationCommand();
-        } else if (currentId !== undefined) {
-          console.info("导航命令ID相同，无需处理");
-        } else {
-          console.info("navigationCommandId 未定义，跳过处理");
         }
       } catch (e) {
-        console.error("处理导航命令时出错:", e);
+        console.error("处理URL变化时出错:", e);
       }
     })
-
   }
 
-    // 新增处理导航命令的方法
-private handleNavigationCommand(): void {
+  private onNavigationCommandIdChange(): void {
+    try {
+      // 检查URL是否发生变化
+      if (this.compose_args.url && this.compose_args.url !== this.currentUrl) {
+        console.info(`检测到Compose端URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
+
+        // 更新本地URL
+        this.currentUrl = this.compose_args.url;
+        console.info(`本地URL同步成功: ${this.currentUrl}`);
+
+        // 立即加载新URL到WebView
+        if (this.webviewController) {
+          this.webviewController.loadUrl({
+            url: this.currentUrl
+          });
+          console.info(`WebView已加载新URL: ${this.currentUrl}`);
+        }
+      }
+
+      // 检查导航命令变化
+      const currentNavId = this.compose_args.navigationCommandId !== undefined ?
+      Number(this.compose_args.navigationCommandId) : undefined;
+
+      if (currentNavId !== undefined && currentNavId > this.lastHandledCommandId) {
+        console.info("检测到新的导航命令，准备处理");
+
+        // 更新本地状态
+        this.navigationCommandId = currentNavId;
+        this.navigationCommand = this.compose_args.navigationCommand || '';
+        this.lastHandledCommandId = currentNavId;
+        console.info("更新本地状态完成，开始处理命令");
+
+        // 处理导航命令
+        // this.handleNavigationCommand();
+      }
+    } catch (e) {
+      console.error("处理URL变化时出错:", e);
+    }
+  }
+
+  // 新增处理导航命令的方法
+  private handleNavigationCommand(): void {
     console.info(`处理导航命令: ${this.navigationCommand}, commandId: ${this.navigationCommandId}`);
 
     try {
@@ -441,7 +586,7 @@ private handleNavigationCommand(): void {
           console.info("执行后退操作");
           try {
             if (this.webviewController && this.webviewController.accessBackward &&
-                this.webviewController.backward && this.webviewController.accessBackward()) {
+            this.webviewController.backward && this.webviewController.accessBackward()) {
               this.webviewController.backward();
               console.info("后退操作执行成功");
               // 后退成功后更新当前URL并通知Compose端
@@ -465,7 +610,7 @@ private handleNavigationCommand(): void {
           console.info("执行前进操作");
           try {
             if (this.webviewController && this.webviewController.accessForward &&
-                this.webviewController.forward && this.webviewController.accessForward()) {
+            this.webviewController.forward && this.webviewController.accessForward()) {
               this.webviewController.forward();
               console.info("前进操作执行成功");
               // 前进成功后更新当前URL并通知Compose端
@@ -534,7 +679,7 @@ private handleNavigationCommand(): void {
         default:
           console.info("未知导航命令: " + this.navigationCommand);
 
-          // 如果是loadUrl命令但没有匹配上面的情况，则直接加载URL
+        // 如果是loadUrl命令但没有匹配上面的情况，则直接加载URL
           if (this.navigationCommand === "loadUrl") {
             console.info("直接加载URL: " + this.currentUrl);
             if (this.webviewController) {
@@ -549,5 +694,4 @@ private handleNavigationCommand(): void {
       console.error("处理导航命令时发生异常:", e);
     }
   }
-
 }

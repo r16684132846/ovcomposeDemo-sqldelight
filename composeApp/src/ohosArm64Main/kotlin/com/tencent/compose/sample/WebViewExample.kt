@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
@@ -34,7 +35,7 @@ internal fun WebViewExample() {
     val navigator = rememberWebViewNavigator()
 
     // 记录首页URL（用户首次访问的页面）
-    var homeUrl by remember { mutableStateOf(url) }
+    val homeUrl by remember { mutableStateOf(url) }
 
     // 导航命令状态（关键修改：确保状态可观察且递增）
     var navigationCommand by remember { mutableStateOf("") }
@@ -52,25 +53,21 @@ internal fun WebViewExample() {
         TextField(
             value = url,
             onValueChange = {
-                // 确保URL不为空
-                url = it.ifEmpty {
-                    "https://www.baidu.com"
-                }
+                url = it
+                println("URL输入变更，同步到鸿蒙端: $url")
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(60.dp)
                 .padding(8.dp),
             label = { Text("URL") }
         )
 
         Button(
             onClick = {
-                navigator.loadUrl(url)
-                println("url更新 : $url")
-                // 更新导航命令以触发重新加载
                 navigationCommand = "loadUrl"
                 navigationCommandId++
-                println("kn numId--加载 : $navigationCommandId")
+                println("kn numId--加载 url更新 : $navigationCommandId , $url")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,14 +77,14 @@ internal fun WebViewExample() {
         }
 
         // 显示页面加载状态
-        Text(
-            text = when (state.loadingState) {
-                is LoadingState.Initializing -> "初始化中..."
-                is LoadingState.Loading -> "加载中... ${(state.loadingState as LoadingState.Loading).progress}%"
-                is LoadingState.Finished -> "加载完成"
-            },
-            modifier = Modifier.padding(8.dp)
-        )
+//        Text(
+//            text = when (state.loadingState) {
+//                is LoadingState.Initializing -> "初始化中..."
+//                is LoadingState.Loading -> "加载中... ${(state.loadingState as LoadingState.Loading).progress}%"
+//                is LoadingState.Finished -> "加载完成"
+//            },
+//            modifier = Modifier.padding(8.dp)
+//        )
 
         // 导航控制按钮
         Row(
@@ -97,10 +94,9 @@ internal fun WebViewExample() {
         ) {
             Button(
                 onClick = {
-                    println("url后退 : $url")
-                    println("kn numId--back : $navigationCommandId")
                     navigationCommand = "back"
                     navigationCommandId++
+                    println("kn numId--后退 url后退 : $navigationCommandId ,$navigationCommand,$url")
                 },
                 enabled = navigator.canGoBack,
                 modifier = Modifier.weight(1f).padding(4.dp)
@@ -110,10 +106,9 @@ internal fun WebViewExample() {
 
             Button(
                 onClick = {
-                    println("url前进 : $url")
-                    println("kn numId--forward : $navigationCommandId")
                     navigationCommand = "forward"
                     navigationCommandId++
+                    println("kn numId--前进 url前进 : $navigationCommandId ,$navigationCommand,$url")
                 },
                 enabled = navigator.canGoForward,
                 modifier = Modifier.weight(1f).padding(4.dp)
@@ -123,11 +118,9 @@ internal fun WebViewExample() {
 
             Button(
                 onClick = {
-                    println("url刷新 : $url")
-                    println("kn numId--刷新 : $navigationCommandId")
-                    navigator.loadUrl(url)
                     navigationCommand = "reload"
                     navigationCommandId++
+                    println("kn numId--刷新 url刷新 : $navigationCommandId ,$navigationCommand ,$url")
                 },
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
@@ -136,13 +129,12 @@ internal fun WebViewExample() {
 
             Button(
                 onClick = {
-                    println("url首页 : $url")
-                    println("kn numId--首页 : $navigationCommandId")
                     // 返回到首页URL（用户首次访问的页面）
                     url = homeUrl
-                    navigator.loadUrl(homeUrl)
+//                    navigator.loadUrl(homeUrl)
                     navigationCommand = "home"
                     navigationCommandId++
+                    println("kn numId--加载 url更新 : $navigationCommandId , $url")
                 },
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
@@ -161,7 +153,7 @@ internal fun WebViewExample() {
                     modifier = Modifier.fillMaxSize(),
                     parameter = js {
                         "url"(url)
-//                        "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
+                        println("kotlin传递给鸿蒙url : $url")
                         "userAgent"(userAgent)
                         "databaseEnabled"(true)
                         "domStorageEnabled"(true)
@@ -174,16 +166,7 @@ internal fun WebViewExample() {
                         val newUrl = jsObject["currentUrl"]?.asString()?.toString()
                         if (!newUrl.isNullOrEmpty()) {
                             url = newUrl
-                        }
-                        jsObject.apply {
-                            "url"(if (url.isNullOrEmpty()) "https://www.baidu.com" else url)
-                            "userAgent"(userAgent)
-                            "databaseEnabled"(true)
-                            "domStorageEnabled"(true)
-                            "cacheMode"("default")
-                            "javaScriptEnabled"(true)
-                            "navigationCommand"(navigationCommand)
-                            "navigationCommandId"(navigationCommandId)
+                            println("鸿蒙返回url :  $url")
                         }
                     }
                 )
