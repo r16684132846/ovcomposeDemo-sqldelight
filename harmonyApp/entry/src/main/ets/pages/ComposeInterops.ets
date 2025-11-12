@@ -259,8 +259,6 @@ interface WebViewArgs {
   onReload?: () => void
   onGoHome?: () => void
   urlChangeCommandId?: number
-  canGoBack?: boolean
-  canGoForward?: boolean
   canGoBack: boolean
   canGoForward: boolean
 }

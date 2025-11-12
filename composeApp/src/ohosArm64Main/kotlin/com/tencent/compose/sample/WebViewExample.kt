@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.napi.asBoolean
 import androidx.compose.ui.napi.asString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.napi.js
@@ -80,7 +81,7 @@ internal fun WebViewExample() {
                     navigationCommandId++
                     println("点击后退按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
-//                enabled = canGoBack,
+                enabled = canGoBack,
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
                 Text("后退")
@@ -92,7 +93,7 @@ internal fun WebViewExample() {
                     navigationCommandId++
                     println("点击前进按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
-//                enabled = canGoForward,
+                enabled = canGoForward,
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
                 Text("前进")
@@ -149,16 +150,16 @@ internal fun WebViewExample() {
                             url = newUrl
                         }
                         // 更新导航按钮状态
-                        val backState = jsObject["canGoBack"]?.asString()
+                        val backState = jsObject["canGoBack"]?.asBoolean()
                         println("kotlin端backState:$backState")
                         if (backState != null) {
-                            canGoBack = backState.toBoolean()
+                            canGoBack = backState
                         }
 
-                        val forwardState = jsObject["canGoForward"]?.asString()
+                        val forwardState = jsObject["canGoForward"]?.asBoolean()
                         println("kotlin端forwardState:$forwardState")
                         if (forwardState != null) {
-                            canGoForward = forwardState.toBoolean()
+                            canGoForward = forwardState
                         }
                         println("鸿蒙返回--url : $url、canGoBackState:$canGoBack、forwardState:$canGoForward")
                     }
