@@ -150,11 +150,13 @@ internal fun WebViewExample() {
                         }
                         // 更新导航按钮状态
                         val backState = jsObject["canGoBack"]?.asString()
+                        println("kotlin端backState:$backState")
                         if (backState != null) {
                             canGoBack = backState.toBoolean()
                         }
 
                         val forwardState = jsObject["canGoForward"]?.asString()
+                        println("kotlin端forwardState:$forwardState")
                         if (forwardState != null) {
                             canGoForward = forwardState.toBoolean()
                         }

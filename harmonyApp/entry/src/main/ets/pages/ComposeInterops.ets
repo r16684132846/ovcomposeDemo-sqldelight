@@ -261,6 +261,8 @@ interface WebViewArgs {
   urlChangeCommandId?: number
   canGoBack?: boolean
   canGoForward?: boolean
+  canGoBack: boolean
+  canGoForward: boolean
 }
 
 @Builder
@@ -293,13 +295,7 @@ struct webview {
     } else {
       console.warn("WebView URL 为空或无效，使用默认值");
       this.currentUrl = "about:blank";
-      this.homeUrl = "about:blank";
     }
-
-    // if (this.compose_args.currentUrl && this.compose_args.currentUrl !== this.currentUrl) {
-    //   this.currentUrl = this.compose_args.currentUrl;
-    //   console.info("同步compose_args.currentUrl到currentUrl: " + this.currentUrl);
-    // }
     // 确保在初始化时不会意外重置导航历史
     if (this.webviewController) {
       if (this.currentUrl !== "about:blank") {
@@ -312,23 +308,19 @@ struct webview {
 
   build() {
     Column() {
-      TextInput({
-        text: $$this.compose_args.currentUrl,
-        placeholder: "请输入URL"
-      })
-        .onChange(() => {
-          this.onNavigationChange()
-        })
-        .height(36)
       Text("WebView Component")
         .fontSize(14)
         .fontWeight(FontWeight.Bold)
         .margin({ bottom: 10 })
 
-      Text(`当前URL: ${this.currentUrl}`)
+      Text(`当前URL: ${this.compose_args.currentUrl}`)
         .fontSize(14)
         .maxLines(1)
         .textOverflow({ overflow: TextOverflow.Ellipsis })
+        .onAreaChange((oldValue: Area, newValue: Area) => {
+          this.onNavigationChange()
+          console.info(`区域已改变: ${this.compose_args.currentUrl} x ${this.compose_args.url}`);
+        })
       Web({
         src: this.currentUrl,
         controller: this.webviewController
@@ -343,13 +335,10 @@ struct webview {
             // 触发URL变更事件，通过增加commandId来通知变化
             this.compose_args.urlChangeCommandId = Date.now(); // 使用时间戳作为唯一ID
 
-            // 更新导航状态
-            if (this.webviewController) {
-              this.compose_args.canGoBack =
-                this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-              this.compose_args.canGoForward =
-                this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-            }
+            // 延迟更新导航状态，确保WebView有足够时间更新导航历史
+            setTimeout(() => {
+              this.updateNavigationState();
+            }, 100);
 
             if (this.compose_args.onLoadStart) {
               this.compose_args.onLoadStart();
@@ -375,6 +364,10 @@ struct webview {
               this.compose_args.canGoForward =
                 this.webviewController.accessForward ? this.webviewController.accessForward() : false;
             }
+            // 延迟更新导航状态，确保WebView有足够时间更新导航历史
+            setTimeout(() => {
+              this.updateNavigationState();
+            }, 100);
 
             if (this.compose_args.onLoadFinish) {
               this.compose_args.onLoadFinish();
@@ -390,6 +383,11 @@ struct webview {
               const errorCode = event.error.getErrorCode();
               this.compose_args.onLoadError(`Error: ${errorInfo}, Code: ${errorCode}`);
             }
+
+            // 错误时也更新导航状态
+            setTimeout(() => {
+              this.updateNavigationState();
+            }, 100);
           } catch (e) {
             console.error("执行onLoadError回调时出错:", e);
           }
@@ -406,14 +404,42 @@ struct webview {
     .padding(10)
   }
 
+  // 新增方法：统一更新导航状态
+  private updateNavigationState(): void {
+    if (this.webviewController) {
+      try {
+        const canGoBack = this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
+        const canGoForward = this.webviewController.accessForward ? this.webviewController.accessForward() : false;
+        console.info(`更新导航状态 - canGoBack: ${canGoBack}, canGoForward: ${canGoForward}`);
+        this.compose_args.canGoBack = canGoBack;
+        this.compose_args.canGoForward = canGoForward;
+
+        // 保存旧的状态值用于比较
+        const oldCanGoBack = this.compose_args.canGoBack;
+        const oldCanGoForward = this.compose_args.canGoForward;
+        console.info(`更新导航状态 - oldCanGoBack: ${oldCanGoBack}, oldCanGoForward: ${oldCanGoForward}`);
+
+        if (oldCanGoBack !== canGoBack || oldCanGoForward !== canGoForward) {
+          this.compose_args.urlChangeCommandId = Date.now();
+        }
+      } catch (e) {
+        console.error("更新导航状态时出错:", e);
+        // 出错时设为默认值   
+        this.compose_args.canGoBack = false;
+        this.compose_args.canGoForward = false;
+      }
+    }
+  }
+
   // 导航命令处理逻辑
   private onNavigationChange(): void {
     // 检查导航命令变化
     const currentNavId = this.compose_args.navigationCommandId !== undefined ?
     Number(this.compose_args.navigationCommandId) : undefined;
 
-    // 同时检查URL变化
-    if (this.compose_args.currentUrl && this.compose_args.currentUrl !== this.currentUrl) {
+    // 同时检查URL变化，但只在URL非空时更新
+    if (this.compose_args.currentUrl && this.compose_args.currentUrl.trim() !== '' &&
+      this.compose_args.currentUrl !== this.currentUrl) {
       console.info(`检测到compose_args.currentUrl变化，从 ${this.currentUrl} 更新为 ${this.compose_args.currentUrl}`);
       this.currentUrl = this.compose_args.currentUrl;
     }
@@ -452,6 +478,12 @@ struct webview {
               if (currentNavId > this.lastHandledCommandId) {
                 this.lastHandledCommandId = currentNavId;
               }
+
+              // 延迟更新导航状态
+              setTimeout(() => {
+                this.updateNavigationState();
+              }, 100);
+
               return;
             } else {
               console.info("无法后退 - 没有后退历史或控制器不可用");
@@ -468,23 +500,19 @@ struct webview {
               this.webviewController.forward();
               console.info("前进操作执行成功");
               // 前进成功后更新当前URL并通知Compose端
-              // 注意：前进操作后URL会自动变化，我们会在onPageBegin中处理URL更新
               if (this.compose_args.onNavigateForward) {
                 this.compose_args.onNavigateForward();
               }
+
+              // 延迟更新导航状态
+              setTimeout(() => {
+                this.updateNavigationState();
+              }, 100);
             } else {
               console.info("无法前进 - 没有前进历史或控制器不可用");
             }
           } catch (e) {
             console.error("执行前进操作时出错:", e);
-          } finally {
-            // 更新导航状态
-            if (this.webviewController) {
-              this.compose_args.canGoBack =
-                this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-              this.compose_args.canGoForward =
-                this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-            }
           }
           break;
         case "loadUrl":
@@ -500,17 +528,14 @@ struct webview {
               if (this.compose_args.onReload) {
                 this.compose_args.onReload();
               }
+
+              // 延迟更新导航状态
+              setTimeout(() => {
+                this.updateNavigationState();
+              }, 100);
             }
           } catch (e) {
             console.error("执行刷新操作时出错:", e);
-          } finally {
-            // 更新导航状态
-            if (this.webviewController) {
-              this.compose_args.canGoBack =
-                this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-              this.compose_args.canGoForward =
-                this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-            }
           }
           break;
         case "home":
@@ -550,15 +575,44 @@ struct webview {
             this.compose_args.onGoHome();
           }
 
-          // 更新导航状态
-          if (this.webviewController) {
-            this.compose_args.canGoBack =
-              this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-            this.compose_args.canGoForward =
-              this.webviewController.accessForward ? this.webviewController.accessForward() : false;
+          // 延迟更新导航状态
+          setTimeout(() => {
+            this.updateNavigationState();
+          }, 100);
+          break;
+        case "executeJs":
+          console.info("执行JavaScript代码");
+          try {
+            if (this.webviewController && this.compose_args.jsMessageToSend) {
+              const script = `(function() {
+                  try {
+                    // 尝试执行传入的JavaScript代码
+                    var result = eval('${this.compose_args.jsMessageToSend}');
+                    // 发送结果回Kotlin端
+                    if (window.WebViewJavascriptBridge && window.WebViewJavascriptBridge.onResult) {
+                      window.WebViewJavascriptBridge.onResult(JSON.stringify(result));
+                    }
+                    return JSON.stringify(result);
+                  } catch (e) {
+                    return 'Error: ' + e.message;
+                  }
+                })();
+              `;
+              this.webviewController.runJavaScript({
+                script: script,
+                callback: (result: string) => {
+                  console.info("JavaScript执行结果: " + result);
+                  // 可以通过回调将结果发送回Kotlin
+                }
+              })
+                .catch((e: Error) => {
+                  console.error("JavaScript执行失败: " + e.message);
+                });
+            }
+          } catch (e) {
+            console.error("执行JavaScript时出错:", e);
           }
           break;
-
         case "":
           // 处理空命令的情况，当命令为空时默认加载当前URL
           if (this.currentUrl && this.currentUrl.trim() !== '') {
@@ -569,13 +623,10 @@ struct webview {
               });
               console.info("空命令情况下URL加载成功");
             }
-            // 更新导航状态
-            if (this.webviewController) {
-              this.compose_args.canGoBack =
-                this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-              this.compose_args.canGoForward =
-                this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-            }
+            // 延迟更新导航状态
+            setTimeout(() => {
+              this.updateNavigationState();
+            }, 100);
           }
           break;
 
@@ -593,24 +644,18 @@ struct webview {
             }
           }
 
-        // 更新导航状态
-          if (this.webviewController) {
-            this.compose_args.canGoBack =
-              this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-            this.compose_args.canGoForward =
-              this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-          }
+        // 延迟更新导航状态
+          setTimeout(() => {
+            this.updateNavigationState();
+          }, 100);
       }
     } catch (e) {
       console.error("处理导航命令时发生异常:", e);
 
       // 即使发生异常，也尝试更新导航状态
-      if (this.webviewController) {
-        this.compose_args.canGoBack =
-          this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-        this.compose_args.canGoForward =
-          this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-      }
+      setTimeout(() => {
+        this.updateNavigationState();
+      }, 100);
     }
 
     // 更新最后处理的命令ID，避免重复处理
