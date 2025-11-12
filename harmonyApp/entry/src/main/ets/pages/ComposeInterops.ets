@@ -278,16 +278,18 @@ struct webview {
   @Consume compose_args: WebViewArgs
   private webviewController: WebController = new WebController();
   @State private currentUrl: string = ''
-  @State @Watch('onNavigationCommandIdChange') private navigationCommand: string = ''
-  @State @Watch('onNavigationCommandIdChange') private navigationCommandId: number = 0
+  @State @Watch('onNavigationChange') private navigationCommand: string = ''
+  @State @Watch('onNavigationChange') private navigationCommandId: number = 0
   @State private lastHandledCommandId: number = -1
-  @State private homeUrl: string = ''
 
   aboutToAppear(): void {
-    if (this.compose_args.url && this.compose_args.url.trim() !== '') {
-      this.currentUrl = this.compose_args.url;
-      this.homeUrl = this.compose_args.url;
+    // 保存原始的URL，避免在初始化时重置导航历史
+    const originalUrl = this.compose_args.url;
+
+    if (originalUrl && originalUrl.trim() !== '') {
+      this.currentUrl = originalUrl;
       console.info("设置初始URL和首页URL: " + this.currentUrl);
+      //保留导航历史
     } else {
       console.warn("WebView URL 为空或无效，使用默认值");
       this.currentUrl = "about:blank";
@@ -298,17 +300,26 @@ struct webview {
     //   this.currentUrl = this.compose_args.currentUrl;
     //   console.info("同步compose_args.currentUrl到currentUrl: " + this.currentUrl);
     // }
+    // 确保在初始化时不会意外重置导航历史
+    if (this.webviewController) {
+      if (this.currentUrl !== "about:blank") {
+        this.webviewController.loadUrl({
+          url: this.currentUrl
+        });
+      }
+    }
   }
 
   build() {
     Column() {
       TextInput({
-        text: this.compose_args.currentUrl,
+        text: $$this.compose_args.currentUrl,
         placeholder: "请输入URL"
-      }).layoutWeight(1)
+      })
         .onChange(() => {
-          this.onNavigationCommandIdChange()
+          this.onNavigationChange()
         })
+        .height(36)
       Text("WebView Component")
         .fontSize(14)
         .fontWeight(FontWeight.Bold)
@@ -393,14 +404,10 @@ struct webview {
     .width('100%')
     .height('100%')
     .padding(10)
-
-    // .onAreaChange((oldValue: Area, newValue: Area) => {
-    //
-    // })
   }
 
   // 导航命令处理逻辑
-  private onNavigationCommandIdChange(): void {
+  private onNavigationChange(): void {
     // 检查导航命令变化
     const currentNavId = this.compose_args.navigationCommandId !== undefined ?
     Number(this.compose_args.navigationCommandId) : undefined;
@@ -411,11 +418,8 @@ struct webview {
       this.currentUrl = this.compose_args.currentUrl;
     }
 
+    // 确保不会在处理导航命令时意外重置URL
     if (currentNavId !== undefined && currentNavId > this.lastHandledCommandId) {
-      // 处理导航命令
-      this.handleNavigationCommand();
-    } else if (currentNavId !== undefined && currentNavId === this.lastHandledCommandId) {
-      // 即使ID相同，也要检查命令是否变化
       this.handleNavigationCommand();
     }
   }
@@ -444,19 +448,16 @@ struct webview {
               if (this.compose_args.onNavigateBack) {
                 this.compose_args.onNavigateBack();
               }
+              // 更新最后处理的命令ID，避免重复处理
+              if (currentNavId > this.lastHandledCommandId) {
+                this.lastHandledCommandId = currentNavId;
+              }
+              return;
             } else {
               console.info("无法后退 - 没有后退历史或控制器不可用");
             }
           } catch (e) {
             console.error("执行后退操作时出错:", e);
-          } finally {
-            // 更新导航状态
-            if (this.webviewController) {
-              this.compose_args.canGoBack =
-                this.webviewController.accessBackward ? this.webviewController.accessBackward() : false;
-              this.compose_args.canGoForward =
-                this.webviewController.accessForward ? this.webviewController.accessForward() : false;
-            }
           }
           break;
         case "forward":
@@ -514,6 +515,12 @@ struct webview {
           break;
         case "home":
           console.info("执行首页操作，跳转到: " + this.compose_args.url);
+          //loadUrl 来导航到首页
+          if (this.webviewController) {
+            this.webviewController.loadUrl({
+              url: this.compose_args.url
+            });
+          }
           // 检查URL是否发生变化
           if (this.compose_args.url !== this.currentUrl) {
             console.info(`检测到URL变化，从 ${this.currentUrl} 更新为 ${this.compose_args.url}`);
@@ -571,6 +578,7 @@ struct webview {
             }
           }
           break;
+
         default:
           console.info("未知导航命令: " + currentNavCommand);
 

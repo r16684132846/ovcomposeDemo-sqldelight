@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
@@ -29,19 +30,13 @@ internal fun WebViewExample() {
     var url by remember { mutableStateOf("https://www.baidu.com/") }
     var canGoBack by remember { mutableStateOf(false) }
     var canGoForward by remember { mutableStateOf(false) }
-
-    // 记录首页URL
     val homeUrl by remember { mutableStateOf(url) }
-
-    // 导航命令状态
     var navigationCommand by remember { mutableStateOf("") }
     var navigationCommandId by remember { mutableStateOf(0) }
-
     val userAgent =
         "Mozilla/5.0 (OpenHarmony) AppleWebKit/537.36 (KHTML, like Gecko) Version/9.0 Mobile"
-
-    // 是否加载失败
     val webViewError by remember { mutableStateOf<String?>(null) }
+    /*var jsMessageToSend by remember { mutableStateOf("") }*/
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -50,11 +45,13 @@ internal fun WebViewExample() {
             value = url,
             onValueChange = {
                 url = it
-                println("URL输入变更，同步到鸿蒙端: $url")
+                println("kotlin端URL输入变更: $url")
             },
             modifier = Modifier
+                .height(66.dp)
                 .fillMaxWidth()
-                .padding(8.dp),
+                .height(60.dp)
+                .padding(4.dp),
             label = { Text("URL") }
         )
 
@@ -62,11 +59,11 @@ internal fun WebViewExample() {
             onClick = {
                 navigationCommand = "loadUrl"
                 navigationCommandId++
-                println("kn numId--加载 url更新 : $navigationCommandId , $url")
+                println("点击加载按钮: $navigationCommandId ,$navigationCommand,$url")
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(6.dp)
         ) {
             Text("加载")
         }
@@ -75,13 +72,13 @@ internal fun WebViewExample() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(6.dp)
         ) {
             Button(
                 onClick = {
                     navigationCommand = "back"
                     navigationCommandId++
-                    println("kn numId--后退 url后退 : $navigationCommandId ,$navigationCommand,$url")
+                    println("点击后退按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
 //                enabled = canGoBack,
                 modifier = Modifier.weight(1f).padding(4.dp)
@@ -93,7 +90,7 @@ internal fun WebViewExample() {
                 onClick = {
                     navigationCommand = "forward"
                     navigationCommandId++
-                    println("kn numId--前进 url前进 : $navigationCommandId ,$navigationCommand,$url")
+                    println("点击前进按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
 //                enabled = canGoForward,
                 modifier = Modifier.weight(1f).padding(4.dp)
@@ -105,7 +102,7 @@ internal fun WebViewExample() {
                 onClick = {
                     navigationCommand = "reload"
                     navigationCommandId++
-                    println("kn numId--刷新 url刷新 : $navigationCommandId ,$navigationCommand ,$url")
+                    println("点击刷新按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
@@ -117,7 +114,7 @@ internal fun WebViewExample() {
                     url = homeUrl
                     navigationCommand = "home"
                     navigationCommandId++
-                    println("kn numId--加载 url更新 : $navigationCommandId , $url")
+                    println("点击首页按钮 : $navigationCommandId ,$navigationCommand,$url")
                 },
                 modifier = Modifier.weight(1f).padding(4.dp)
             ) {
@@ -136,7 +133,6 @@ internal fun WebViewExample() {
                     modifier = Modifier.fillMaxSize(),
                     parameter = js {
                         "url"(url)
-                        println("kotlin传递给鸿蒙url : $url")
                         "userAgent"(userAgent)
                         "databaseEnabled"(true)
                         "domStorageEnabled"(true)
@@ -145,12 +141,12 @@ internal fun WebViewExample() {
                         "navigationCommand"(navigationCommand)
                         "navigationCommandId"(navigationCommandId)
                         println("kotlin传递给鸿蒙navigationCommand和ID : $navigationCommand, $navigationCommandId")
+                        println("kotlin传递给鸿蒙的 url:$url、ID:$navigationCommandId、navigationCommand: $navigationCommand ")
                     },
                     update = { jsObject ->
                         val newUrl = jsObject["currentUrl"]?.asString()
                         if (!newUrl.isNullOrEmpty()) {
                             url = newUrl
-                            println("鸿蒙返回url :  $url")
                         }
                         // 更新导航按钮状态
                         val backState = jsObject["canGoBack"]?.asString()
@@ -162,6 +158,7 @@ internal fun WebViewExample() {
                         if (forwardState != null) {
                             canGoForward = forwardState.toBoolean()
                         }
+                        println("鸿蒙返回--url : $url、canGoBackState:$canGoBack、forwardState:$canGoForward")
                     }
                 )
             } else {
