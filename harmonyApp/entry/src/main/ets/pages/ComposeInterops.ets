@@ -317,12 +317,13 @@ struct webview {
         .textOverflow({ overflow: TextOverflow.Ellipsis })
         .onAreaChange((oldValue: Area, newValue: Area) => {
           this.onNavigationChange()
-          console.info(`区域已改变: ${this.compose_args.currentUrl} x ${this.compose_args.url}`);
+          console.info(`区域已改变: ${this.compose_args.currentUrl} - ${this.compose_args.url}`);
         })
       Web({
         src: this.currentUrl,
         controller: this.webviewController
       })
+        .layoutWeight(1)
         .onPageBegin((event: OnPageBeginEvent) => {
           console.info(`页面开始加载时更新 URL: ${event.url}`);
           // 页面开始加载时更新 URL
@@ -440,6 +441,19 @@ struct webview {
       this.compose_args.currentUrl !== this.currentUrl) {
       console.info(`检测到compose_args.currentUrl变化，从 ${this.currentUrl} 更新为 ${this.compose_args.currentUrl}`);
       this.currentUrl = this.compose_args.currentUrl;
+
+      // 如果是URL更新命令，立即加载新的URL
+      if (this.compose_args.navigationCommand === "updateUrl" && this.webviewController) {
+        this.webviewController.loadUrl({
+          url: this.currentUrl
+        });
+        console.info(`已加载更新后的URL: ${this.currentUrl}`);
+
+        // 更新导航状态
+        setTimeout(() => {
+          this.updateNavigationState();
+        }, 100);
+      }
     }
 
     // 确保不会在处理导航命令时意外重置URL
@@ -578,39 +592,6 @@ struct webview {
             this.updateNavigationState();
           }, 100);
           break;
-        case "executeJs":
-          console.info("执行JavaScript代码");
-          try {
-            if (this.webviewController && this.compose_args.jsMessageToSend) {
-              const script = `(function() {
-                  try {
-                    // 尝试执行传入的JavaScript代码
-                    var result = eval('${this.compose_args.jsMessageToSend}');
-                    // 发送结果回Kotlin端
-                    if (window.WebViewJavascriptBridge && window.WebViewJavascriptBridge.onResult) {
-                      window.WebViewJavascriptBridge.onResult(JSON.stringify(result));
-                    }
-                    return JSON.stringify(result);
-                  } catch (e) {
-                    return 'Error: ' + e.message;
-                  }
-                })();
-              `;
-              this.webviewController.runJavaScript({
-                script: script,
-                callback: (result: string) => {
-                  console.info("JavaScript执行结果: " + result);
-                  // 可以通过回调将结果发送回Kotlin
-                }
-              })
-                .catch((e: Error) => {
-                  console.error("JavaScript执行失败: " + e.message);
-                });
-            }
-          } catch (e) {
-            console.error("执行JavaScript时出错:", e);
-          }
-          break;
         case "":
           // 处理空命令的情况，当命令为空时默认加载当前URL
           if (this.currentUrl && this.currentUrl.trim() !== '') {
@@ -630,6 +611,32 @@ struct webview {
 
         default:
           console.info("未知导航命令: " + currentNavCommand);
+
+        // 添加对URL更新的支持
+          if (currentNavCommand === "updateUrl") {
+            console.info("处理URL更新命令，新URL: " + this.compose_args.currentUrl);
+            // 即使currentUrl为空，也使用url字段作为备选
+            const targetUrl = (this.compose_args.currentUrl && this.compose_args.currentUrl.trim() !== '')
+              ? this.compose_args.currentUrl
+              : this.compose_args.url;
+
+            if (targetUrl && targetUrl.trim() !== '') {
+              this.currentUrl = targetUrl;
+              if (this.webviewController) {
+                this.webviewController.loadUrl({
+                  url: this.currentUrl
+                });
+                console.info("URL更新成功并加载新页面: " + this.currentUrl);
+
+                // 更新导航状态
+                setTimeout(() => {
+                  this.updateNavigationState();
+                }, 100);
+              }
+            } else {
+              console.warn("接收到空URL，忽略更新");
+            }
+          }
 
         // 如果是loadUrl命令但没有匹配上面的情况，则直接加载URL
           if (currentNavCommand === "loadUrl") {

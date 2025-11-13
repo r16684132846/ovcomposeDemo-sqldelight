@@ -37,7 +37,6 @@ internal fun WebViewExample() {
     val userAgent =
         "Mozilla/5.0 (OpenHarmony) AppleWebKit/537.36 (KHTML, like Gecko) Version/9.0 Mobile"
     val webViewError by remember { mutableStateOf<String?>(null) }
-    /*var jsMessageToSend by remember { mutableStateOf("") }*/
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -46,7 +45,9 @@ internal fun WebViewExample() {
             value = url,
             onValueChange = {
                 url = it
-                println("kotlin端URL输入变更: $url")
+                navigationCommand = "updateUrl"
+                navigationCommandId++
+                println("kotlin输入框url地址变化:navigationCommand - $navigationCommand,navigationCommandId - $navigationCommandId,URL - $url")
             },
             modifier = Modifier
                 .height(66.dp)
@@ -151,15 +152,15 @@ internal fun WebViewExample() {
                         }
                         // 更新导航按钮状态
                         val backState = jsObject["canGoBack"]?.asBoolean()
-                        println("kotlin端backState:$backState")
                         if (backState != null) {
                             canGoBack = backState
+                            println("kotlin端backState:$backState")
                         }
 
                         val forwardState = jsObject["canGoForward"]?.asBoolean()
-                        println("kotlin端forwardState:$forwardState")
                         if (forwardState != null) {
                             canGoForward = forwardState
+                            println("kotlin端forwardState:$forwardState")
                         }
                         println("鸿蒙返回--url : $url、canGoBackState:$canGoBack、forwardState:$canGoForward")
                     }
