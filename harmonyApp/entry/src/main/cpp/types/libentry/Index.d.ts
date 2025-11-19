@@ -16,9 +16,13 @@
  */
 
 import { ArkUIViewController } from "compose/src/main/cpp/types/libcompose_arkui_utils";
+import { resourceManager } from "@kit.LocalizationKit";
 
 export const add: (a: number, b: number) => number;
 
 export const MainArkUIViewController: () => ArkUIViewController
 
 export const initResourceManager: (resourceManager: resourceManager.ResourceManager) => number;
+// 添加数据库路径相关的函数声明
+export const setDatabasePath: (path: string) => void;
+export const getDatabasePath: () => string;

@@ -19,6 +19,8 @@ import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.Ab
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { initResourceManager } from 'libentry.so';
+import { fileIo as fs } from '@kit.CoreFileKit';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 const DOMAIN = 0x0000;
 
@@ -26,6 +28,9 @@ export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     initResourceManager(this.context.resourceManager)
+    // 设置数据库路径供native层使用
+    this.setupDatabasePath();
+
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
   }
 
@@ -59,5 +64,100 @@ export default class EntryAbility extends UIAbility {
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+  }
+
+
+  // 设置数据库路径并确保目录存在
+  private async setupDatabasePath(): Promise<void> {
+    try {
+      // 沙箱路径
+      const dbDirectory = `${this.context.filesDir}/database`;
+      hilog.info(DOMAIN, 'testTag', 'dbDirectory: %{public}s', dbDirectory);
+      // 创建数据库文件
+      const dbPath = `${dbDirectory}/my_database.db`;
+      hilog.info(DOMAIN, 'testTag', 'dbPath: %{public}s', dbPath);
+      // 确保数据库目录存在
+      try {
+        await fs.mkdir(dbDirectory, true);
+        hilog.info(DOMAIN, 'testTag', 'Database directory created or already exists: %{public}s', dbDirectory);
+      } catch (mkdirError) {
+        hilog.warn(DOMAIN, 'test', 'Could not create directory (may already exist): %{public}s', mkdirError.message);
+      }
+
+      // 检查目录是否可写
+      try {
+        const testFile = `${dbDirectory}/test.tmp`;
+        const stream = fs.createWriteStream(testFile);
+        stream.write('test');
+        stream.close();
+        fs.unlinkSync(testFile);
+        hilog.info(DOMAIN, 'testTag', 'Database directory is writable');
+      } catch (error) {
+        hilog.error(DOMAIN, 'testTag', 'Database directory is not writable: %{public}s', error.message);
+        return;
+      }
+
+      // 将dbPath传递到native层
+      setDatabasePath(dbPath);
+    } catch (error) {
+      const businessError = error as BusinessError;
+      hilog.error(DOMAIN, 'testTag', 'Failed to setup database path. Error: %{public}s, Code: %{public}d',
+        businessError.message, businessError.code);
+    }
+  }
+}
+
+// 定义native模块的接口
+interface EntryNativeModule {
+  setDatabasePath(path: string): void;
+
+  getDatabasePath(): string;
+}
+
+// 声明 requireNapi 函数，使用明确的返回类型
+declare function requireNapi(moduleName: string): EntryNativeModule | undefined;
+
+// 实现setDatabasePath函数，通过NAPI调用native层
+function setDatabasePath(dbPath: string) {
+  // 通过native方法设置数据库路径
+  try {
+    hilog.info(DOMAIN, 'testTag', 'Starting to call native setDatabasePath function');
+
+    // 尝试不同的模块名称
+    const moduleNames = ['entry', 'libentry', './entry', '../entry'];
+    let nativeLibrary: EntryNativeModule | undefined = undefined;
+
+    for (let moduleName of moduleNames) {
+      try {
+        hilog.info(DOMAIN, 'testTag', 'Trying to load module: %{public}s', moduleName);
+        // 修改 requireNapi 的调用方式
+        nativeLibrary = requireNapi(moduleName);
+        if (nativeLibrary !== undefined) {
+          hilog.info(DOMAIN, 'testTag', 'Successfully loaded module: %{public}s', moduleName);
+          break;
+        }
+      } catch (e) {
+        hilog.warn(DOMAIN, 'testTag', 'Failed to load module %{public}s: %{public}s', moduleName, e.message);
+      }
+    }
+
+    // 添加调试信息
+    hilog.info(DOMAIN, 'testTag', 'Native library typeof: %{public}s', typeof nativeLibrary);
+    hilog.info(DOMAIN, 'testTag', 'Native library object: %{public}s', JSON.stringify(nativeLibrary));
+
+    if (nativeLibrary !== undefined) {
+      hilog.info(DOMAIN, 'testTag', 'Native library keys: %{public}s', JSON.stringify(Object.keys(nativeLibrary)));
+      if (typeof nativeLibrary.setDatabasePath === 'function') {
+        hilog.info(DOMAIN, 'testTag', 'Successfully found native setDatabasePath function');
+        nativeLibrary.setDatabasePath(dbPath);
+        hilog.info(DOMAIN, 'testTag', 'Successfully set database path to: %{public}s', dbPath);
+      } else {
+        hilog.error(DOMAIN, 'testTag', 'setDatabasePath function not found in native library');
+      }
+    } else {
+      hilog.error(DOMAIN, 'testTag', 'Failed to load native library - library is undefined')
+    }
+  } catch (error) {
+    hilog.error(DOMAIN, 'testTag', 'Error setting database path: %{public}s', error.message)
   }
 }

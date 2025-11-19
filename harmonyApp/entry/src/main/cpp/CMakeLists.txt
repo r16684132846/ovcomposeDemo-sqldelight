@@ -12,9 +12,11 @@ include_directories(${NATIVERENDER_ROOT_PATH}
 
 find_package(skikobridge)
 
-add_library(entry SHARED napi_init.cpp)
+# 将 libkn.cpp 添加到源文件列表中
+add_library(entry SHARED napi_init.cpp sqldelight.cpp)
 target_link_libraries(entry PUBLIC libace_napi.z.so)
 target_link_libraries(entry PUBLIC libdeviceinfo_ndk.z.so)
+target_link_libraries(entry PUBLIC libhilog_ndk.z.so)
 target_link_libraries(entry PUBLIC librawfile.z.so)
 target_link_libraries(entry PUBLIC ${NATIVERENDER_ROOT_PATH}/../../../libs/arm64-v8a/libkn.so)
 target_link_libraries(entry PUBLIC skikobridge::skikobridge)
