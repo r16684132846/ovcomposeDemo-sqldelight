@@ -50,23 +50,27 @@
     ],
     "requestPermissions": [
       {
-        "name": "ohos.permission.CAMERA",
-        "reason": "$string:camera_permission_reason",
+        "name": "ohos.permission.READ_MEDIA",
+        "reason": "$string:read_media_permission_reason",
         "usedScene": {
-          "abilities": [
-            "拍照权限"
-          ]
+          "abilities": ["MainAbility"],
+          "when": "inuse"
         }
       },
       {
-        "name": "ohos.permission.MICROPHONE",
-        "reason": "$string:microphone_permission_reason",
+        "name": "ohos.permission.WRITE_MEDIA",
+        "reason": "$string:write_media_permission_reason",
         "usedScene": {
-          "abilities": [
-            "麦克风"
-          ]
+          "abilities": ["MainAbility"],
+          "when": "inuse"
         }
       }
-    ]
+    ],
+   "metadata": [
+   {
+    "name": "ohos.metadata.libraryPath",
+    "resource": "$profile:library_path"
+   }
+  ]
   }
 }

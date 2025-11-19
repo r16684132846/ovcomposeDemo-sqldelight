@@ -19,13 +19,19 @@ import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.Ab
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { initResourceManager } from 'libentry.so';
+import { fileIo as fs } from '@kit.CoreFileKit';
+import { BusinessError } from '@kit.BasicServicesKit';
+import { setDatabasePath, getDatabasePath } from 'libentry.so';
 
-const DOMAIN = 0x0000;
+const DOMAIN = 0x0D04;
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     initResourceManager(this.context.resourceManager)
+    // 设置数据库路径供native层使用
+    this.setupDatabasePath();
+
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
   }
 
@@ -59,5 +65,55 @@ export default class EntryAbility extends UIAbility {
   onBackground(): void {
     // Ability has back to background
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onBackground');
+  }
+
+
+  // 设置数据库路径并确保目录存在
+  private async setupDatabasePath(): Promise<void> {
+    try {
+      // 沙箱路径
+      const dbDirectory = `${this.context.filesDir}/database`;
+      hilog.info(DOMAIN, 'testTag', 'dbDirectory: %{public}s', dbDirectory);
+      // 创建数据库文件
+      const dbPath = `${dbDirectory}/my_database.db`;
+      hilog.info(DOMAIN, 'testTag', 'dbPath: %{public}s', dbPath);
+      // 确保数据库目录存在
+      try {
+        await fs.mkdir(dbDirectory, true);
+        hilog.info(DOMAIN, 'testTag', 'Database directory created or already exists: %{public}s', dbDirectory);
+      } catch (mkdirError) {
+        hilog.warn(DOMAIN, 'test', 'Could not create directory (may already exist): %{public}s', mkdirError.message);
+      }
+
+      // 检查目录是否可写
+      try {
+        const testFile = `${dbDirectory}/test.tmp`;
+        const stream = fs.createWriteStream(testFile);
+        stream.write('test');
+        stream.close();
+        fs.unlinkSync(testFile);
+        hilog.info(DOMAIN, 'testTag', 'Database directory is writable');
+      } catch (error) {
+        hilog.error(DOMAIN, 'testTag', 'Database directory is not writable: %{public}s', error.message);
+        return;
+      }
+
+      /*// 创建空的数据库文件
+      try {
+        const fd = fs.openSync(dbPath, fs.OpenMode.CREATE | fs.OpenMode.READ_WRITE);
+        fs.closeSync(fd);
+        hilog.info(DOMAIN, 'testTag', 'Database file created or already exists: %{public}s', dbPath);
+      } catch (error) {
+        hilog.error(DOMAIN, 'testTag', 'Failed to create database file: %{public}s', error.message);
+      }*/
+
+      // 将dbPath传递到native层
+      setDatabasePath(dbPath);
+      hilog.info(DOMAIN, 'testTag', 'Successfully set database path to: %{public}s', dbPath);
+    } catch (error) {
+      const businessError = error as BusinessError;
+      hilog.error(DOMAIN, 'testTag', 'Failed to setup database path. Error: %{public}s, Code: %{public}d',
+        businessError.message, businessError.code);
+    }
   }
 }

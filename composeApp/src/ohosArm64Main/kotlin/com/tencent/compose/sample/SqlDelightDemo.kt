@@ -42,16 +42,17 @@ internal fun SqlDelightDemo() {
     var persons by remember { mutableStateOf<List<Person>>(emptyList()) }
     var database by remember { mutableStateOf<MyDatabase?>(null) }
     var nextId by remember { mutableStateOf(1L) }
+    var errorMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         withContext(Dispatchers.Default) {
             try {
                 println("开始初始化数据库...")
                 val driver = createTestDriver()
-                println("数据库驱动创建成功")
+                println("数据库驱动创建成功-${driver}")
                 val db = MyDatabase(driver = driver)
                 database = db
-                println("数据库实例创建成功")
+                println("数据库实例创建成功-${database}")
 
                 // 加载所有人员
                 println("开始加载人员数据...")
@@ -63,12 +64,21 @@ internal fun SqlDelightDemo() {
 
             } catch (e: Exception) {
                 println("数据库初始化失败: ${e.message}")
-                e.printStackTrace() // 打印完整堆栈信息
+                e.printStackTrace()
+                errorMessage = "数据库测试失败: ${e.message}"
             }
         }
     }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                modifier = Modifier.padding(8.dp),
+                style = androidx.compose.material.MaterialTheme.typography.body1
+            )
+        }
+
         Button(onClick = {
             database?.let { db ->
                 println("开始插入新人员: ID=$nextId, 姓名=Person $nextId")

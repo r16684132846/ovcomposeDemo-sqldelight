@@ -18,6 +18,24 @@
 import { appTasks } from '@ohos/hvigor-ohos-plugin';
 
 export default {
-    system: appTasks,  /* Built-in plugin of Hvigor. It cannot be modified. */
-    plugins:[]         /* Custom plugin to extend the functionality of Hvigor. */
+  system: appTasks, /* Built-in plugin of Hvigor. It cannot be modified. */
+  plugins: [
+    // 添加 Native 模块构建配置
+    {
+      name: 'native-module',
+      config: {
+        modules: [
+          {
+            name: 'libentry.so',
+            sourceDir: 'entry/src/main/cpp',
+            buildType: 'shared',
+            cflags: ['-std=c++17'],
+            includeDirs: ['entry/src/main/cpp/include'],
+            dependencies: [],
+            outputDir: 'entry/libs'
+          }
+        ]
+      }
+    }
+  ]
 }

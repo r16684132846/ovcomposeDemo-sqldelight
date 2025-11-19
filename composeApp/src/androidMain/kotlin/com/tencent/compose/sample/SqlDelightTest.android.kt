@@ -7,5 +7,5 @@ import com.tencent.compose.db.MyDatabase
 
 actual fun createTestDriver(): SqlDriver {
     // 使用应用上下文而不是测试框架的 InstrumentationRegistry
-    return AndroidSqliteDriver(MyDatabase.Schema, applicationContext)
+    return AndroidSqliteDriver(MyDatabase.Schema, applicationContext, "androidTest.db")
 }

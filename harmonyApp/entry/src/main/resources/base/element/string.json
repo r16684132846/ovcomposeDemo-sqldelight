@@ -13,12 +13,12 @@
       "value": "ComposeSample"
     },
     {
-      "name": "microphone_permission_reason",
-      "value": "需要麦克风权限来录音"
+      "name": "read_media_permission_reason",
+      "value": "应用需要访问沙箱存储以管理数据库文件"
     },
     {
-      "name": "camera_permission_reason",
-      "value": "需要拍照权限来录音"
+      "name": "write_media_permission_reason",
+      "value": "应用需要写入沙箱存储以保存数据库文件"
     }
   ]
 }
