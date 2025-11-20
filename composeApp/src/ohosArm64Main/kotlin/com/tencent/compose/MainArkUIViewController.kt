@@ -17,22 +17,12 @@
 
 package com.tencent.compose
 
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.window.ComposeArkUIViewController
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.tencent.compose.sample.NativeResourceManager
-import com.tencent.compose.sample.koin.appModule
 import com.tencent.compose.sample.mainpage.MainPage
 import com.tencent.compose.sample.nativeResourceManager
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.initMainHandler
-import org.koin.core.context.startKoin
 import platform.ohos.napi_env
 import platform.ohos.napi_value
 import kotlin.experimental.ExperimentalNativeApi
@@ -41,25 +31,7 @@ import kotlin.experimental.ExperimentalNativeApi
 @CName("MainArkUIViewController")
 fun MainArkUIViewController(env: napi_env): napi_value {
     initMainHandler(env)
-    startKoin {
-        modules(appModule)
-    }
-    return ComposeArkUIViewController(env) {
-        val lifecycleOwner = object : LifecycleOwner {
-            private val registry = LifecycleRegistry(this)
-            override val lifecycle: Lifecycle
-                get() = registry
-        }
-        val viewModelStoreOwner = object : ViewModelStoreOwner {
-            override val viewModelStore: ViewModelStore = ViewModelStore()
-        }
-        CompositionLocalProvider(
-            LocalLifecycleOwner provides lifecycleOwner,
-            LocalViewModelStoreOwner provides viewModelStoreOwner
-        ){
-            MainPage()
-        }
-    }
+    return ComposeArkUIViewController(env) { MainPage() }
 }
 
 @OptIn(ExperimentalForeignApi::class)

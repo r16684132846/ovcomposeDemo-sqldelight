@@ -62,7 +62,6 @@ import androidx.compose.ui.unit.sp
 import com.tencent.compose.sample.backhandler.BackHandler
 import com.tencent.compose.sample.data.DisplayItem
 import com.tencent.compose.sample.data.DisplaySection
-import com.tencent.compose.sample.koin.appModule
 import com.tencent.compose.sample.rememberLocalImage
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 

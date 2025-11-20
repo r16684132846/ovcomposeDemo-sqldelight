@@ -26,7 +26,6 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.cocoapods)
-    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -96,31 +95,18 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
-            implementation(libs.lifecycle.viewmodel)
-            implementation(libs.lifecycle.viewmodel.compose)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.atomicFu)
-            implementation(libs.koin.core)
-            implementation(libs.koin.test)
-            implementation(libs.koin.core.viewmodel)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.core.coroutines)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.annotations)
             implementation(libs.hash.sha1)
-            implementation(libs.koin.compose.viewmodel.nagivation)
         }
-        jvmMain.dependencies {
-        }
+
         val ohosArm64Main by getting {
             dependencies {
                 api(libs.compose.multiplatform.export)
@@ -165,13 +151,6 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.ui.tooling)
-    implementation(libs.koin.ksp.compiler)
-    add("kspCommonMainMetadata", libs.koin.ksp.compiler)
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspOhosArm64", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
 }
 
 tasks.withType<com.android.build.gradle.internal.tasks.CheckDuplicateClassesTask>().configureEach {

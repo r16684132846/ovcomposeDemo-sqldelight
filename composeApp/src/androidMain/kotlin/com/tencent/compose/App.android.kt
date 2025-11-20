@@ -18,14 +18,9 @@
 package com.tencent.compose
 
 import android.app.Application
-import com.tencent.compose.sample.koin.appModule
-import org.koin.core.context.startKoin
 
 class App: Application () {
     override fun onCreate() {
         super.onCreate()
-        startKoin {
-            modules(appModule)
-        }
     }
 }
