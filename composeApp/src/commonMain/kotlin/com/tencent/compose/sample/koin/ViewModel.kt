@@ -37,7 +37,11 @@ class UserViewModel(
         return userRepository.getUserCount()
     }
 
-    fun clearMessage() {
-        _state = _state.copy(message = "")
+    fun setCurrentUserID(count: Int) {
+        userRepository.setCurrentUserID(count)
+    }
+
+    fun getCurrentUser(): User? {
+        return userRepository.getCurrentUser()
     }
 }

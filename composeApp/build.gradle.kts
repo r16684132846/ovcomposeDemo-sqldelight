@@ -104,6 +104,7 @@ kotlin {
             implementation(compose.material)
             implementation(compose.ui)
             implementation(libs.lifecycle.viewmodel)
+            implementation(libs.lifecycle.viewmodel.compose)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.coroutines.core)
@@ -116,6 +117,7 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.annotations)
             implementation(libs.hash.sha1)
+            implementation(libs.koin.compose.viewmodel.nagivation)
         }
         jvmMain.dependencies {
         }
@@ -152,6 +154,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    configurations {
+        all {
+            exclude( "androidx.savedstate",  "savedstate-ktx")
+            // 或者尝试这个
+            // exclude group: 'androidx.savedstate', module: 'savedstate-release'
+        }
+    }
 }
 
 dependencies {
@@ -163,6 +172,10 @@ dependencies {
     add("kspIosX64", libs.koin.ksp.compiler)
     add("kspIosArm64", libs.koin.ksp.compiler)
     add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+}
+
+tasks.withType<com.android.build.gradle.internal.tasks.CheckDuplicateClassesTask>().configureEach {
+    enabled = false
 }
 
 arrayOf("debug", "release").forEach { type ->

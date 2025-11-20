@@ -12,6 +12,7 @@ val appModule = module {
     singleOf(::ValidationServiceImpl) { bind<ValidationService>() }
 
     viewModelOf(::UserViewModel)
+
 }
 
 // Koin 验证器

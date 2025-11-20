@@ -30,6 +30,7 @@ import com.tencent.compose.sample.mainpage.sectionItem.FallingBalls
 import com.tencent.compose.sample.mainpage.sectionItem.GestureDemo
 import com.tencent.compose.sample.mainpage.sectionItem.HashPage
 import com.tencent.compose.sample.mainpage.sectionItem.ImageExamplesScreen
+import com.tencent.compose.sample.mainpage.sectionItem.KoinNavPage
 import com.tencent.compose.sample.mainpage.sectionItem.KoinPage
 import com.tencent.compose.sample.mainpage.sectionItem.NestedScrollDemo
 import com.tencent.compose.sample.mainpage.sectionItem.ProgressIndicatorExamples
@@ -79,6 +80,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("carousel", Res.drawable.carousel) { CarouselTransition() },
                 DisplayItem("hash", Res.drawable.carousel) { HashPage() },
                 DisplayItem("koin", Res.drawable.carousel) { KoinPage() },
+                DisplayItem("koin-nav", Res.drawable.carousel) { KoinNavPage() },
             )
         ),
         DisplaySection(

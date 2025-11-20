@@ -6,11 +6,14 @@ interface UserRepository {
     fun getUserById(id: Int): User?
     fun addUser(user: User)
     fun getUserCount(): Int
+    fun setCurrentUserID(id: Int)
+    fun getCurrentUser(): User?
 }
 
 // 仓储实现
 class UserRepositoryImpl : UserRepository {
     private val users = mutableListOf<User>()
+    private var currentUserID: Int = 0
 
     init {
         // 初始化一些测试数据
@@ -29,4 +32,12 @@ class UserRepositoryImpl : UserRepository {
     }
 
     override fun getUserCount(): Int = users.size
+
+    override fun setCurrentUserID(id: Int) {
+        currentUserID = id
+    }
+
+    override fun getCurrentUser(): User? {
+        return getUserById(currentUserID)
+    }
 }

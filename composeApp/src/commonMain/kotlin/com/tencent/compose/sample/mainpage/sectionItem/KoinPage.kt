@@ -90,7 +90,7 @@ internal fun KoinPage() {
 @Composable
 fun LiveDemo() {
     // 使用 koinInject() 获取 ViewModel (Koin 4.x Compose 集成)
-    val viewModel: UserViewModel = koinViewModel()
+    val viewModel: UserViewModel = koinInject()
     var userName by remember { mutableStateOf("") }
     var userEmail by remember { mutableStateOf("") }
 
