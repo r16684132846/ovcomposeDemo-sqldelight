@@ -1,5 +1,6 @@
 package com.tencent.compose.sample.hash
 
+import com.tencent.compose.sqldelight.getDbInstance
 import org.kotlincrypto.hash.sha1.SHA1
 
 fun hashTest(): String {
@@ -20,4 +21,13 @@ fun hashTest(): String {
     println("原始数据: $testData")
     println("SHA-1 哈希值: $hexResult")
     return hexResult
+}
+
+
+fun sqlTest() {
+    val db = getDbInstance()
+    val teams = db.teamQueries.selectAll().executeAsList()
+    val players = db.playerQueries.selectAll().executeAsList()
+    println("team size: ${teams.size}")
+    println("player size: ${players.size}")
 }

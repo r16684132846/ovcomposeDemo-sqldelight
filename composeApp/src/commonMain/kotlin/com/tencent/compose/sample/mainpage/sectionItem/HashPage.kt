@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tencent.compose.sample.hash.hashTest
+import com.tencent.compose.sample.hash.sqlTest
 
 @Composable
 internal fun HashPage() {
@@ -53,7 +54,18 @@ internal fun HashPage() {
             Text(text = hashResult)
             Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
         }
-
+        item {
+            Text("sqldelight 验证")
+            Text(
+                text = "sqldelight test",
+                color = Color.Red,
+                fontSize = 16.sp,
+                modifier = Modifier.clickable {
+                    sqlTest()
+                }
+            )
+            Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
+        }
     }
 }
 

@@ -9,6 +9,8 @@ compose-multiplatform = "1.6.1-KBA-002"
 kotlin = "2.0.21-KBA-009"
 kotlinx-coroutines = "1.8.0-KBA-001"
 hash = "0.6.1-OHOS-001"
+sqldelight = "2.0.2-OHOS-001"
+kotlinx-datetime = "0.6.2-OHOS-001"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
@@ -18,11 +20,18 @@ compose-multiplatform-export = { module = "org.jetbrains.compose.export:export",
 # AndroidX compose, only used by android target.
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 
 #hash
 hash-sha1 = { module = "org.kotlincrypto.hash:sha1", version.ref = "hash"}
 
 [plugins]
+sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

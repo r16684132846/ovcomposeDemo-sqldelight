@@ -26,6 +26,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.cocoapods)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -59,9 +60,8 @@ kotlin {
     }
 
     ohosArm64 {
-        val dumpReportPath = getLayout().buildDirectory.file("compile_perf.txt").get()
         compilations.all {
-            compilerOptions.configure {
+            compileTaskProvider.configure {
                 // // 开启性能统计
                 // freeCompilerArgs.add("-Xreport-perf")
                 // // 指定报告地址
@@ -76,6 +76,10 @@ kotlin {
             // 在debug和release模式，gradle都打包带符号表的so
             // release包在鸿蒙应用打包时strip so中的符号表，打包出的符号表可以对现网崩溃进行 addr2line
             debuggable = true
+            val libDir = "$rootDir/composeApp/libs/ohosArm64"
+            linkerOpts(
+                "-L$libDir"
+            )
         }
 
         val main by compilations.getting
@@ -95,6 +99,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.sqldelight.android.driver)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -104,12 +109,22 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.native.driver)
+            implementation(libs.sqldelight.primitive.adapters)
+            implementation(libs.sqldelight.coroutines.extensions)
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.datetime)
             implementation(libs.hash.sha1)
         }
-
+        iosArm64Main.dependencies {
+            api(libs.compose.multiplatform.export)
+            implementation(libs.sqldelight.native.driver)
+        }
         val ohosArm64Main by getting {
             dependencies {
                 api(libs.compose.multiplatform.export)
+                implementation(libs.sqldelight.native.driver)
             }
         }
     }
@@ -151,6 +166,15 @@ android {
 
 dependencies {
     debugImplementation(libs.compose.ui.tooling)
+}
+
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.tencent.compose.sqldelight")
+        }
+        linkSqlite = true
+    }
 }
 
 tasks.withType<com.android.build.gradle.internal.tasks.CheckDuplicateClassesTask>().configureEach {
