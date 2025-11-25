@@ -64,6 +64,24 @@
           "abilities": ["MainAbility"],
           "when": "inuse"
         }
+      },
+      {
+        "name": "ohos.permission.READ_MEDIA",
+        "reason": "$string:storage_permission_reason",
+        "usedScene": {
+          "abilities": [
+            "读取媒体文件"
+          ]
+        }
+      },
+      {
+        "name": "ohos.permission.READ_WRITE_USER_FILE",
+        "reason": "$string:location_permission_reason",
+        "usedScene": {
+          "abilities": [
+            "写入媒体文件"
+          ]
+        }
       }
     ],
    "metadata": [
