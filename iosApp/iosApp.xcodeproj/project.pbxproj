@@ -12,6 +12,7 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		8AFFDBBC99146419756E6BEA /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E72FD2CD82F2F56448FC8E67 /* Pods_iosApp.framework */; };
+		CB18D2152ED5800800709A06 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CB18D2142ED5800800709A06 /* libsqlite3.tbd */; };
 		F856839F2DD458860069A352 /* ImagesScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F856839E2DD458860069A352 /* ImagesScrollView.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,6 +26,7 @@
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3632DC29227652001CCB65 /* Config.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		BC30693E5A29FCCA0D6B12B3 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
+		CB18D2142ED5800800709A06 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		E72FD2CD82F2F56448FC8E67 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F856839E2DD458860069A352 /* ImagesScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesScrollView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -34,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB18D2152ED5800800709A06 /* libsqlite3.tbd in Frameworks */,
 				8AFFDBBC99146419756E6BEA /* Pods_iosApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -61,6 +64,7 @@
 		42799AB246E5F90AF97AA0EF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CB18D2142ED5800800709A06 /* libsqlite3.tbd */,
 				E72FD2CD82F2F56448FC8E67 /* Pods_iosApp.framework */,
 			);
 			name = Frameworks;

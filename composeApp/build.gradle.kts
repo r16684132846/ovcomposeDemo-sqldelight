@@ -32,8 +32,10 @@ plugins {
 kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+        compilations.all {
+            kotlinOptions {
+                jvmTarget = "11"
+            }
         }
     }
 
@@ -110,15 +112,13 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.sqldelight.runtime)
-            implementation(libs.sqldelight.native.driver)
             implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.hash.sha1)
         }
-        iosArm64Main.dependencies {
-            api(libs.compose.multiplatform.export)
+        iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
         val ohosArm64Main by getting {
