@@ -127,6 +127,7 @@ kotlin {
                 implementation(libs.webview.ohosarm64)
                 implementation(libs.sqldelight.coroutines.extensions)
                 implementation(libs.sqldelight.native.driver)
+                implementation(libs.sqldelight.runtime)
                 implementation(libs.atomicFu)
             }
         }
@@ -193,7 +194,7 @@ sqldelight {
     databases {
         create("MyDatabase") {
             packageName = "com.tencent.compose.db"
-            dialect("app.cash.sqldelight:sqlite-3-25-dialect:${libs.versions.sqldelight.get()}")
+            dialect("app.cash.sqldelight:native-driver:${libs.versions.sqldelight.get()}")
             schemaOutputDirectory = file("build/dbs")
         }
     }

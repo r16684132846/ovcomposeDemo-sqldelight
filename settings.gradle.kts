@@ -20,8 +20,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         maven {
             isAllowInsecureProtocol = true
             name = "Nenus"
@@ -31,7 +29,9 @@ pluginManagement {
                 password = "notekmp1504"
             }
         }
-         google {
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
                 includeGroupAndSubgroups("com.android")
@@ -46,8 +46,6 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
-        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         maven {
             isAllowInsecureProtocol = true
             name = "Nenus"
@@ -57,7 +55,8 @@ dependencyResolutionManagement {
                 password = "notekmp1504"
             }
         }
-
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")

@@ -45,9 +45,14 @@ int createDirectories(const char *path) {
         createDirectories(parentDir);
     }
 
+    // 确保父目录存在后再创建当前目录
+    if (stat(parentDir, &st) == -1) {
+        mkdir(parentDir, 0755);
+    }
+
     int result = mkdir(dir, 0755);
     if (result != 0 && errno != EEXIST) {
-        printf("Failed to create directory %s: %s\n", dir, strerror(errno));
+        LOGE("Failed to create directory %s: %s", dir, strerror(errno));
     }
 
     free(parent);
@@ -65,32 +70,35 @@ libkn_kref_app_cash_sqldelight_db_SqlDriver createTestDriver() {
 
     // 确保数据库目录存在
     if (createDirectories(dbPath.c_str()) != 0) {
-        LOGE("Failed to create database directory for path: %s\n", dbPath.c_str());
+        LOGE("Failed to create database directory for path: %s", dbPath.c_str());
     }
 
     // 检查数据库文件是否存在
     struct stat st;
     if (stat(dbPath.c_str(), &st) == 0) {
         if (S_ISREG(st.st_mode)) {
-            LOGI("Database file already exists and is a regular file\n");
+            LOGI("Database file already exists and is a regular file");
         } else {
-            LOGE("Database path exists but is not a regular file\n");
+            LOGE("Database path exists but is not a regular file");
         }
     } else {
-        LOGE("Database file does not exist yet\n");
+        LOGI("Database file does not exist yet");
     }
 
     // 创建 SQLite 驱动
     auto kt = libkn_symbols();
-    LOGE("Failed to load Kotlin symbols\n");
+    if (kt == nullptr) {
+        LOGE("Failed to load Kotlin symbols");
+        // 返回空的驱动或者抛出异常
+    }
 
     // 获取数据库 Schema
     auto schema = kt->kotlin.root.com.tencent.compose.db.MyDatabase.Companion.get_Schema(
             kt->kotlin.root.com.tencent.compose.db.MyDatabase.Companion._instance());
-    LOGI("获取数据库Schema成功...\n");
+    LOGI("获取数据库Schema成功...");
     // 调用Kotlin中定义的createTestDriver函数
     auto driver = kt->kotlin.root.com.tencent.compose.sample.createTestDriver();
-    LOGI("创建数据库驱动成功...\n");
+    LOGI("创建数据库驱动成功...");
     return driver;
 }
 
@@ -103,7 +111,7 @@ void setDatabasePath(const char *path) {
         // 确保路径目录存在
         createDirectories(path);
     } else {
-        LOGI("尝试设置空的数据库路径\n");
+        LOGI("尝试设置空的数据库路径");
     }
 }
 
