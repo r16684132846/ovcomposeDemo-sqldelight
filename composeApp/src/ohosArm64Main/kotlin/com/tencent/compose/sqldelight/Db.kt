@@ -2,6 +2,7 @@ package com.tencent.compose.sqldelight
 
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import platform.posix.setenv
 import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.freeze
 
@@ -28,7 +29,8 @@ object Db {
     // Called from Swift
     @Suppress("unused")
     fun defaultDriver() {
-        Db.dbSetup(NativeSqliteDriver(Schema, "appdb"))
+        setenv("HOME","/data/app/el2/100/database/com.tencent.compose/",1)
+        Db.dbSetup(NativeSqliteDriver(Schema, "app.db"))
     }
 
     val instance: AppDatabase

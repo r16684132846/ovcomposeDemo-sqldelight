@@ -24,10 +24,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
 import com.tencent.compose.sample.mainpage.MainPage
+import com.tencent.compose.sqldelight.Db
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Db.defaultDriver(this)
         setContent {
             Surface(modifier = Modifier.statusBarsPadding()) {
                 MainPage()
