@@ -17,6 +17,7 @@
 
 package com.tencent.compose.sample.mainpage
 
+import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.Vertical2Vertical
 import com.tencent.compose.sample.data.DisplayItem
 import composesample.composeapp.generated.resources.Res
@@ -28,4 +29,8 @@ internal actual fun platformSections(): List<DisplayItem> {
     return listOf(
         DisplayItem("嵌套原生滑动", Res.drawable.swipedown) { Vertical2Vertical() }
     )
+}
+
+@Composable
+internal actual fun WebViewInterface() {
 }

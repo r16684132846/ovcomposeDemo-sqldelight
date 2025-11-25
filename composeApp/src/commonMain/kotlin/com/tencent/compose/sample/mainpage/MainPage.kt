@@ -62,6 +62,8 @@ import androidx.compose.ui.unit.sp
 import com.tencent.compose.db.MyDatabase
 import com.tencent.compose.sample.XmlUtilTest
 import com.tencent.compose.sample.KsoupTest
+//import com.tencent.compose.sample.NapierTest
+import com.tencent.compose.sample.WebViewTest
 import com.tencent.compose.sample.backhandler.BackHandler
 import com.tencent.compose.sample.createTestDriver
 import com.tencent.compose.sample.data.DisplayItem
@@ -115,6 +117,7 @@ fun testXmlUtil(): String {
     }
 }
 
+// 添加数据库测试函数
 fun testDatabase(): String {
     return try {
         // 创建数据库驱动和实例
@@ -165,6 +168,23 @@ fun testKsoup(): String {
     }
 }
 
+//fun testNapier(): String {
+//    return try {
+//        val napierTest = NapierTest()
+//        napierTest.runAllTests()
+//    } catch (e: Exception) {
+//        "Napier 测试失败: ${e.message}"
+//    }
+//}
+
+fun testWebView(): String {
+    return try {
+        val webViewTest = WebViewTest()
+        webViewTest.runAllTests()
+    } catch (e: Exception) {
+        "WebView 测试失败: ${e.message}"
+    }
+}
 
 @Composable
 internal fun MainPage(skiaRender: Boolean = true) {
@@ -185,8 +205,9 @@ internal fun MainPage(skiaRender: Boolean = true) {
                 )
             },
             title = {
+//                val title = testWebView()
+//                val title = testNapier()
 //                val title = testKsoup()
-//                val title = testXmlUtil()
                 val title = testDatabase()
 //                val title = testXmlUtil()
 //                val title = testCoroutines()

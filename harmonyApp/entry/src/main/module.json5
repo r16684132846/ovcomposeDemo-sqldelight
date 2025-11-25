@@ -12,6 +12,11 @@
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+    ],
     "abilities": [
       {
         "name": "EntryAbility",
@@ -50,24 +55,6 @@
     ],
     "requestPermissions": [
       {
-        "name": "ohos.permission.CAMERA",
-        "reason": "$string:camera_permission_reason",
-        "usedScene": {
-          "abilities": [
-            "拍照权限"
-          ]
-        }
-      },
-      {
-        "name": "ohos.permission.MICROPHONE",
-        "reason": "$string:microphone_permission_reason",
-        "usedScene": {
-          "abilities": [
-            "麦克风"
-          ]
-        }
-      },
-      {
         "name": "ohos.permission.READ_MEDIA",
         "reason": "$string:storage_permission_reason",
         "usedScene": {
@@ -77,8 +64,8 @@
         }
       },
       {
-        "name": "ohos.permission.READ_WRITE_USER_FILE",
-        "reason": "$string:location_permission_reason",
+        "name": "ohos.permission.WRITE_MEDIA",
+        "reason": "$string:storage_permission_reason",
         "usedScene": {
           "abilities": [
             "写入媒体文件"

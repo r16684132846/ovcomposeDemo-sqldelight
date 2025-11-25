@@ -19,7 +19,6 @@ package com.tencent.compose
 
 import android.content.Context
 import android.os.Build
-import com.tencent.compose.db.MyDatabase
 internal class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
 }

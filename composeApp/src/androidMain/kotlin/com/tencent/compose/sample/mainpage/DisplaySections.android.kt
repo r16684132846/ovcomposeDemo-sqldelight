@@ -17,8 +17,13 @@
 
 package com.tencent.compose.sample.mainpage
 
+import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.data.DisplayItem
 
 internal actual fun platformSections(): List<DisplayItem> {
     return emptyList()
+}
+
+@Composable
+internal actual fun WebViewInterface() {
 }

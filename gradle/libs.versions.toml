@@ -24,7 +24,8 @@ androidx-core = "1.15.0"
 sqldelight = "2.0.2-OHOS-004"
 coreKtx = "1.7.0"
 ksoup = "0.4.1-OHOS-001"
-
+napier = "2.7.1-OHOS-001"
+webview = "1.9.20-OHOS-002"
 
 
 [libraries]
@@ -66,6 +67,12 @@ sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sq
 sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
+# Napier logging library
+napier-android = { module = "io.github.aakira:napier-android", version.ref = "napier" }
+napier-ohosarm64 = { module = "io.github.aakira:napier-ohosarm64", version.ref = "napier" }
+webview = { module = "io.github.kevinnzou:webview", version.ref = "webview" }
+webview-ohosarm64 = { module = "io.github.kevinnzou:webview-ohosarm64", version.ref = "webview" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

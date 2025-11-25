@@ -64,7 +64,7 @@ kotlin {
             baseName = "kn"
             export(libs.compose.multiplatform.export)
             // 添加链接器选项以使用本地sqlite3库
-            linkerOpts("-L${projectDir}/src/ohosArm64Main/cinterop/libs", "-lsqlite3")
+            linkerOpts("-L${projectDir}/src/ohosArm64Main/cinterop/lib", "-lsqlite3")
         }
 
         val main by compilations.getting
@@ -84,6 +84,8 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.napier.android)
+            implementation(libs.webview)
             implementation(libs.sqldelight.android.driver)
         }
         commonTest.dependencies {
@@ -111,6 +113,7 @@ kotlin {
 
             implementation(libs.ksoup.html)
             implementation(libs.ksoup.entities)
+            implementation(libs.webview)
         }
 
         val ohosArm64Main by getting {
@@ -120,6 +123,8 @@ kotlin {
                 implementation(libs.xmlutil.serialization)
                 implementation(libs.ksoup.html)
                 implementation(libs.ksoup.entities)
+                implementation(libs.napier.ohosarm64)
+                implementation(libs.webview.ohosarm64)
                 implementation(libs.sqldelight.coroutines.extensions)
                 implementation(libs.sqldelight.native.driver)
                 implementation(libs.atomicFu)

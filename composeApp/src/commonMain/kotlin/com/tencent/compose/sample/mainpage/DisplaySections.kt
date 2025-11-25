@@ -17,6 +17,7 @@
 
 package com.tencent.compose.sample.mainpage
 
+import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.LinearGradientLine
 import com.tencent.compose.sample.MultiTouches
 import com.tencent.compose.sample.PersonListScreen
@@ -97,10 +98,14 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("Falling Balls", Res.drawable.falling) { FallingBalls() },
                 DisplayItem("DropdownMenu", Res.drawable.menu) { DropdownMenu() },
                 DisplayItem("GradientLine", Res.drawable.gradient) { LinearGradientLine() },
+                DisplayItem("WebView Example", Res.drawable.gradient) { WebViewInterface() },
                 DisplayItem("SqlDelight安卓测试", Res.drawable.balls) { PersonListScreen() },
-            )
+                ),
         )
     )
 }
 
 internal expect fun platformSections(): List<DisplayItem>
+
+@Composable
+internal expect fun WebViewInterface()
