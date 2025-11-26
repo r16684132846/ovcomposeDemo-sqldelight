@@ -20,12 +20,12 @@ package com.tencent.compose.sample.mainpage
 import androidx.compose.runtime.Composable
 import com.tencent.compose.sample.LinearGradientLine
 import com.tencent.compose.sample.MultiTouches
-import com.tencent.compose.sample.PersonListScreen
 import com.tencent.compose.sample.mainpage.sectionItem.BouncingBallsApp
 import com.tencent.compose.sample.data.DisplayItem
 import com.tencent.compose.sample.data.DisplaySection
 import com.tencent.compose.sample.mainpage.sectionItem.CarouselTransition
 import com.tencent.compose.sample.mainpage.sectionItem.CheckboxExamples
+import com.tencent.compose.sample.mainpage.sectionItem.DemoPage
 import com.tencent.compose.sample.mainpage.sectionItem.DialogExamples
 import com.tencent.compose.sample.mainpage.sectionItem.DropdownMenu
 import com.tencent.compose.sample.mainpage.sectionItem.FallingBalls
@@ -74,6 +74,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("image-cat", Res.drawable.cat) { SimpleImage() },
                 DisplayItem("image-dog", Res.drawable.dog) { ImageExamplesScreen() },
                 DisplayItem("carousel", Res.drawable.carousel) { CarouselTransition() },
+                DisplayItem("sqldelight", Res.drawable.carousel) { DemoPage() },
             )
         ),
         DisplaySection(
@@ -99,8 +100,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("DropdownMenu", Res.drawable.menu) { DropdownMenu() },
                 DisplayItem("GradientLine", Res.drawable.gradient) { LinearGradientLine() },
                 DisplayItem("WebView Example", Res.drawable.gradient) { WebViewInterface() },
-                DisplayItem("SqlDelight安卓测试", Res.drawable.balls) { PersonListScreen() },
-                ),
+            ),
         )
     )
 }

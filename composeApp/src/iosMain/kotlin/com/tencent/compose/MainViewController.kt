@@ -23,6 +23,7 @@ import androidx.compose.ui.uikit.OnFocusBehavior
 import androidx.compose.ui.uikit.RenderBackend
 import androidx.compose.ui.window.ComposeUIViewController
 import com.tencent.compose.sample.mainpage.MainPage
+import com.tencent.compose.sqldelight.Db
 import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalObjCName::class)
@@ -30,6 +31,7 @@ import kotlin.experimental.ExperimentalObjCName
 fun MainViewController() = ComposeUIViewController(
     configure = { onFocusBehavior = OnFocusBehavior.DoNothing }
 ) {
+    Db.defaultDriver()
     MainPage(false)
 }
 

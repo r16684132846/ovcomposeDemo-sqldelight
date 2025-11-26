@@ -18,10 +18,10 @@
 package com.tencent.compose
 
 import androidx.compose.ui.window.ComposeArkUIViewController
-import com.tencent.compose.sample.DatabaseManager
 import com.tencent.compose.sample.NativeResourceManager
 import com.tencent.compose.sample.mainpage.MainPage
 import com.tencent.compose.sample.nativeResourceManager
+import com.tencent.compose.sqldelight.Db
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.initMainHandler
 import platform.ohos.napi_env
@@ -32,8 +32,7 @@ import kotlin.experimental.ExperimentalNativeApi
 @CName("MainArkUIViewController")
 fun MainArkUIViewController(env: napi_env): napi_value {
     initMainHandler(env)
-    // 初始化数据库
-    DatabaseManager.initialize()
+    Db.defaultDriver()
     return ComposeArkUIViewController(env) { MainPage() }
 }
 

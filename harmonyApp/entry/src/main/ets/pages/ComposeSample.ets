@@ -29,6 +29,7 @@ import {
   horizontalListBuilder,
   webviewBuilder,
 } from './ComposeInterops';
+import { FfiBenchmarkBuilder } from './FfiBenchmark';
 
 export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('button', buttonBuilder)
@@ -40,4 +41,5 @@ export function registerComposeInteropBuilders() {
   registerComposeInteropBuilder('verticalList', verticalListBuilder)
   registerComposeInteropBuilder('horizontalList', horizontalListBuilder)
   registerComposeInteropBuilder('webview', webviewBuilder)
+  registerComposeInteropBuilder('FfiBenchmark', FfiBenchmarkBuilder)
 }

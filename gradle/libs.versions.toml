@@ -22,6 +22,7 @@ kotlinxSerializationJsonPlug = "2.2.0"
 xmlutil = "0.90.3-OHOS-001"
 androidx-core = "1.15.0"
 sqldelight = "2.0.2-OHOS-004"
+kotlinx-datetime = "0.6.2-OHOS-008"
 coreKtx = "1.7.0"
 ksoup = "0.4.1-OHOS-001"
 napier = "2.7.1-OHOS-001"
@@ -64,8 +65,11 @@ ksoup-html = { module = "com.mohamedrejeb.ksoup:ksoup-html", version.ref = "ksou
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
-sqldelight-jvm-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqldelight" }
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtx" }
 # Napier logging library
 napier-android = { module = "io.github.aakira:napier-android", version.ref = "napier" }

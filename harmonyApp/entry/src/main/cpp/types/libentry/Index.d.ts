@@ -23,6 +23,11 @@ export const add: (a: number, b: number) => number;
 export const MainArkUIViewController: () => ArkUIViewController
 
 export const initResourceManager: (resourceManager: resourceManager.ResourceManager) => number;
-// 添加数据库路径相关的函数声明
-export const setDatabasePath: (path: string) => void;
-export const getDatabasePath: () => string;
+
+export const kn_string_params: (param: string) => void
+
+export const kn_string_result: () => string
+
+export const origin_string_params: (param: string) => void
+
+export const origin_string_result: () => string

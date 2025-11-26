@@ -12,8 +12,8 @@ include_directories(${NATIVERENDER_ROOT_PATH}
 
 find_package(skikobridge)
 
-# 将 libkn.cpp 添加到源文件列表中
-add_library(entry SHARED napi_init.cpp sqldelight.cpp)
+# 添加源文件到entry库
+add_library(entry SHARED napi_init.cpp)
 target_link_libraries(entry PUBLIC libace_napi.z.so)
 target_link_libraries(entry PUBLIC libdeviceinfo_ndk.z.so)
 target_link_libraries(entry PUBLIC libhilog_ndk.z.so)
@@ -25,8 +25,3 @@ target_link_libraries(entry PUBLIC skikobridge::skikobridge)
 include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-
-# 指定 SQLite 源码
-add_library(sqlite3 SHARED sqlite3.c)
-
-install(TARGETS sqlite3 LIBRARY DESTINATION lib)

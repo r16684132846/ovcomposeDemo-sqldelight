@@ -80,12 +80,10 @@ kotlin {
     }
 
     sourceSets {
-
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.napier.android)
-            implementation(libs.webview)
             implementation(libs.sqldelight.android.driver)
         }
         commonTest.dependencies {
@@ -105,15 +103,16 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
+            implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.sqldelight.runtime)
+            implementation(libs.kotlinx.datetime)
             implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
             implementation("org.jetbrains.kotlin:kotlin-test-common:1.9.0")
             implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.9.0")
 
             implementation(libs.ksoup.html)
             implementation(libs.ksoup.entities)
-            implementation(libs.webview)
         }
 
         val ohosArm64Main by getting {
@@ -170,6 +169,15 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
 }
 
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.tencent.compose.sqldelight")
+        }
+        linkSqlite = true
+    }
+}
+
 arrayOf("debug", "release").forEach { type ->
     tasks.register<Copy>("publish${type.capitalizeUS()}BinariesToHarmonyApp") {
         group = "harmony"
@@ -187,15 +195,5 @@ arrayOf("debug", "release").forEach { type ->
 tasks.whenTaskAdded {
     if (name.contains("iosTest")) {
         enabled = false
-    }
-}
-
-sqldelight {
-    databases {
-        create("MyDatabase") {
-            packageName = "com.tencent.compose.db"
-            dialect("app.cash.sqldelight:native-driver:${libs.versions.sqldelight.get()}")
-            schemaOutputDirectory = file("build/dbs")
-        }
     }
 }

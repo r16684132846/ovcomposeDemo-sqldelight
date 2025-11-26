@@ -21,10 +21,6 @@
 #include <rawfile/raw_file_manager.h>
 #include <string>
 
-// 声明Native层的函数
-extern "C" void setDatabasePath(const char *path);
-extern "C" const char *getDatabasePath();
-
 static napi_value Add(napi_env env, napi_callback_info info) {
     size_t argc = 2;
     napi_value args[2] = {nullptr};
@@ -47,51 +43,6 @@ static napi_value Add(napi_env env, napi_callback_info info) {
     napi_create_double(env, value0 + value1, &sum);
 
     return sum;
-}
-
-// 实现NAPI绑定函数
-static napi_value SetDatabasePath(napi_env env, napi_callback_info info) {
-    size_t argc = 1;
-    napi_value args[1] = {nullptr};
-    napi_get_cb_info(env, info, &argc, args, nullptr, nullptr);
-
-    if (argc < 1) {
-        napi_throw_error(env, nullptr, "Wrong number of arguments");
-        return nullptr;
-    }
-
-    // 获取字符串参数
-    size_t strLen;
-    napi_get_value_string_utf8(env, args[0], nullptr, 0, &strLen);
-
-    char *buffer = (char *)malloc(strLen + 1);
-    if (buffer == nullptr) {
-        napi_throw_error(env, nullptr, "Memory allocation failed");
-        return nullptr;
-    }
-
-    napi_get_value_string_utf8(env, args[0], buffer, strLen + 1, &strLen);
-
-    // 调用Native函数
-    setDatabasePath(buffer);
-
-    free(buffer);
-
-    // 返回undefined
-    napi_value result;
-    napi_get_undefined(env, &result);
-    return result;
-}
-
-// 实现获取数据库路径的NAPI绑定函数
-static napi_value GetDatabasePath(napi_env env, napi_callback_info info) {
-    // 调用Native函数获取路径
-    const char *path = getDatabasePath();
-
-    // 创建并返回JavaScript字符串
-    napi_value result;
-    napi_create_string_utf8(env, path, NAPI_AUTO_LENGTH, &result);
-    return result;
 }
 
 static napi_value MainArkUIViewController(napi_env env, napi_callback_info info) {
@@ -122,9 +73,7 @@ static napi_value Init(napi_env env, napi_value exports) {
         {"MainArkUIViewController", nullptr, MainArkUIViewController, nullptr, nullptr, nullptr, napi_default, nullptr},
         {"MainArkUIViewController", nullptr, NAPI_Global_MainArkUIViewController, nullptr, nullptr, nullptr,
          napi_default, nullptr},
-        // 添加数据库路径相关函数的绑定
-        {"setDatabasePath", nullptr, SetDatabasePath, nullptr, nullptr, nullptr, napi_default, nullptr},
-        {"getDatabasePath", nullptr, GetDatabasePath, nullptr, nullptr, nullptr, napi_default, nullptr}};
+    };
     napi_define_properties(env, exports, sizeof(desc) / sizeof(desc[0]), desc);
     return exports;
 }

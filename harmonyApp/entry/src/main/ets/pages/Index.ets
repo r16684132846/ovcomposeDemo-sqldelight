@@ -16,7 +16,7 @@
  */
 
 import { Compose } from 'compose';
-import { MainArkUIViewController } from 'libentry.so';
+import testNapi from 'libentry.so'
 import { registerComposeInteropBuilders } from './ComposeSample';
 
 registerComposeInteropBuilders();
@@ -24,7 +24,7 @@ registerComposeInteropBuilders();
 @Entry
 @Component
 struct Index {
-  private controller = MainArkUIViewController()
+  private controller = testNapi.MainArkUIViewController()
 
   onPageShow(): void {
     this.controller.onPageShow()
