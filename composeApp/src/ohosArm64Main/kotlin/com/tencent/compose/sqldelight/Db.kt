@@ -29,7 +29,9 @@ object Db {
     // Called from Swift
     @Suppress("unused")
     fun defaultDriver() {
-        setenv("HOME","/data/app/el2/100/database/com.tencent.compose/",1)
+        println("fwd:------->:set env")
+        val ret = setenv("HOME","/data/storage/el2/base/cache/",1)
+        println("fwd:------->:init sql driver $ret")
         Db.dbSetup(NativeSqliteDriver(Schema, "app.db"))
     }
 

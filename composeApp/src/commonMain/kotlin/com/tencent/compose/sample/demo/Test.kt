@@ -1,4 +1,4 @@
-package com.tencent.compose.sample.hash
+package com.tencent.compose.sample.demo
 
 import com.tencent.compose.sqldelight.getDbInstance
 import org.kotlincrypto.hash.sha1.SHA1
@@ -24,10 +24,11 @@ fun hashTest(): String {
 }
 
 
-fun sqlTest() {
+fun sqlTest(): String {
     val db = getDbInstance()
     val teams = db.teamQueries.selectAll().executeAsList()
     val players = db.playerQueries.selectAll().executeAsList()
-    println("team size: ${teams.size}")
-    println("player size: ${players.size}")
+    println("team count: ${teams.size}")
+    println("player count: ${players.size}")
+    return "Team count: ${teams.size}    Player count: ${players.size}"
 }

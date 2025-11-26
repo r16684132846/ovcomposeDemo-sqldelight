@@ -31,6 +31,7 @@ fun createQueryWrapper(driver: SqlDriver): AppDatabase {
 object Schema : SqlSchema<QueryResult.Value<Unit>> by AppDatabase.Schema {
      override fun create(driver: SqlDriver): QueryResult.Value<Unit> {
         AppDatabase.Schema.create(driver)
+         println("fwd:------->:create database")
 
         // Seed data time!
         createQueryWrapper(driver).apply {
@@ -38,10 +39,12 @@ object Schema : SqlSchema<QueryResult.Value<Unit>> by AppDatabase.Schema {
             val pens = "Pittsburgh Penguins"
             val sharks = "San Jose Sharks"
 
+            println("fwd:------->:database insert team data")
             // Populate teams.
             teamQueries.insertTeam(ducks, LocalDate(1993, 3, 1), "Randy Carlyle", true)
             teamQueries.insertTeam(pens, LocalDate(1966, 2, 8), "Mike Sullivan", true)
             teamQueries.insertTeam(sharks, LocalDate(1990, 5, 5), "Peter DeBoer", false)
+            println("fwd:------->:database insert player data")
 
             playerQueries.insertPlayer(
                 "Corey", "Perry", 10, ducks, 30, 210F, LocalDate(1985, 5, 16),
@@ -69,6 +72,7 @@ object Schema : SqlSchema<QueryResult.Value<Unit>> by AppDatabase.Schema {
                 Shoots.RIGHT, Position.CENTER,
             )
             teamQueries.setCaptain(8, sharks)
+            println("fwd:------->:database insert success")
         }
         return QueryResult.Unit
     }

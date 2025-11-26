@@ -28,7 +28,7 @@ import com.tencent.compose.sample.mainpage.sectionItem.DialogExamples
 import com.tencent.compose.sample.mainpage.sectionItem.DropdownMenu
 import com.tencent.compose.sample.mainpage.sectionItem.FallingBalls
 import com.tencent.compose.sample.mainpage.sectionItem.GestureDemo
-import com.tencent.compose.sample.mainpage.sectionItem.HashPage
+import com.tencent.compose.sample.mainpage.sectionItem.DemoPage
 import com.tencent.compose.sample.mainpage.sectionItem.ImageExamplesScreen
 import com.tencent.compose.sample.mainpage.sectionItem.NestedScrollDemo
 import com.tencent.compose.sample.mainpage.sectionItem.ProgressIndicatorExamples
@@ -76,7 +76,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("image-cat", Res.drawable.cat) { SimpleImage() },
                 DisplayItem("image-dog", Res.drawable.dog) { ImageExamplesScreen() },
                 DisplayItem("carousel", Res.drawable.carousel) { CarouselTransition() },
-                DisplayItem("hash", Res.drawable.carousel) { HashPage() },
+                DisplayItem("sqldelight", Res.drawable.carousel) { DemoPage() },
             )
         ),
         DisplaySection(

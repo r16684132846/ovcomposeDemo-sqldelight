@@ -33,36 +33,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tencent.compose.sample.hash.hashTest
-import com.tencent.compose.sample.hash.sqlTest
+import com.tencent.compose.sample.demo.hashTest
+import com.tencent.compose.sample.demo.sqlTest
 
 @Composable
-internal fun HashPage() {
-    val textContent = "org.kotlincrypto.hash:sha1 功能验证"
-    var hashResult by mutableStateOf( "hash-sha1-result")
+internal fun DemoPage() {
+    var result by mutableStateOf( "show result")
     LazyColumn(modifier = Modifier.fillMaxSize().fillMaxHeight()) {
         item {
-            Text(text = textContent)
-            Text(
-                text = "Hello, World!",
-                color = Color.Red,
-                fontSize = 16.sp,
-                modifier = Modifier.clickable {
-                    hashResult = hashTest()
-                }
-            )
-            Text(text = hashResult)
-            Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
-        }
-        item {
-            Text("sqldelight 验证")
+            Text("sqldelight 验证(click me)")
             Text(
                 text = "sqldelight test",
                 color = Color.Red,
                 fontSize = 16.sp,
                 modifier = Modifier.clickable {
-                    sqlTest()
+                    result = sqlTest()
                 }
+            )
+            Text(
+                text = result,
+                color = Color.Magenta
             )
             Spacer(modifier = Modifier.fillMaxWidth().height(10.dp))
         }
