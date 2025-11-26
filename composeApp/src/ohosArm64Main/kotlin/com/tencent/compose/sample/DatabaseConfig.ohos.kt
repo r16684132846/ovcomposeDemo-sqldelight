@@ -1,40 +1,81 @@
 package com.tencent.compose.sample
 
+import app.cash.sqldelight.db.AfterVersion
+import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import app.cash.sqldelight.driver.native.wrapConnection
 import co.touchlab.sqliter.DatabaseConfiguration
-import com.tencent.compose.db.MyDatabase
-import platform.posix.S_IRWXU
-import platform.posix.mkdir
-import platform.posix.S_IRWXG
-import platform.posix.S_IRWXO
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.posix.getenv
+import platform.posix.setenv
 
-//HarmonyOS 特定的数据库配置
+// 数据库配置类
 class DatabaseConfig {
-    fun createDriver(databaseName: String = "app_database.db"): SqlDriver {
-        // HarmonyOS 特定的数据库路径
-        val databasePath = "/data/app/el2/100/database/com.tencent.compose/"
-
-        // 确保目录存在
-        mkdir(databasePath, (S_IRWXU.toUInt() or S_IRWXG.toUInt() or S_IRWXO.toUInt()))
-
+    @OptIn(ExperimentalForeignApi::class)
+    fun createDriver(databaseName: String = "myDatabase.db"): SqlDriver {
+        setenv("HOME", "/data/app/el2/100/database/com.tencent.compose/", 1)
         val config = DatabaseConfiguration(
             name = databaseName,
-            version = MyDatabase.Schema.version.toInt(),
+            version = DatabaseSchema.version.toInt(),
             create = { connection ->
-                wrapConnection(connection) { MyDatabase.Schema.create(it) }
+                wrapConnection(connection) { DatabaseSchema.create(it) }
             },
             upgrade = { connection, oldVersion, newVersion ->
                 wrapConnection(connection) {
-                    MyDatabase.Schema.migrate(it, oldVersion.toLong(), newVersion.toLong())
+                    DatabaseSchema.migrate(it, oldVersion.toLong(), newVersion.toLong())
                 }
             },
             extendedConfig = DatabaseConfiguration.Extended(
-                basePath = databasePath
+                basePath = getenv("HOME")?.toString(),
             )
         )
 
         return NativeSqliteDriver(config)
+    }
+}
+
+object DatabaseSchema : SqlSchema<QueryResult.Value<Unit>> {
+    override val version: Long = 1
+
+    override fun create(driver: SqlDriver): QueryResult.Value<Unit> {
+        val result = driver.execute(
+            identifier = null,
+            sql = """
+                CREATE TABLE IF NOT EXISTS Person (
+                    id INTEGER NOT NULL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL
+                )
+            """.trimIndent(),
+            parameters = 0
+        )
+        println("setupDatabase: $result")
+        return QueryResult.Unit
+    }
+
+    override fun migrate(
+        driver: SqlDriver,
+        oldVersion: Long,
+        newVersion: Long,
+        vararg callbacks: AfterVersion
+    ): QueryResult.Value<Unit> {
+        // 处理从版本1到版本2的迁移
+        when (oldVersion) {
+            1L -> {
+                // 添加新的字段或修改表结构
+                driver.execute(
+                    identifier = null,
+                    sql = """
+                        ALTER TABLE Person ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    """.trimIndent(),
+                    parameters = 0
+                )
+            }
+
+            else -> throw IllegalArgumentException("Migration from version $oldVersion is not supported")
+        }
+        return QueryResult.Unit
     }
 }

@@ -8,10 +8,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+// 数据库操作类
 class DatabaseHelper(
     private val personQueries: PersonQueries
 ) {
-    fun getAllPeople(): Flow<List<Person>> = personQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
+    fun getAllPeople(): Flow<List<Person>> =
+        personQueries.selectAll().asFlow().mapToList(Dispatchers.Default)
 
     fun getPersonById(id: Long): Person? = personQueries.selectById(id).executeAsOneOrNull()
 

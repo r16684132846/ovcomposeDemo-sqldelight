@@ -29,8 +29,9 @@ pluginManagement {
                 password = "notekmp1504"
             }
         }
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        maven("https://kotlinnativeohos.online/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -40,7 +41,6 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
-        mavenLocal()
     }
 }
 
@@ -55,8 +55,9 @@ dependencyResolutionManagement {
                 password = "notekmp1504"
             }
         }
-        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
+        maven("https://kotlinnativeohos.online/maven")
         maven("https://mirrors.tencent.com/nexus/repository/maven-tencent")
+        maven("https://mirrors.tencent.com/nexus/repository/maven-public")
         google {
             mavenContent {
                 includeGroupAndSubgroups("androidx")
@@ -65,7 +66,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        mavenLocal()
     }
 }
 

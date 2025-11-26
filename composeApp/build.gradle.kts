@@ -63,8 +63,6 @@ kotlin {
         binaries.sharedLib {
             baseName = "kn"
             export(libs.compose.multiplatform.export)
-            // 添加链接器选项以使用本地sqlite3库
-            linkerOpts("-L${projectDir}/src/ohosArm64Main/cinterop/lib", "-lsqlite3")
         }
 
         val main by compilations.getting
@@ -73,19 +71,13 @@ kotlin {
             defFile(file("src/ohosArm64Main/cinterop/resource.def"))
             includeDirs(file("${projectDir}/src/ohosArm64Main/cinterop/include"))
         }
-        val sqlite3 by main.cinterops.creating {
-            defFile(file("src/ohosArm64Main/cinterop/sqlite3.def"))
-            includeDirs(file("${projectDir}/src/ohosArm64Main/cinterop/include"))
-        }
     }
 
     sourceSets {
-
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.napier.android)
-            implementation(libs.webview)
             implementation(libs.sqldelight.android.driver)
         }
         commonTest.dependencies {
@@ -105,6 +97,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.xmlutil.core)
             implementation(libs.xmlutil.serialization)
+            implementation(libs.sqldelight.primitive.adapters)
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.sqldelight.runtime)
             implementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
@@ -113,7 +106,6 @@ kotlin {
 
             implementation(libs.ksoup.html)
             implementation(libs.ksoup.entities)
-            implementation(libs.webview)
         }
 
         val ohosArm64Main by getting {
@@ -170,6 +162,15 @@ dependencies {
     debugImplementation(libs.compose.ui.tooling)
 }
 
+sqldelight {
+    databases {
+        create("AppDatabase") {
+            packageName.set("com.tencent.compose.sqldelight")
+        }
+        linkSqlite = true
+    }
+}
+
 arrayOf("debug", "release").forEach { type ->
     tasks.register<Copy>("publish${type.capitalizeUS()}BinariesToHarmonyApp") {
         group = "harmony"
@@ -187,15 +188,5 @@ arrayOf("debug", "release").forEach { type ->
 tasks.whenTaskAdded {
     if (name.contains("iosTest")) {
         enabled = false
-    }
-}
-
-sqldelight {
-    databases {
-        create("MyDatabase") {
-            packageName = "com.tencent.compose.db"
-            dialect("app.cash.sqldelight:native-driver:${libs.versions.sqldelight.get()}")
-            schemaOutputDirectory = file("build/dbs")
-        }
     }
 }
