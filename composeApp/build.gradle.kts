@@ -116,7 +116,7 @@ kotlin {
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
-            implementation(libs.hash.sha1)
+//            implementation(libs.hash.sha1)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)

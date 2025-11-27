@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tencent.compose.sample.demo.hashTest
+//import com.tencent.compose.sample.demo.hashTest
 import com.tencent.compose.sample.demo.sqlTest
 
 @Composable
