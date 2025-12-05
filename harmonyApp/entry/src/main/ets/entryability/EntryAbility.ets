@@ -50,15 +50,15 @@ export default class EntryAbility extends UIAbility {
         windowStage.getMainWindow().then((data: window.Window) => {
           // [Start fullscreen]
           // Set full screen
-          data.setWindowLayoutFullScreen(true).then(() => {
-            hilog.info(DOMAIN, 'testTag', 'Succeeded in setting the window layout to full-screen mode.');
-          })
+          // data.setWindowLayoutFullScreen(true).then(() => {
+          //   hilog.info(DOMAIN, 'testTag', 'Succeeded in setting the window layout to full-screen mode.');
+          // })
           let deviceTypeInfo: string = deviceInfo.deviceType;
 
           if (deviceTypeInfo === '2in1') {
             if (canIUse('SystemCapability.Window.SessionManager')) {
               // 2in1 device settings hide title bar and title bar height
-              data.setWindowDecorVisible(false);
+              // data.setWindowDecorVisible(false);
               // [StartExclude fullscreen]
               data.setWindowDecorHeight(56)
               // [EndExclude fullscreen]
@@ -87,8 +87,8 @@ export default class EntryAbility extends UIAbility {
           this.onAvoidAreaChange({ type: window.AvoidAreaType.TYPE_NAVIGATION_INDICATOR, area: avoidAreaNavigation })
           data.on('avoidAreaChange', this.onAvoidAreaChange);
 
-          data.setSpecificSystemBarEnabled('navigationIndicator', false);
-          data.setWindowLayoutFullScreen(true);
+          // data.setSpecificSystemBarEnabled('navigationIndicator', false);
+          // data.setWindowLayoutFullScreen(true);
 
           this.updateBreakPoint(data.getWindowProperties().windowRect.width);
           data.on('windowSizeChange', (windowSize: window.Size) => {

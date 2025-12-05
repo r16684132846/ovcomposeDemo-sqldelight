@@ -18,6 +18,7 @@
 import { Compose } from 'compose';
 import testNapi from 'libentry.so'
 import { registerComposeInteropBuilders } from './ComposeSample';
+import router from '@ohos.router';
 
 registerComposeInteropBuilders();
 
@@ -49,6 +50,16 @@ struct Index {
           onBackPressed: () => false
         }
       ).width('100%').height('100%')
+
+      // 添加一个跳转到 S3 页面的按钮
+      Button('S3 功能演示')
+        .position({ x: 260, y: 460 })
+        .width(120)
+        .height(40)
+        .fontSize(14)
+        .onClick(() => {
+          router.pushUrl({ url: 'pages/S3Page' });
+        })
     }.width('100%').height('100%')
   }
 }
