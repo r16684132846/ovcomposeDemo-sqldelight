@@ -39,6 +39,7 @@ import com.tencent.compose.sample.mainpage.sectionItem.SliderExamples
 import com.tencent.compose.sample.mainpage.sectionItem.SwitchExamples
 import com.tencent.compose.sample.mainpage.sectionItem.TextField2
 import com.tencent.compose.sample.mainpage.sectionItem.TextField3
+import com.tencent.compose.ui.S3Page
 import composesample.composeapp.generated.resources.Res
 import composesample.composeapp.generated.resources.balls
 import composesample.composeapp.generated.resources.carousel
@@ -75,6 +76,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("image-dog", Res.drawable.dog) { ImageExamplesScreen() },
                 DisplayItem("carousel", Res.drawable.carousel) { CarouselTransition() },
                 DisplayItem("sqldelight", Res.drawable.carousel) { DemoPage() },
+                DisplayItem("S3Page", Res.drawable.carousel) { S3Page() },
             )
         ),
         DisplaySection(

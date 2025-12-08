@@ -77,6 +77,10 @@ kotlin {
             defFile(file("src/ohosArm64Main/cinterop/sqlite3.def"))
             includeDirs(file("${projectDir}/src/ohosArm64Main/cinterop/include"))
         }
+        val kn_wrapper by main.cinterops.creating {
+            defFile(file("src/ohosArm64Main/cinterop/kn_wrapper.def"))
+            includeDirs(file("../harmonyApp/entry/src/main/cpp/include"))
+        }
     }
 
     sourceSets {

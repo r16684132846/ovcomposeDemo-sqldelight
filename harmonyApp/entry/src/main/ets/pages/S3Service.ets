@@ -110,6 +110,8 @@ export function checkAndRefreshToken(force: boolean = false): boolean {
  * @param fileName 文件名
  * @param fileContent 文件内容
  */
+globalThis.uploadFile = uploadFile
+
 export async function uploadFile(fileName: string, fileContent: Uint8Array): Promise<boolean> {
   try {
     // 检查凭证有效性
@@ -201,6 +203,8 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
  * @param fileName 文件名
  * @returns 文件内容
  */
+globalThis.downloadFile = downloadFile
+
 export async function downloadFile(fileName: string): Promise<Uint8Array | null> {
   try {
     const key = PRE_PATH + fileName;
@@ -273,6 +277,8 @@ export async function downloadFile(fileName: string): Promise<Uint8Array | null>
  * @param prefix 文件夹前缀
  * @returns 文件列表
  */
+globalThis.listFiles = listFiles
+
 export async function listFiles(prefix?: string): Promise<S3Object[] | null> {
   try {
     const fullPrefix = PRE_PATH + (prefix ? prefix : '');
@@ -311,6 +317,8 @@ export async function listFiles(prefix?: string): Promise<S3Object[] | null> {
  * @param fileName 文件名
  * @returns 文件信息
  */
+globalThis.getFileInfo = getFileInfo
+
 export async function getFileInfo(fileName: string): Promise<FileInfo | null> {
   try {
     const key = PRE_PATH + fileName;
@@ -362,6 +370,8 @@ class S3Error extends Error {
  * @param fileName 文件名
  * @returns 是否存在
  */
+globalThis.isFileExists = isFileExists
+
 export async function isFileExists(fileName: string): Promise<boolean> {
   try {
     const key = PRE_PATH + fileName;
@@ -399,6 +409,8 @@ export async function isFileExists(fileName: string): Promise<boolean> {
  * @param fileName 文件名
  * @returns 是否删除成功
  */
+globalThis.deleteFile = deleteFile
+
 export async function deleteFile(fileName: string): Promise<boolean> {
   try {
     const key = PRE_PATH + fileName;
@@ -416,13 +428,14 @@ export async function deleteFile(fileName: string): Promise<boolean> {
   }
 }
 
-
 /**
  * 复制文件
  * @param sourceFileName 源文件名
  * @param targetFileName 目标文件名
  * @returns 是否复制成功
  */
+globalThis.copyFile = copyFile
+
 export async function copyFile(sourceFileName: string, targetFileName: string): Promise<boolean> {
   try {
     const sourceKey = PRE_PATH + sourceFileName;
@@ -472,6 +485,8 @@ export async function copyFile(sourceFileName: string, targetFileName: string): 
  * @param folderPath 文件夹路径
  * @returns 是否删除成功
  */
+globalThis.deleteFolder = deleteFolder
+
 export async function deleteFolder(folderPath: string): Promise<boolean> {
   try {
     // 确保文件夹路径以 / 结尾

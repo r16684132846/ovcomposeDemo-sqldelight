@@ -1,0 +1,2 @@
+package = platform.napiwrapper
+headers = kn_wrapper.h
