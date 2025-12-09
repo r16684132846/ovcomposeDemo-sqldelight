@@ -95,3 +95,28 @@ extern "C" size_t kn_get_arraybuffer_length(napi_env env, napi_value value) {
     }
     return length;
 }
+
+extern "C" napi_value
+kn_create_arraybuffer_from_bytes(napi_env env, const uint8_t *data, size_t length) {
+    if (env == nullptr || data == nullptr || length == 0) {
+        napi_value undefined;
+        napi_get_undefined(env, &undefined);
+        return undefined;
+    }
+
+    void *buffer_data = nullptr;
+    napi_value arraybuffer;
+
+    // 创建 ArrayBuffer 并获取其底层数据指针
+    napi_status st = napi_create_arraybuffer(env, length, &buffer_data, &arraybuffer);
+    if (st != napi_ok || buffer_data == nullptr) {
+        napi_value undefined;
+        napi_get_undefined(env, &undefined);
+        return undefined;
+    }
+
+    // 将 Kotlin ByteArray 的数据复制到 ArrayBuffer 中
+    memcpy(buffer_data, data, length);
+
+    return arraybuffer;
+}

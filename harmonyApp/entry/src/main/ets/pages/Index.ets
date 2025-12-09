@@ -19,6 +19,7 @@ import { Compose } from 'compose';
 import testNapi from 'libentry.so'
 import { registerComposeInteropBuilders } from './ComposeSample';
 import router from '@ohos.router';
+import { s3ClientInit } from './S3Service';
 
 registerComposeInteropBuilders();
 
@@ -28,6 +29,7 @@ struct Index {
   private controller = testNapi.MainArkUIViewController()
 
   onPageShow(): void {
+    s3ClientInit()
     this.controller.onPageShow()
   }
 

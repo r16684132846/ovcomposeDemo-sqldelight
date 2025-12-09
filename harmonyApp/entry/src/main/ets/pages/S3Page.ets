@@ -107,12 +107,12 @@ struct S3Page {
       // 创建一个简单的测试文件内容
       const content = '这是一个测试文件的内容'
       // 修复文本编码方式
-      let fileContent = new Uint8Array(new ArrayBuffer(content.length));
+      const buffer = new ArrayBuffer(content.length);
+      const view = new Uint8Array(buffer);
       for (let i = 0; i < content.length; i++) {
-        fileContent[i] = content.charCodeAt(i);
+        view[i] = content.charCodeAt(i);
       }
-
-      const success = await uploadFile('test.txt', fileContent);
+      const success = await uploadFile('test.txt', buffer);
       if (success) {
         this.message = '文件上传成功';
       } else {
@@ -128,10 +128,11 @@ struct S3Page {
     try {
       const data = await downloadFile('test.txt');
       if (data) {
-        // 修复文本解码方式
+        // 将 ArrayBuffer 转换为字符串进行显示
+        const uint8Array = new Uint8Array(data);
         let content = '';
-        for (let i = 0; i < data.length; i++) {
-          content += String.fromCharCode(data[i]);
+        for (let i = 0; i < uint8Array.length; i++) {
+          content += String.fromCharCode(uint8Array[i]);
         }
         this.message = '文件下载成功';
         this.fileInfo = '文件内容: ' + content;

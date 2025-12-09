@@ -9,6 +9,8 @@ import {
   PutObjectCommandInput
 } from '@ohos/aws-sdk-client-s3';
 import { common } from '@kit.AbilityKit';
+import { fileIo, picker } from '@kit.CoreFileKit';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 
 // 定义 S3 对象接口
@@ -31,14 +33,14 @@ interface FileInfo {
 }
 
 // S3 客户端配置
-export const ACCESS_KEY = 'WhZPjFVcxkfAWfjoRz0'; //天翼云
+export const ACCESS_KEY = 'LYHpaojJs57UYbjLTXd'; //天翼云
 
 // 密钥
-export const SECRET_KEY = '8I2B1ZOZBC9CKUXPA1GB84JZSGCXK0105B7ED5E';
+export const SECRET_KEY = '5J9UY7Y0K1JET14Y1SRFQ5MV46JD9IUDFCB9YH5';
 
 // 临时凭证
 export const ACCESS_TOKEN =
-  '/kzCbFMxsPxBoNMkdVnNuNNR2v+sPalVZvgvGKpc7tYyfc/5Ga6e4KGB6KpFowNi3XUMtRnBUMy6dLqOE/BGbNyzuVaWoZiMh5uYuLlu/K25U5aQq4FzCQzqxtU/miTfj6yTzORHjqKeTXQdxD25KE5QuzVIRx1HFSoT4LQ5fQDtYqxYx61/KqBRl0tAmAUbB5SWx1l/j9o6kzStn+xYPZXuNHJmQhd9AvLZ1GHVWmG/si3JKqCKCkngNOBIX8hWi53hO2EVaPpD1D9Qc7jHR1TkBFdTR2LiwMGjCidk9YeqJqb5aPeEZt3slJfNmOAc/w4GVEKZWOdHL5iNmPO5UZnJ2ulfR0QffdP+7vtMMBLhZvC1ubLexfBRTV5n3MX4U9Dug0FDewo4IVsnYh7qrAVgNpuKrhqI6ZoLHbOZ1ZRy/VoWfNm8DcsAQCpx3gEM7iP0a1pG6B+Z/0RpsQFCnonL1nsPdWqa6UJofSWHaoVn/YmCj0BIbu8MGlG5eplPEKdoodWAyqLWzloiLQv3D56qUqcjgPjzG2rkTLpdcdAN0lZv2XlFUss9ty9tACOXr3bv2aLrRnOPovGTIcZ7Qqj634rvvgDA7wgN0pt5+w5Cez5AaGJTXgiICxccrlXlh1+ME8r0v5J7I3tocGJUk6IykSjpiGL2byUZEa4xMyN6psPDWarr1QrF420I7+No6phNnjepyfX2vWYESw+IACA4agSbkncTFf3ikQNRCoAGduQjrW2yPLWM47xPYacKuy6d8jNt3FLRR3yPTZFl1xqe5mww34MGoDxT/1Zrp+GpgSnCWayUndpUebYHefzPDrXkeJg6faF69p375C4qRf9hIxgOau1T/F+NaPpQPA1IIdsbwShiG8eSqGL+KyOrh9Kn0RG4+HAvB/m7FPIpcA==';
+  'P0EdyTS7YDFE1a3s+tqFsiDTGqx/XoRHlgHzLG7kWc8dpVWe0DnWoYRfqo+6SZ5qluuQfEiBwxlGvStI3ifZksgGBQCuNHy/6SyubLzMolTojOe/jtvihJbewfQJHtbdMRQC1zDRIIQmW3YVWB23ueru+LQtga3eyXOEYu4oOz/HrquUKkHOyM4vMBDkJKYJvf356qicQVwHDoy0PixbhdCLIPJ+eaQJU/HfelWl6xlVi+U4TfQe1qJaAbp5I+/M4LOU0FL0soniyrLFB58sarB9N1U4UMoqoR1Yy4LK5Q8uJA2C4YXvlvbJ3u4FsWcBfinqi7Qr8sm3vjgKRB3za6PSugNjwsmARZyf5cLnz6gjH2+ambuqbftBOuZ/0f005R43dS0wEb9Gb3aBUvDNrOekovSxCHAp9fRhL3yjQtdF5bOlEUu7tv7lpaG0P8SmKHhlD7DQ0U4R1lroh2ym0cDAQKZH9ZM03YCoVce53ZJ+48Ia3mtiYoVOIteqMzNbipv6S6T0OCzCRzUN76yrv+6Fj/O+sOSb6SCMhVt31otOTCAN6YMCFbHDn8sv5Baec6CqELOCiUuzbgh9CAMgJESlcWqMf+ZDyQCxE5Wp/85AV6XUgciAnEv8lmNGfdFY8MdOqRkh0VVZUVY7WsiY4Z8Ff3dVNED1larvC0KLGW0Ro8r5H/U6THgY+ks1KKO76iwzmEgJQEr/dTsgLCbFtEZuJgOJ65ojT2hr9UxPWfvV+md7xclX3RpqMvdg6lbXfTfC6hXbEJHskk8jJ/fi/vZu6+yFVVFyTWuvsIntfyGxZXcSMaV46XWNjr2zbd/8prNf3p/9Vz4ssfujiJezMI+ELARjR3g89jXfCIGFTfKMDO6PHky4uayKuspqyodekZ80q8EyODiL6UoZS6sldg==';
 
 // 存储桶名称
 export const BUCKET_NAME = 'notetest';
@@ -50,8 +52,9 @@ const REGION = 'cn-south-1';
 export const ENDPOINT = 'https://gd5oss.ctyunxs.cn';
 
 // 文件前缀
-// export const PRE_PATH = 'touchnotes/userdata/note20000115837cdfa3cf3bb441b9639989928ae8f90/';
-export const PRE_PATH = ''
+export const PRE_PATH = 'touchnotes/userdata/note20000115837cdfa3cf3bb441b9639989928ae8f90/';
+
+// export const PRE_PATH = ''
 
 console.log('- 访问密钥:', ACCESS_KEY);
 console.log('- 密钥长度:', SECRET_KEY.length);
@@ -60,25 +63,69 @@ console.log('- Token长度:', ACCESS_TOKEN.length);
 // 创建上下文对象
 const context = globalThis.abilityContext as common.UIAbilityContext;
 
+// S3客户端配置参数
+interface S3Config_2 {
+  connectionTimeout: number;
+  socketTimeout: number;
+}
+
+interface S3Config {
+  accessKeyId: string;
+  secretAccessKey: string;
+  sessionToken: string;
+}
+
+interface S3Config_3 {
+  region: string;
+  endpoint: string;
+  credentials: S3Config;
+  forcePathStyle: boolean;
+  tls: boolean;
+  requestHandler: S3Config_2;
+}
+
+const S3_CLIENT_CONFIG: S3Config_3 = {
+  region: REGION,
+  endpoint: ENDPOINT,
+  credentials: ({
+    accessKeyId: ACCESS_KEY,
+    secretAccessKey: SECRET_KEY,
+    sessionToken: ACCESS_TOKEN
+  } as S3Config),
+  forcePathStyle: true,
+  tls: true,
+  requestHandler: ({
+    connectionTimeout: 60000,
+    socketTimeout: 600000
+  } as S3Config_2),
+};
+
 // 创建 S3 客户端
-export const s3Client = new S3Client(
-  context,
-  {
-    region: REGION,
-    endpoint: ENDPOINT,
-    credentials: {
-      accessKeyId: ACCESS_KEY,
-      secretAccessKey: SECRET_KEY,
-      sessionToken: ACCESS_TOKEN
-    },
-    forcePathStyle: true,
-    tls: true,
-    requestHandler: {
-      connectionTimeout: 60000,
-      socketTimeout: 600000
-    },
+export let s3Client = new S3Client(context, S3_CLIENT_CONFIG);
+
+/**
+ * 初始化S3服务
+ * 这个方法应该在使用S3服务之前调用
+ */
+export function s3ClientInit(): void {
+  console.log('arkts:- 创建 S3 客户端...');
+
+  // 确保上下文对象已创建
+  if (!context) {
+    console.error('无法创建S3客户端：上下文对象未初始化');
+    return;
   }
-);
+
+  try {
+    // 创建S3客户端
+    s3Client = new S3Client(context, S3_CLIENT_CONFIG);
+
+    console.log('S3客户端初始化完成');
+  } catch (error) {
+    console.error('创建S3客户端时出错:', error);
+  }
+}
+
 
 /**
  * 检查并刷新凭证
@@ -86,7 +133,7 @@ export const s3Client = new S3Client(
  */
 export function checkAndRefreshToken(force: boolean = false): boolean {
   try {
-    const expirationTimestamp = 1765233728012; // 凭证过期时间
+    const expirationTimestamp = 1765304962126; // 凭证过期时间
     const currentTime = new Date().getTime();
     const timeDiff = expirationTimestamp - currentTime;
 
@@ -112,7 +159,7 @@ export function checkAndRefreshToken(force: boolean = false): boolean {
  */
 globalThis.uploadFile = uploadFile
 
-export async function uploadFile(fileName: string, fileContent: Uint8Array): Promise<boolean> {
+export async function uploadFile(fileName: string, fileContent: ArrayBuffer): Promise<boolean> {
   try {
     // 检查凭证有效性
     if (!checkAndRefreshToken()) {
@@ -120,15 +167,18 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
       throw new Error('凭证已过期，请更新凭证后再尝试操作');
     }
 
+    // 将 ArrayBuffer 转换为 Uint8Array
+    const uint8ArrayContent = new Uint8Array(fileContent);
+
     const key = PRE_PATH + fileName;
     console.log(`开始上传文件: ${key}`);
-    console.log(`文件大小: ${fileContent.byteLength} 字节`);
+    console.log(`文件大小: ${uint8ArrayContent.byteLength} 字节`);
 
     // 使用明确的类型定义参数
     const params: PutObjectCommandInput = {
       Bucket: BUCKET_NAME,
       Key: key,
-      Body: fileContent,
+      Body: uint8ArrayContent,
       ContentType: 'application/octet-stream'
     };
 
@@ -174,7 +224,7 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
       console.error('6. 访问路径或前缀不正确');
 
       // 检查是否是凭证过期问题
-      const expirationTimestamp = 1765233728012;
+      const expirationTimestamp = 1765304962126;
       const currentTime = new Date().getTime();
       if (ACCESS_TOKEN && expirationTimestamp && currentTime > expirationTimestamp) {
         console.error('确认：临时凭证已过期，请获取新的凭证');
@@ -198,6 +248,7 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
   }
 }
 
+
 /**
  * 下载文件
  * @param fileName 文件名
@@ -205,7 +256,7 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
  */
 globalThis.downloadFile = downloadFile
 
-export async function downloadFile(fileName: string): Promise<Uint8Array | null> {
+export async function downloadFile(fileName: string): Promise<ArrayBuffer | null> {
   try {
     const key = PRE_PATH + fileName;
     const command = new GetObjectCommand({
@@ -215,41 +266,58 @@ export async function downloadFile(fileName: string): Promise<Uint8Array | null>
 
     const response = await s3Client.send(command);
 
-    // 检查 Body 是否存在
     if (response.Body === undefined) {
       console.error('响应体为空');
       return null;
     }
 
-    // 根据参考资料中的处理方式，检查不同的 Body 类型
+    let arrayBuffer: ArrayBuffer;
+
     if (typeof response.Body === 'string') {
-      // 如果是字符串，转换为 Uint8Array
-      // 使用替代方法：手动转换字符编码
-      const arrayBuffer = new ArrayBuffer(response.Body);
-      const view = new Uint8Array(arrayBuffer);
-
-      // 添加类型断言来解决类型检查问题
-      const bodyString = response.Body as string;
-
-      for (let i = 0; i < bodyString.length; i++) {
-        view[i] = bodyString.charCodeAt(i);
+      // 字符串 → 手动转为 ArrayBuffer（注意：这仅适用于 ASCII/UTF-8 文本）
+      const str: string = response.Body;
+      const buffer: ArrayBuffer = new ArrayBuffer(str.length);
+      const view: Uint8Array = new Uint8Array(buffer);
+      for (let i: number = 0; i < str.length; i++) {
+        view[i] = str.charCodeAt(i);
       }
-
-      return view;
+      arrayBuffer = buffer;
+      await saveToDocument('111.txt', response.Body);
     } else if (response.Body instanceof ArrayBuffer) {
-      // 如果是 ArrayBuffer，直接包装为 Uint8Array
-      return new Uint8Array(response.Body);
+      arrayBuffer = response.Body; // ✅ 直接使用
     } else if (response.Body instanceof Uint8Array) {
-      // 如果已经是 Uint8Array，直接返回
-      return response.Body;
+      // Uint8Array → 提取其底层 buffer 并确保返回 ArrayBuffer
+      const uint8Array: Uint8Array = response.Body;
+      const buffer: ArrayBuffer = uint8Array.buffer.slice(
+        uint8Array.byteOffset,
+        uint8Array.byteOffset + uint8Array.byteLength
+      ) as ArrayBuffer;
+      arrayBuffer = buffer;
     } else if (typeof response.Body.transformToByteArray === 'function') {
-      // 如果有 transformToByteArray 方法，调用它
-      const arrayBuffer = await response.Body.transformToByteArray();
-      return new Uint8Array(arrayBuffer);
+      // 假设 transformToByteArray 返回 ArrayBuffer 或 Uint8Array
+      const result: Uint8Array | ArrayBuffer = await response.Body.transformToByteArray();
+      if (result instanceof Uint8Array) {
+        // 如果是 Uint8Array，提取其底层 buffer 并确保返回 ArrayBuffer
+        const uint8Array: Uint8Array = result;
+        const buffer: ArrayBuffer = uint8Array.buffer.slice(
+          uint8Array.byteOffset,
+          uint8Array.byteOffset + uint8Array.byteLength
+        ) as ArrayBuffer;
+        arrayBuffer = buffer;
+      } else if (result instanceof ArrayBuffer) {
+        arrayBuffer = result;
+      } else {
+        console.error('transformToByteArray returned unexpected type:', typeof result);
+        return null;
+      }
     } else {
-      console.error('未知的 Body 类型:', typeof response.Body);
+      console.error('未知的 Body 类型:', typeof response.Body, response.Body);
       return null;
     }
+
+    // ✅ 确保最终返回的是 ArrayBuffer
+    return arrayBuffer;
+
   } catch (error) {
     console.error('文件下载失败:', error);
 
@@ -271,6 +339,30 @@ export async function downloadFile(fileName: string): Promise<Uint8Array | null>
   }
 }
 
+export function saveToDocument(filename: string, content: string | ArrayBuffer): Promise<void> {
+  return new Promise((resolve, reject) => {
+    try {
+      let documentSaveOptions = new picker.DocumentSaveOptions();
+      documentSaveOptions.newFileNames = [filename];
+      let documentPicker = new picker.DocumentViewPicker(getContext());
+      documentPicker.save(documentSaveOptions).then((documentSaveResult: Array<string>) => {
+        console.info('DocumentViewPicker.save successfully, documentSaveResult uri: ' +
+        JSON.stringify(documentSaveResult));
+        let file = fileIo.openSync(documentSaveResult[0], fileIo.OpenMode.CREATE | fileIo.OpenMode.READ_WRITE);
+        fileIo.writeSync(file.fd, content);
+        fileIo.closeSync(file);
+        resolve()
+      }).catch((err: BusinessError) => {
+        console.error(`DocumentViewPicker.save failed with err, code is: ${err.code}, message is: ${err.message}`);
+        reject(err)
+      });
+    } catch (error) {
+      let err: BusinessError = error as BusinessError;
+      console.error(`DocumentViewPicker failed with err, code is: ${err.code}, message is: ${err.message}`);
+      reject(error)
+    }
+  })
+}
 
 /**
  * 列出文件夹中的对象
@@ -528,3 +620,4 @@ export async function deleteFolder(folderPath: string): Promise<boolean> {
     return false;
   }
 }
+

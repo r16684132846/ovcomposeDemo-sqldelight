@@ -1,6 +1,8 @@
 package com.tencent.compose.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -21,14 +23,15 @@ fun S3Page() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(20.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = message,
             fontSize = MaterialTheme.typography.h6.fontSize,
             fontWeight = MaterialTheme.typography.h6.fontWeight,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier.padding(bottom = 10.dp)
         )
 
         // 添加测试按钮
@@ -44,7 +47,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("上传测试文件")
         }
@@ -62,7 +65,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("下载测试文件")
         }
@@ -80,7 +83,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("列出文件")
         }
@@ -98,7 +101,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("获取文件信息")
         }
@@ -115,7 +118,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("检查文件是否存在")
         }
@@ -132,7 +135,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("删除文件")
         }
@@ -149,7 +152,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("复制文件")
         }
@@ -166,7 +169,7 @@ fun S3Page() {
             },
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 5.dp)
         ) {
             Text("删除文件夹")
         }
@@ -176,7 +179,7 @@ fun S3Page() {
             text = fileInfo,
             fontSize = MaterialTheme.typography.body1.fontSize,
             modifier = Modifier
-                .padding(top = 20.dp, bottom = 20.dp)
+                .padding(top = 10.dp, bottom = 10.dp)
                 .align(Alignment.Start)
         )
 

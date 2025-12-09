@@ -25,6 +25,10 @@ uint8_t *kn_get_arraybuffer_value(napi_env env, napi_value value);
 // 返回 ArrayBuffer 的实际长度（size_t）
 size_t kn_get_arraybuffer_length(napi_env env, napi_value value);
 
+
+// 将 Kotlin ByteArray 转换为 JavaScript ArrayBuffer
+napi_value kn_create_arraybuffer_from_bytes(napi_env env, const uint8_t *data, size_t length);
+
 #ifdef __cplusplus
 }
 #endif
