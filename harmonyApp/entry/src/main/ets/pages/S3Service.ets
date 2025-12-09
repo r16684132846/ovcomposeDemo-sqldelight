@@ -8,6 +8,7 @@ import {
   CopyObjectCommand,
   PutObjectCommandInput
 } from '@ohos/aws-sdk-client-s3';
+import { common } from '@kit.AbilityKit';
 
 
 // 定义 S3 对象接口
@@ -30,14 +31,14 @@ interface FileInfo {
 }
 
 // S3 客户端配置
-export const ACCESS_KEY = 'M1DsU83dpWTyIXo4kOx'; //天翼云
+export const ACCESS_KEY = 'WhZPjFVcxkfAWfjoRz0'; //天翼云
 
 // 密钥
-export const SECRET_KEY = 'W936S689BOODIEFMOIT1HWAXR70EDRWXE1K030Y';
+export const SECRET_KEY = '8I2B1ZOZBC9CKUXPA1GB84JZSGCXK0105B7ED5E';
 
 // 临时凭证
 export const ACCESS_TOKEN =
-  'hBdiCEeax2zqm/qxUhObRchF4dh/hJHZQrR6OUpa+alnJ/nuQEtxfF0QdlvGJgO09AQMjDpYIV3adxRKxKFZSRijttJ8wr0S+Tf+qw4m4N6IaC+cvREfm2p1WG5JwLxWcbE11r8WSGuCyI1Yg31fcK0gkb5ghf4S5JJJdLpn6VH+NaHeZguahB5ZsMYis9HftVN9bU73HNe5tRk7xciYye/LL4EERUjyitBEq2gYvkb+ETkR0qiq48AO9uMSTxHG83F97vwCGu5RZSujVcYoGcOeICHCHGW+/MVSdMQmzvA45cokO7xTQVRK1bxkhTkhZP+qTWV/BC/HK0SOhNgQ0apho0bRA/eE/RYQxIOPTh6s+V3nqilR31URGGQ9s++LAGwjvBlMqDju2v0HZLQNJpcfmzRZ02nlbGzk5XSQC7CH0btaLp3p8NH3as9+ft9NTryaOzFfQCpFIXJa4Ikgo1SouHQy6hqNS/98dZLFmKhiL6MKmx9JnBpFgBLNwqDlqPk8i/XkbubdqQc19G955SxkmOMb9UJ0blJu5A+fVA+K7UwPfF9AFopc9JQBqRggun+6KBb15ZWXZ4yusEBXagmvrxni9IZstW969iZaX7PZahNH/zuouQwh7fVYLBGXeDXlVuMGQ2uznKmF2jQSQod4sOfTiYFRVwokv4QR3J4NOSmujNHOhDviyJQO9NCSGytXcyTcD8mA8tjzGW/xmYPMM/OfWoJFWW+BKg9HFSjY5yCJuE1hldwtsefFTHMUoPT8qq5Sam5VWpipVJysSeutFda99rLp4swHBAP5K5mZS+/JoXscjQcxqWARvwqFosgsPvxHzOz1+Hfju1Yr31ceThE0VIuyRLZhglWUB5lLS/jgU4HKZJixvLazEZT8ph/ntDW1LgSweBTXsYNFgA==';
+  '/kzCbFMxsPxBoNMkdVnNuNNR2v+sPalVZvgvGKpc7tYyfc/5Ga6e4KGB6KpFowNi3XUMtRnBUMy6dLqOE/BGbNyzuVaWoZiMh5uYuLlu/K25U5aQq4FzCQzqxtU/miTfj6yTzORHjqKeTXQdxD25KE5QuzVIRx1HFSoT4LQ5fQDtYqxYx61/KqBRl0tAmAUbB5SWx1l/j9o6kzStn+xYPZXuNHJmQhd9AvLZ1GHVWmG/si3JKqCKCkngNOBIX8hWi53hO2EVaPpD1D9Qc7jHR1TkBFdTR2LiwMGjCidk9YeqJqb5aPeEZt3slJfNmOAc/w4GVEKZWOdHL5iNmPO5UZnJ2ulfR0QffdP+7vtMMBLhZvC1ubLexfBRTV5n3MX4U9Dug0FDewo4IVsnYh7qrAVgNpuKrhqI6ZoLHbOZ1ZRy/VoWfNm8DcsAQCpx3gEM7iP0a1pG6B+Z/0RpsQFCnonL1nsPdWqa6UJofSWHaoVn/YmCj0BIbu8MGlG5eplPEKdoodWAyqLWzloiLQv3D56qUqcjgPjzG2rkTLpdcdAN0lZv2XlFUss9ty9tACOXr3bv2aLrRnOPovGTIcZ7Qqj634rvvgDA7wgN0pt5+w5Cez5AaGJTXgiICxccrlXlh1+ME8r0v5J7I3tocGJUk6IykSjpiGL2byUZEa4xMyN6psPDWarr1QrF420I7+No6phNnjepyfX2vWYESw+IACA4agSbkncTFf3ikQNRCoAGduQjrW2yPLWM47xPYacKuy6d8jNt3FLRR3yPTZFl1xqe5mww34MGoDxT/1Zrp+GpgSnCWayUndpUebYHefzPDrXkeJg6faF69p375C4qRf9hIxgOau1T/F+NaPpQPA1IIdsbwShiG8eSqGL+KyOrh9Kn0RG4+HAvB/m7FPIpcA==';
 
 // 存储桶名称
 export const BUCKET_NAME = 'notetest';
@@ -49,14 +50,15 @@ const REGION = 'cn-south-1';
 export const ENDPOINT = 'https://gd5oss.ctyunxs.cn';
 
 // 文件前缀
-export const PRE_PATH = 'touchnotes/userdata/note20000115837cdfa3cf3bb441b9639989928ae8f90/';
+// export const PRE_PATH = 'touchnotes/userdata/note20000115837cdfa3cf3bb441b9639989928ae8f90/';
+export const PRE_PATH = ''
 
 console.log('- 访问密钥:', ACCESS_KEY);
 console.log('- 密钥长度:', SECRET_KEY.length);
 console.log('- Token长度:', ACCESS_TOKEN.length);
 
 // 创建上下文对象
-const context = getContext();
+const context = globalThis.abilityContext as common.UIAbilityContext;
 
 // 创建 S3 客户端
 export const s3Client = new S3Client(
@@ -78,21 +80,20 @@ export const s3Client = new S3Client(
   }
 );
 
-
 /**
  * 检查并刷新凭证
  * @param force 是否强制刷新
  */
 export function checkAndRefreshToken(force: boolean = false): boolean {
   try {
-    const expirationTimestamp = 1764969158955; // 凭证过期时间
+    const expirationTimestamp = 1765233728012; // 凭证过期时间
     const currentTime = new Date().getTime();
     const timeDiff = expirationTimestamp - currentTime;
 
-    // 如果距离过期小于10分钟或者强制刷新，则需要刷新
     if (force || timeDiff < 10 * 60 * 1000) {
       console.log('凭证即将过期或需要强制刷新，建议重新获取凭证');
       // 在实际应用中，这里应该调用API重新获取凭证
+      console.error('凭证已过期，请更新凭证后再尝试操作');
       return true;
     }
 
@@ -103,7 +104,6 @@ export function checkAndRefreshToken(force: boolean = false): boolean {
     return false;
   }
 }
-
 
 /**
  * 上传文件
@@ -117,7 +117,7 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
     // 检查凭证有效性
     if (!checkAndRefreshToken()) {
       console.error('凭证无效，无法上传文件');
-      return false;
+      throw new Error('凭证已过期，请更新凭证后再尝试操作');
     }
 
     const key = PRE_PATH + fileName;
@@ -174,7 +174,7 @@ export async function uploadFile(fileName: string, fileContent: Uint8Array): Pro
       console.error('6. 访问路径或前缀不正确');
 
       // 检查是否是凭证过期问题
-      const expirationTimestamp = 1764969158955;
+      const expirationTimestamp = 1765233728012;
       const currentTime = new Date().getTime();
       if (ACCESS_TOKEN && expirationTimestamp && currentTime > expirationTimestamp) {
         console.error('确认：临时凭证已过期，请获取新的凭证');

@@ -31,6 +31,9 @@ export default class EntryAbility extends UIAbility {
     this.context.getApplicationContext().setColorMode(ConfigurationConstant.ColorMode.COLOR_MODE_NOT_SET);
     initResourceManager(this.context.resourceManager)
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
+
+    // 设置全局上下文，供NAPI模块调用
+    globalThis.abilityContext = this.context;
   }
 
   onDestroy(): void {

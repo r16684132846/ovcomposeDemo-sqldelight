@@ -76,7 +76,7 @@ internal fun displaySections(): List<DisplaySection> {
                 DisplayItem("image-dog", Res.drawable.dog) { ImageExamplesScreen() },
                 DisplayItem("carousel", Res.drawable.carousel) { CarouselTransition() },
                 DisplayItem("sqldelight", Res.drawable.carousel) { DemoPage() },
-                DisplayItem("S3Page", Res.drawable.carousel) { S3Page() },
+                DisplayItem("AmazonS3测试", Res.drawable.carousel) { S3Page() },
             )
         ),
         DisplaySection(
