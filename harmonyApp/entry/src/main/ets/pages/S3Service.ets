@@ -33,14 +33,14 @@ interface FileInfo {
 }
 
 // S3 客户端配置
-export const ACCESS_KEY = 'LYHpaojJs57UYbjLTXd'; //天翼云
+export const ACCESS_KEY = '4p9C203iaTfMsifJJZj'; //天翼云
 
 // 密钥
-export const SECRET_KEY = '5J9UY7Y0K1JET14Y1SRFQ5MV46JD9IUDFCB9YH5';
+export const SECRET_KEY = 'PI9Y22H37129VGA2UXM7KXOGIB7IOCJ95LYTWAM';
 
 // 临时凭证
 export const ACCESS_TOKEN =
-  'P0EdyTS7YDFE1a3s+tqFsiDTGqx/XoRHlgHzLG7kWc8dpVWe0DnWoYRfqo+6SZ5qluuQfEiBwxlGvStI3ifZksgGBQCuNHy/6SyubLzMolTojOe/jtvihJbewfQJHtbdMRQC1zDRIIQmW3YVWB23ueru+LQtga3eyXOEYu4oOz/HrquUKkHOyM4vMBDkJKYJvf356qicQVwHDoy0PixbhdCLIPJ+eaQJU/HfelWl6xlVi+U4TfQe1qJaAbp5I+/M4LOU0FL0soniyrLFB58sarB9N1U4UMoqoR1Yy4LK5Q8uJA2C4YXvlvbJ3u4FsWcBfinqi7Qr8sm3vjgKRB3za6PSugNjwsmARZyf5cLnz6gjH2+ambuqbftBOuZ/0f005R43dS0wEb9Gb3aBUvDNrOekovSxCHAp9fRhL3yjQtdF5bOlEUu7tv7lpaG0P8SmKHhlD7DQ0U4R1lroh2ym0cDAQKZH9ZM03YCoVce53ZJ+48Ia3mtiYoVOIteqMzNbipv6S6T0OCzCRzUN76yrv+6Fj/O+sOSb6SCMhVt31otOTCAN6YMCFbHDn8sv5Baec6CqELOCiUuzbgh9CAMgJESlcWqMf+ZDyQCxE5Wp/85AV6XUgciAnEv8lmNGfdFY8MdOqRkh0VVZUVY7WsiY4Z8Ff3dVNED1larvC0KLGW0Ro8r5H/U6THgY+ks1KKO76iwzmEgJQEr/dTsgLCbFtEZuJgOJ65ojT2hr9UxPWfvV+md7xclX3RpqMvdg6lbXfTfC6hXbEJHskk8jJ/fi/vZu6+yFVVFyTWuvsIntfyGxZXcSMaV46XWNjr2zbd/8prNf3p/9Vz4ssfujiJezMI+ELARjR3g89jXfCIGFTfKMDO6PHky4uayKuspqyodekZ80q8EyODiL6UoZS6sldg==';
+  'wK/fyzzSJHZ18+LiRV5vfKeYHO+VtipM/5SdIXorIZLaR1PTxx8MQfe/arQrV5POefug4t8ettDQZOF+4iTH+IdgyENud1HZGDCnjmJen68bHwEXryXoHgyf4VoVs8Etz0mvgAzDpOIISOaSluDFUSOh11xNmtTI7s72q1aEVSzEnDKaGksvEUbRaf1z+B3yG3CP1LgyMIo5dFobOMfEzz/7A4ndCdjHa68WDD6XouwVrEF0w0JKMyM8S5vrduYw1vhwMh/svhTx7wjXiKC95I9K5y48ZyCDMytymPLlNHQDVOpWF/jAKJ3NQ8wWLIodatt0SGyOqQlB4x/O/fqsTnXzbNrQcmxZLVuWGwC6eNRKosZx8K6wugCeSQbObP5s/ZFRjLQTZmzmaXzbO6nZwiKAfZkLQu9hMdaSkaKlbVAUbYvK8cTNvuWKLj1XpvDbwevkYk2IF50M5rFcWL8zJ5c2jBAOM8C6sqKdwP+1C8U4UHif+kB8yS5S6jQTEAl1OtvDk3eKCKQK+uh2uJ2f0HtPbu22BGohNdEuIRddS2i4jQr6vKL/UKTtMrV9TpXIFHfb5kmXd6HmyOl+yiijeS+uPGBzyszel4E5SLhF006Il5AVsJak1qQwJi/QzvKvwJZiKI7vutDULWUwT/Eq6WDHjnxufWLA12iPB37QkJmcILOmKst6P42GfgEUPUttDcvOB876wyAjsgIRQzfLRkMnnH+z+FKXi6OBQF93rawtlbtkrHug3OgTwZ9p9VTJluDQ1o8V77pE8FjzBMtsUdj4KWXRdcnXvWXNqgk2titXOHFwF87WXsj5K7eYJSzYLNrsXhvU4CxfdmH3zOxvelaB5PCGJPfamjYouW1zurFuhIPgfE0QSr0s14DSAmuDBp6cNXXKk7b7Uw7D4lUQ2A==';
 
 // 存储桶名称
 export const BUCKET_NAME = 'notetest';
@@ -54,7 +54,6 @@ export const ENDPOINT = 'https://gd5oss.ctyunxs.cn';
 // 文件前缀
 export const PRE_PATH = 'touchnotes/userdata/note20000115837cdfa3cf3bb441b9639989928ae8f90/';
 
-// export const PRE_PATH = ''
 
 console.log('- 访问密钥:', ACCESS_KEY);
 console.log('- 密钥长度:', SECRET_KEY.length);
@@ -133,7 +132,7 @@ export function createS3Client(): void {
  */
 export function checkAndRefreshToken(force: boolean = false): boolean {
   try {
-    const expirationTimestamp = 1765304962126; // 凭证过期时间
+    const expirationTimestamp = 1765396917385; // 凭证过期时间
     const currentTime = new Date().getTime();
     const timeDiff = expirationTimestamp - currentTime;
 
@@ -224,7 +223,7 @@ export async function uploadFile(relativePath: string, fileContent: ArrayBuffer)
       console.error('6. 访问路径或前缀不正确');
 
       // 检查是否是凭证过期问题
-      const expirationTimestamp = 1765304962126;
+      const expirationTimestamp = 1765396917385;
       const currentTime = new Date().getTime();
       if (ACCESS_TOKEN && expirationTimestamp && currentTime > expirationTimestamp) {
         console.error('确认：临时凭证已过期，请获取新的凭证');
@@ -507,26 +506,24 @@ globalThis.copy = copy
 
 export async function copy(relativePath: string, toPath: string): Promise<boolean> {
   try {
-    const sourceKey = PRE_PATH + relativePath;
-    const targetKey = PRE_PATH + toPath;
+    console.log(`开始通过下载上传方式复制文件: ${relativePath} -> ${toPath}`);
 
-    // 使用 CopyObjectCommand 直接复制文件，而不是下载再上传
-    const command = new CopyObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: targetKey,
-      CopySource: `${BUCKET_NAME}/${sourceKey}`,
-      // 可选：设置目标对象的 Metadata 或 StorageClass 等
-      // MetadataDirective: 'REPLACE', // 可选：是否替换元数据，默认是 'COPY'（继承源对象的元数据）
-      // Metadata: {                  // 可选：自定义元数据（仅在 MetadataDirective 为 'REPLACE' 时生效）
-      //   'author': 'John Doe',
-      //   'description': 'Copied file',
-      // },
-      // StorageClass: 'STANDARD',    // 可选：设置存储类别，如 'STANDARD', 'GLACIER' 等
-    });
+    // 首先下载源文件
+    const fileContent = await downloadFile(relativePath);
+    if (!fileContent) {
+      console.error(`下载源文件失败: ${relativePath}`);
+      return false;
+    }
 
-    const response = await s3Client.send(command);
-    console.log('文件复制成功:', response);
-    return true;
+    // 然后将内容上传到目标路径
+    const result = await uploadFile(toPath, fileContent);
+    if (result) {
+      console.log(`文件复制成功: ${relativePath} -> ${toPath}`);
+    } else {
+      console.error(`文件上传失败: ${toPath}`);
+    }
+
+    return result;
   } catch (error) {
     console.error('文件复制失败:', error);
 
