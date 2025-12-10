@@ -74,7 +74,7 @@ fun S3Page() {
             onClick = {
                 println("点击列出文件按钮")
                 coroutineScope.launch {
-                    listFiles("") { result, list ->
+                    listObjects("") { result, list ->
                         println("列出文件结果: $result")
                         message = result
                         fileList = list ?: emptyList()
@@ -144,7 +144,7 @@ fun S3Page() {
             onClick = {
                 println("点击复制文件按钮")
                 coroutineScope.launch {
-                    copyFile("test.txt", "test_copy.txt") { result ->
+                    copy("test.txt", "test_copy.txt") { result ->
                         println("复制文件结果: $result")
                         message = result
                     }
@@ -251,13 +251,13 @@ private suspend fun testDownload(onUpdateResult: (String, String?) -> Unit) {
 }
 
 // 列出文件
-private suspend fun listFiles(
+private suspend fun listObjects(
     prefix: String,
     onUpdateResult: (String, List<String>?) -> Unit
 ) {
     try {
         println("开始列出文件，前缀: '$prefix'")
-        val files = listFiles(prefix)
+        val files = listObjects(prefix)
         if (files != null) {
             println("获取到 ${files.size} 个文件")
             val fileListText = files.map {
@@ -298,7 +298,7 @@ private suspend fun getFileInfo(fileName: String, onUpdateResult: (String, Strin
 private suspend fun checkFileExists(fileName: String, onUpdateMessage: (String) -> Unit) {
     try {
         println("开始检查文件是否存在: $fileName")
-        val exists = isFileExists(fileName)
+        val exists = existsFile(fileName)
         if (exists) {
             println("文件存在: $fileName")
             onUpdateMessage("文件存在")
@@ -331,19 +331,19 @@ private suspend fun deleteFile(fileName: String, onUpdateMessage: (String) -> Un
 }
 
 // 复制文件
-private suspend fun copyFile(
-    sourceFileName: String,
-    targetFileName: String,
+private suspend fun copy(
+    relativePath: String,
+    toPath: String,
     onUpdateMessage: (String) -> Unit
 ) {
     try {
-        println("开始复制文件: $sourceFileName -> $targetFileName")
-        val success = copyFile(sourceFileName, targetFileName)
+        println("开始复制文件: $relativePath -> $toPath")
+        val success = copy(relativePath, toPath)
         if (success) {
-            println("文件复制成功: $sourceFileName -> $targetFileName")
+            println("文件复制成功: $relativePath -> $toPath")
             onUpdateMessage("文件复制成功")
         } else {
-            println("文件复制失败: $sourceFileName -> $targetFileName")
+            println("文件复制失败: $relativePath -> $toPath")
             onUpdateMessage("文件复制失败")
         }
     } catch (e: Exception) {

@@ -1,11 +1,11 @@
 import {
   uploadFile,
   downloadFile,
-  listFiles,
+  listObjects,
   deleteFile,
   getFileInfo,
-  isFileExists,
-  copyFile,
+  existsFile,
+  copy,
   deleteFolder
 } from './S3Service'
 
@@ -147,7 +147,7 @@ struct S3Page {
   // 列出文件
   async listFiles() {
     try {
-      const files = await listFiles('');
+      const files = await listObjects('');
       if (files) {
         this.fileList = files.map(file =>
         `文件名: ${file.Key}, 大小: ${file.Size} 字节, 修改时间: ${file.LastModified}`
@@ -180,7 +180,7 @@ struct S3Page {
   // 检查文件是否存在
   async checkFileExists() {
     try {
-      const exists = await isFileExists('test.txt');
+      const exists = await existsFile('test.txt');
       if (exists) {
         this.message = '文件存在';
       } else {
@@ -208,7 +208,7 @@ struct S3Page {
   // 复制文件
   async copyFile() {
     try {
-      const success = await copyFile('test.txt', 'test_copy.txt');
+      const success = await copy('test.txt', 'test_copy.txt');
       if (success) {
         this.message = '文件复制成功';
       } else {

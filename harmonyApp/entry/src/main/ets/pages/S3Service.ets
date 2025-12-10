@@ -107,7 +107,7 @@ export let s3Client = new S3Client(context, S3_CLIENT_CONFIG);
  * 初始化S3服务
  * 这个方法应该在使用S3服务之前调用
  */
-export function s3ClientInit(): void {
+export function createS3Client(): void {
   console.log('arkts:- 创建 S3 客户端...');
 
   // 确保上下文对象已创建
@@ -154,12 +154,12 @@ export function checkAndRefreshToken(force: boolean = false): boolean {
 
 /**
  * 上传文件
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @param fileContent 文件内容
  */
 globalThis.uploadFile = uploadFile
 
-export async function uploadFile(fileName: string, fileContent: ArrayBuffer): Promise<boolean> {
+export async function uploadFile(relativePath: string, fileContent: ArrayBuffer): Promise<boolean> {
   try {
     // 检查凭证有效性
     if (!checkAndRefreshToken()) {
@@ -170,7 +170,7 @@ export async function uploadFile(fileName: string, fileContent: ArrayBuffer): Pr
     // 将 ArrayBuffer 转换为 Uint8Array
     const uint8ArrayContent = new Uint8Array(fileContent);
 
-    const key = PRE_PATH + fileName;
+    const key = PRE_PATH + relativePath;
     console.log(`开始上传文件: ${key}`);
     console.log(`文件大小: ${uint8ArrayContent.byteLength} 字节`);
 
@@ -251,14 +251,14 @@ export async function uploadFile(fileName: string, fileContent: ArrayBuffer): Pr
 
 /**
  * 下载文件
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @returns 文件内容
  */
 globalThis.downloadFile = downloadFile
 
-export async function downloadFile(fileName: string): Promise<ArrayBuffer | null> {
+export async function downloadFile(relativePath: string): Promise<ArrayBuffer | null> {
   try {
-    const key = PRE_PATH + fileName;
+    const key = PRE_PATH + relativePath;
     const command = new GetObjectCommand({
       Bucket: BUCKET_NAME,
       Key: key
@@ -323,7 +323,7 @@ export async function downloadFile(fileName: string): Promise<ArrayBuffer | null
 
     // 特别处理404错误（文件不存在）
     if (error.name === 'NoSuchKey' || error.statusCode === 404) {
-      console.error(`文件 ${fileName} 不存在`);
+      console.error(`文件 ${relativePath} 不存在`);
     }
 
     // 处理权限错误
@@ -331,7 +331,7 @@ export async function downloadFile(fileName: string): Promise<ArrayBuffer | null
       console.error('下载文件时权限不足');
       console.error('请检查:');
       console.error('- 存储桶名称是否正确:', BUCKET_NAME);
-      console.error('- 文件路径是否正确:', PRE_PATH + fileName);
+      console.error('- 文件路径是否正确:', PRE_PATH + relativePath);
       console.error('- 凭证是否有读取权限');
     }
 
@@ -339,11 +339,11 @@ export async function downloadFile(fileName: string): Promise<ArrayBuffer | null
   }
 }
 
-export function saveToDocument(filename: string, content: string | ArrayBuffer): Promise<void> {
+export function saveToDocument(relativePath: string, content: string | ArrayBuffer): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
       let documentSaveOptions = new picker.DocumentSaveOptions();
-      documentSaveOptions.newFileNames = [filename];
+      documentSaveOptions.newFileNames = [relativePath];
       let documentPicker = new picker.DocumentViewPicker(getContext());
       documentPicker.save(documentSaveOptions).then((documentSaveResult: Array<string>) => {
         console.info('DocumentViewPicker.save successfully, documentSaveResult uri: ' +
@@ -365,13 +365,105 @@ export function saveToDocument(filename: string, content: string | ArrayBuffer):
 }
 
 /**
+ * 获取文件信息
+ * @param relativePath 文件名
+ * @returns 文件信息
+ */
+globalThis.getFileInfo = getFileInfo
+
+export async function getFileInfo(relativePath: string): Promise<FileInfo | null> {
+  try {
+    const key = PRE_PATH + relativePath;
+    const command = new HeadObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: key
+    });
+
+    const response = await s3Client.send(command);
+
+    // 处理可能的 undefined 值
+    const size = response.ContentLength !== undefined ? response.ContentLength : 0;
+    const lastModified = response.LastModified !== undefined ? response.LastModified : new Date();
+    const contentType = response.ContentType !== undefined ? response.ContentType : 'application/octet-stream';
+
+    return {
+      name: relativePath,
+      size: size,
+      lastModified: lastModified,
+      contentType: contentType
+    };
+  } catch (error) {
+    console.error('获取文件信息失败:', error);
+
+    // 处理权限错误
+    if (error.statusCode === 403 || error.$metadata?.httpStatusCode === 403) {
+      console.error('获取文件信息时权限不足');
+      console.error('请检查:');
+      console.error('- 存储桶名称是否正确:', BUCKET_NAME);
+      console.error('- 文件路径是否正确:', PRE_PATH + relativePath);
+      console.error('- 凭证是否有读取权限');
+    }
+
+    return null;
+  }
+}
+
+class S3Error extends Error {
+  public readonly code: number;
+
+  constructor(message: string, code: number = -1) {
+    super(message);
+    this.code = code;
+  }
+}
+
+/**
+ * 判断文件是否存在
+ * @param relativePath 文件名
+ * @returns 是否存在
+ */
+globalThis.existsFile = existsFile
+
+export async function existsFile(relativePath: string): Promise<boolean> {
+  try {
+    const key = PRE_PATH + relativePath;
+    const command = new HeadObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: key
+    });
+
+    await s3Client.send(command);
+    return true;
+  } catch (error) {
+    // 如果是 404 错误，则文件不存在
+    if (error.name === 'NotFound' || error.statusCode === 404) {
+      return false;
+    }
+
+    // 处理权限错误
+    if (error.statusCode === 403 || error.$metadata?.httpStatusCode === 403) {
+      console.error('检查文件存在性时权限不足');
+      console.error('请检查:');
+      console.error('- 存储桶名称是否正确:', BUCKET_NAME);
+      console.error('- 文件路径是否正确:', PRE_PATH + relativePath);
+      console.error('- 凭证是否有读取权限');
+    }
+
+    // 创建自定义错误
+    const customError = new S3Error(`S3 操作失败: ${error.message}`, error.code || -1);
+    console.error('检查文件存在性时出错:', customError);
+    throw customError;
+  }
+}
+
+/**
  * 列出文件夹中的对象
  * @param prefix 文件夹前缀
  * @returns 文件列表
  */
-globalThis.listFiles = listFiles
+globalThis.listObjects = listObjects
 
-export async function listFiles(prefix?: string): Promise<S3Object[] | null> {
+export async function listObjects(prefix?: string): Promise<S3Object[] | null> {
   try {
     const fullPrefix = PRE_PATH + (prefix ? prefix : '');
     const command = new ListObjectsV2Command({
@@ -404,134 +496,19 @@ export async function listFiles(prefix?: string): Promise<S3Object[] | null> {
   }
 }
 
-/**
- * 获取文件信息
- * @param fileName 文件名
- * @returns 文件信息
- */
-globalThis.getFileInfo = getFileInfo
-
-export async function getFileInfo(fileName: string): Promise<FileInfo | null> {
-  try {
-    const key = PRE_PATH + fileName;
-    const command = new HeadObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key
-    });
-
-    const response = await s3Client.send(command);
-
-    // 处理可能的 undefined 值
-    const size = response.ContentLength !== undefined ? response.ContentLength : 0;
-    const lastModified = response.LastModified !== undefined ? response.LastModified : new Date();
-    const contentType = response.ContentType !== undefined ? response.ContentType : 'application/octet-stream';
-
-    return {
-      name: fileName,
-      size: size,
-      lastModified: lastModified,
-      contentType: contentType
-    };
-  } catch (error) {
-    console.error('获取文件信息失败:', error);
-
-    // 处理权限错误
-    if (error.statusCode === 403 || error.$metadata?.httpStatusCode === 403) {
-      console.error('获取文件信息时权限不足');
-      console.error('请检查:');
-      console.error('- 存储桶名称是否正确:', BUCKET_NAME);
-      console.error('- 文件路径是否正确:', PRE_PATH + fileName);
-      console.error('- 凭证是否有读取权限');
-    }
-
-    return null;
-  }
-}
-
-class S3Error extends Error {
-  public readonly code: number;
-
-  constructor(message: string, code: number = -1) {
-    super(message);
-    this.code = code;
-  }
-}
-
-/**
- * 判断文件是否存在
- * @param fileName 文件名
- * @returns 是否存在
- */
-globalThis.isFileExists = isFileExists
-
-export async function isFileExists(fileName: string): Promise<boolean> {
-  try {
-    const key = PRE_PATH + fileName;
-    const command = new HeadObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key
-    });
-
-    await s3Client.send(command);
-    return true;
-  } catch (error) {
-    // 如果是 404 错误，则文件不存在
-    if (error.name === 'NotFound' || error.statusCode === 404) {
-      return false;
-    }
-
-    // 处理权限错误
-    if (error.statusCode === 403 || error.$metadata?.httpStatusCode === 403) {
-      console.error('检查文件存在性时权限不足');
-      console.error('请检查:');
-      console.error('- 存储桶名称是否正确:', BUCKET_NAME);
-      console.error('- 文件路径是否正确:', PRE_PATH + fileName);
-      console.error('- 凭证是否有读取权限');
-    }
-
-    // 创建自定义错误
-    const customError = new S3Error(`S3 操作失败: ${error.message}`, error.code || -1);
-    console.error('检查文件存在性时出错:', customError);
-    throw customError;
-  }
-}
-
-/**
- * 删除文件
- * @param fileName 文件名
- * @returns 是否删除成功
- */
-globalThis.deleteFile = deleteFile
-
-export async function deleteFile(fileName: string): Promise<boolean> {
-  try {
-    const key = PRE_PATH + fileName;
-    const command = new DeleteObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key
-    });
-
-    const response = await s3Client.send(command);
-    console.log('文件删除成功:', response);
-    return true;
-  } catch (error) {
-    console.error('文件删除失败:', error);
-    return false;
-  }
-}
 
 /**
  * 复制文件
- * @param sourceFileName 源文件名
- * @param targetFileName 目标文件名
+ * @param relativePath 源文件名
+ * @param toPath 目标文件名
  * @returns 是否复制成功
  */
-globalThis.copyFile = copyFile
+globalThis.copy = copy
 
-export async function copyFile(sourceFileName: string, targetFileName: string): Promise<boolean> {
+export async function copy(relativePath: string, toPath: string): Promise<boolean> {
   try {
-    const sourceKey = PRE_PATH + sourceFileName;
-    const targetKey = PRE_PATH + targetFileName;
+    const sourceKey = PRE_PATH + relativePath;
+    const targetKey = PRE_PATH + toPath;
 
     // 使用 CopyObjectCommand 直接复制文件，而不是下载再上传
     const command = new CopyObjectCommand({
@@ -558,16 +535,41 @@ export async function copyFile(sourceFileName: string, targetFileName: string): 
       console.error('复制文件时权限不足');
       console.error('请检查:');
       console.error('- 存储桶名称是否正确:', BUCKET_NAME);
-      console.error('- 源文件路径是否正确:', PRE_PATH + sourceFileName);
-      console.error('- 目标文件路径是否正确:', PRE_PATH + targetFileName);
+      console.error('- 源文件路径是否正确:', PRE_PATH + relativePath);
+      console.error('- 目标文件路径是否正确:', PRE_PATH + toPath);
       console.error('- 凭证是否有足够的权限执行复制操作');
     }
 
     // 特别处理404错误（源文件不存在）
     if (error.name === 'NoSuchKey' || error.statusCode === 404) {
-      console.error(`源文件 ${sourceFileName} 不存在`);
+      console.error(`源文件 ${relativePath} 不存在`);
     }
 
+    return false;
+  }
+}
+
+
+/**
+ * 删除文件
+ * @param relativePath 文件名
+ * @returns 是否删除成功
+ */
+globalThis.deleteFile = deleteFile
+
+export async function deleteFile(relativePath: string): Promise<boolean> {
+  try {
+    const key = PRE_PATH + relativePath;
+    const command = new DeleteObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: key
+    });
+
+    const response = await s3Client.send(command);
+    console.log('文件删除成功:', response);
+    return true;
+  } catch (error) {
+    console.error('文件删除失败:', error);
     return false;
   }
 }

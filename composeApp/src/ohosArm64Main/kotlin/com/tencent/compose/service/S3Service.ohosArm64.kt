@@ -60,14 +60,14 @@ private fun getPropAsNumber(g: napi_value, obj: napi_value?, propName: String): 
 
 /**
  * 上传文件
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @param fileContent 文件内容
  * @return 是否上传成功
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun uploadFile(fileName: String, fileContent: ByteArray): Boolean {
+actual suspend fun uploadFile(relativePath: String, fileContent: ByteArray): Boolean {
     val (global, func) = getJsGlobalAndFunction("uploadFile")
-    val paramFileName = JsEnv.createStringUtf8(fileName)
+    val paramRelativePath = JsEnv.createStringUtf8(relativePath)
     val paramFileContent = fileContent.usePinned { pinned ->
         kn_create_arraybuffer_from_bytes(
             JsEnv.env(),
@@ -75,7 +75,7 @@ actual suspend fun uploadFile(fileName: String, fileContent: ByteArray): Boolean
             fileContent.size.toULong()
         )
     }
-    val promise = JsEnv.callFunction(global, func, paramFileName, paramFileContent)
+    val promise = JsEnv.callFunction(global, func, paramRelativePath, paramFileContent)
 
     val deferred = CompletableDeferred<Boolean>()
     val ref = StableRef.create(deferred)
@@ -92,15 +92,15 @@ actual suspend fun uploadFile(fileName: String, fileContent: ByteArray): Boolean
 
 /**
  * 下载文件
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @return 文件内容
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun downloadFile(fileName: String): ByteArray? {
+actual suspend fun downloadFile(relativePath: String): ByteArray? {
     return suspendCancellableCoroutine { continuation ->
         // 1. 调用 JS 函数
         val (global, func) = getJsGlobalAndFunction("downloadFile")
-        val param = JsEnv.createStringUtf8(fileName)
+        val param = JsEnv.createStringUtf8(relativePath)
         val promise = JsEnv.callFunction(global, func, param)
 
         // 2. 创建 StableRef 传递 continuation 回调
@@ -149,10 +149,10 @@ actual suspend fun downloadFile(fileName: String): ByteArray? {
  * @return 文件列表
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun listFiles(prefix: String): List<FileItem>? {
+actual suspend fun listObjects(prefix: String): List<FileItem>? {
     return suspendCancellableCoroutine { continuation ->
         // 1. 调用 ArkTS: listFiles(prefix) -> Promise<S3Object[] | null>
-        val (g, fn) = getJsGlobalAndFunction("listFiles")
+        val (g, fn) = getJsGlobalAndFunction("listObjects")
         val arg = JsEnv.createStringUtf8(prefix)
         val promise = JsEnv.callFunction(g, fn, arg)
 
@@ -280,15 +280,15 @@ actual suspend fun listFiles(prefix: String): List<FileItem>? {
 
 /**
  * 获取文件信息
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @return 文件信息
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun getFileInfo(fileName: String): FileInfo? {
+actual suspend fun getFileInfo(relativePath: String): FileInfo? {
     return suspendCancellableCoroutine { continuation ->
-        // 1. 调用 ArkTS 的 getFileInfo(fileName) -> Promise<FileInfo | null>
+        // 1. 调用 ArkTS 的 getFileInfo(relativePath) -> Promise<FileInfo | null>
         val (g, fn) = getJsGlobalAndFunction("getFileInfo")
-        val arg = JsEnv.createStringUtf8(fileName)
+        val arg = JsEnv.createStringUtf8(relativePath)
         val promise = JsEnv.callFunction(g, fn, arg)
 
         // 2. 定义回调：从 JS 的 napi_value 解析为 Kotlin FileInfo?
@@ -365,13 +365,13 @@ actual suspend fun getFileInfo(fileName: String): FileInfo? {
 
 /**
  * 检查文件是否存在
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @return 是否存在
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun isFileExists(fileName: String): Boolean {
-    val (global, func) = getJsGlobalAndFunction("isFileExists")
-    val param = JsEnv.createStringUtf8(fileName)
+actual suspend fun existsFile(relativePath: String): Boolean {
+    val (global, func) = getJsGlobalAndFunction("existsFile")
+    val param = JsEnv.createStringUtf8(relativePath)
     val promise = JsEnv.callFunction(global, func, param)
 
     val deferred = CompletableDeferred<Boolean>()
@@ -389,13 +389,13 @@ actual suspend fun isFileExists(fileName: String): Boolean {
 
 /**
  * 删除文件
- * @param fileName 文件名
+ * @param relativePath 文件名
  * @return 是否删除成功
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun deleteFile(fileName: String): Boolean {
+actual suspend fun deleteFile(relativePath: String): Boolean {
     val (global, func) = getJsGlobalAndFunction("deleteFile")
-    val param = JsEnv.createStringUtf8(fileName)
+    val param = JsEnv.createStringUtf8(relativePath)
     val promise = JsEnv.callFunction(global, func, param)
 
     val deferred = CompletableDeferred<Boolean>()
@@ -413,15 +413,15 @@ actual suspend fun deleteFile(fileName: String): Boolean {
 
 /**
  * 复制文件
- * @param sourceFileName 源文件名
- * @param targetFileName 目标文件名
+ * @param relativePath 源文件名
+ * @param toPath 目标文件名
  * @return 是否复制成功
  */
 @OptIn(ExperimentalForeignApi::class)
-actual suspend fun copyFile(sourceFileName: String, targetFileName: String): Boolean {
-    val (global, func) = getJsGlobalAndFunction("copyFile")
-    val paramSource = JsEnv.createStringUtf8(sourceFileName)
-    val paramTarget = JsEnv.createStringUtf8(targetFileName)
+actual suspend fun copy(relativePath: String, toPath: String): Boolean {
+    val (global, func) = getJsGlobalAndFunction("copy")
+    val paramSource = JsEnv.createStringUtf8(relativePath)
+    val paramTarget = JsEnv.createStringUtf8(toPath)
     val promise = JsEnv.callFunction(global, func, paramSource, paramTarget)
 
     val deferred = CompletableDeferred<Boolean>()
